@@ -1,0 +1,102 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RSController : MonoBehaviour {
+    public RSManager robotManager;
+    public FlyCamera flyCamera;
+	public bool isAI;
+    public bool isRed;
+    public bool isPlayerOne;
+    public bool isLaborer;
+
+    private void Start()
+    {
+        flyCamera = GetComponent<FlyCamera>();
+        robotManager = GetComponentInChildren<RSManager>();
+        robotManager.isRed = isRed;
+        if (isLaborer){
+            robotManager.Invoke("Die", 0.2f);
+		}
+            
+    }
+
+    public void Die(){
+        //place into construction site queue to respawn as laborer
+        robotManager.transform.parent = null;
+        if (!isAI){
+            flyCamera.Activate(robotManager.robotFollow.BackCamera.transform);
+			StartCoroutine(RespawnE());
+        } else {
+            Destroy(gameObject);
+            AIRespawner.instance.AIDied(robotManager.isRed);
+        }
+    }
+
+    IEnumerator RespawnE(){
+        bool spawned = false;
+        if (isRed){
+            if (TimeMachine.redTimeMachine.AvailableLaborers.Count > 0){
+                robotManager = TimeMachine.redTimeMachine.AvailableLaborers.Dequeue();
+                Respawn();
+                spawned = true;
+            }
+        } else {
+			if (TimeMachine.blueTimeMachine.AvailableLaborers.Count > 0)
+			{
+				robotManager = TimeMachine.blueTimeMachine.AvailableLaborers.Dequeue();
+				Respawn();
+				spawned = true;
+			}
+        }
+
+        if (!spawned){
+            yield return new WaitForSeconds(3);
+            StartCoroutine(RespawnE());
+        }
+    }
+    public void SetPlayer(bool isPlayerOne){
+        this.isPlayerOne = isPlayerOne;
+        Invoke("SetPlayerL", 0.1f);
+    }
+
+    void SetPlayerL(){
+        robotManager.SetPlayerOne(isPlayerOne);
+    }
+
+    public void Respawn()
+    {
+        //delete current controller
+        //delete laborer at time machine
+        Transform laborerTransform = robotManager.GetComponentInChildren<Rigidbody>().transform;
+        //instantiate new player at old laborer position
+        GameObject newRobot = Instantiate(InitialSpawnManager.instance.RobotPlayer, laborerTransform.position, Quaternion.identity);
+        //set players color and team 
+        newRobot.GetComponent<RSController>().SetTeam(robotManager.isRed);
+        newRobot.GetComponentInChildren<RSController>().SetPlayer(isPlayerOne);
+        newRobot.GetComponent<RSController>().SetViewPort(isPlayerOne);
+
+        Destroy(robotManager.gameObject);
+        Destroy(gameObject);
+    }
+
+	public void SetTeam(bool isRed)
+	{
+		this.isRed = isRed;
+        GetComponentInChildren<RSManager>().isRed = isRed;
+        GetComponentInChildren<ColorRobot>().SetColor(isRed);
+	}
+
+    public void SetViewPort(bool playerOne){
+        if (playerOne){
+            Rect rect = new Rect(-0.5f, 0, 1, 1);
+			GetComponentInChildren<RSManager>().GetComponentInChildren<RobotFollow>().BackCamera.rect = rect;
+			GetComponentInChildren<Camera>().rect = rect;
+		} else {
+            Rect rect = new Rect(0.5f, 0, 1, 1);
+			GetComponentInChildren<RSManager>().GetComponentInChildren<RobotFollow>().BackCamera.rect = rect;
+			GetComponentInChildren<Camera>().rect = rect;
+        }
+		GetComponentInChildren<RSManager>().GetComponentInChildren<RobotFollow>().BackCamera.enabled = true;
+	}
+}
