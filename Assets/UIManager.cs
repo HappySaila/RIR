@@ -41,12 +41,6 @@ public class UIManager : MonoBehaviour {
     }
 
     //register join buttons
-    public void RegisterClicked(){
-        if (isPasswordsMatching()){
-            //log in
-        }
-    }
-
     public void LogInClicked(){
         cam.LookAtCreateRoom();
     }
@@ -63,7 +57,7 @@ public class UIManager : MonoBehaviour {
 
 	public bool isPasswordsMatching()
 	{
-		if (!RegisterPassword.text.Equals(RegisterPasswordConfirm))
+        if (!RegisterPassword.text.Equals(RegisterPasswordConfirm.text))
 		{
 			RegisterErrorMessage.enabled = true;
 			RegisterErrorMessage.text = "Passwords do not match.";
@@ -97,7 +91,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void loggedIn(){
-        
+        cam.LookAtCreateRoom();
     }
 
 }

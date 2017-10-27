@@ -16,7 +16,7 @@ public class UICamera : MonoBehaviour {
         Vector3 lTargetDir = target.position - transform.position;
 		//lTargetDir.y = 0.0f;
 		transform.rotation = Quaternion.RotateTowards(transform.rotation, 
-                                                      Quaternion.LookRotation(lTargetDir), Time.time * 3);
+                                                      Quaternion.LookRotation(lTargetDir), 10);
 
 
         //transform.LookAt(position);	
