@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UICamera : MonoBehaviour {
+    public Transform robot;
 
 	// Use this for initialization
 	void Start () {
@@ -11,6 +12,6 @@ public class UICamera : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        transform.LookAt(robot);	
 	}
 }
