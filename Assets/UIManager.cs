@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class UIManager : MonoBehaviour {
 
     public static UIManager instance;
+    public UICamera cam;
 
     private void Awake()
     {
@@ -17,24 +18,17 @@ public class UIManager : MonoBehaviour {
     }
 
     public void SinglePlayerClicked(){
-        SceneManager.LoadScene("SinglePlayer");
+        cam.LookAtMultiplayer();
     }
 
-    public void MultiplayerClicked(){
-        SceneManager.LoadScene("login");
+    public void MultiToMain(){
+        print("Hello");
+        cam.LookAtMainMenu();
     }
 
-    public void loggedIn()
-    {
-        SceneManager.LoadScene("MultiplayerMenu");
+
+    public void loggedIn(){
+        
     }
 
-    public void BackClicked()
-	{
-		SceneManager.LoadScene("MainMenu");
-	}
-
-    public void SplitScreenCLicked(){
-        SceneManager.LoadScene("SplitScreen");
-    }
 }
