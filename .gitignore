@@ -22,7 +22,8 @@ ExportedObj/
 *.booproj
 *.svd
 *.pdb
-
+*.DS_Store
+Assets/Imports/Models/TimeMachine/Customer Only Download/._BakedtextureRed copy.png
 # Unity3D generated meta files
 *.pidb.meta
 
