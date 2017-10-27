@@ -39,10 +39,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 						availableCallback = true;
 						obj = new NetworkCameraNetworkObject(networker, id, frame);
 						break;
-					case RobotNetworkObject.IDENTITY:
-						availableCallback = true;
-						obj = new RobotNetworkObject(networker, id, frame);
-						break;
 					case TestNetworkObject.IDENTITY:
 						availableCallback = true;
 						obj = new TestNetworkObject(networker, id, frame);

@@ -40,10 +40,11 @@ public class GameLogic : MonoBehaviour {
         foreach (NetworkingPlayer player in connectedPlayers)
         {
             Debug.Log("players");
-            behavior = NetworkManager.Instance.InstantiateRobot(position: new Vector3(-1000, count, count));
-            Debug.Log(behavior.networkObject.Owner.Name);
-            behavior.networkObject.AssignOwnership(player);
-            Debug.Log(behavior.networkObject.Owner.Name);
+            //behavior = NetworkManager.Instance.InstantiateRobot(position: new Vector3(-1000, count, count));
+            //where we will eventually start our robot
+            //Debug.Log(behavior.networkObject.Owner.Name);
+            //behavior.networkObject.AssignOwnership(player);
+            //Debug.Log(behavior.networkObject.Owner.Name);
             Debug.Log("robot created");
             
         }
