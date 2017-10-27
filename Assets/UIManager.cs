@@ -19,8 +19,16 @@ public class UIManager : MonoBehaviour {
 
     //single player buttons
     public void SinglePlayerClicked(){
-        cam.LookAtMultiplayer();
+		SceneManager.LoadScene(2);
+	}
+
+    public void SplitScreenClicked(){
+        SceneManager.LoadScene(1);
     }
+
+    public void MultiPlayerClicked(){
+		cam.LookAtMultiplayer();
+	}
 
     public void BackToMainMenu(){
         cam.LookAtMainMenu();
