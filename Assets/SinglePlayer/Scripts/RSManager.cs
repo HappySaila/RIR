@@ -17,12 +17,17 @@ public class RSManager : MonoBehaviour {
 	[HideInInspector] public Rigidbody rigid;
 	[HideInInspector] public RSLaborerControl robotLaborerControl;
 
+	AudioSource audioSource;
+	AudioListener audioListener;
+
+
 	// Use this for initialization
 	void Start () {
 		robotMovement = GetComponentInChildren<RSMovement>();
         robotAttack = GetComponentInChildren<RSAttack>();
 		robotFollow = GetComponentInChildren<RobotFollow>();
 		rigid = GetComponentInChildren<Rigidbody>();
+
 		robotLaborerControl = GetComponentInChildren<RSLaborerControl>();
 		agent = GetComponentInChildren<NavMeshAgent>();
 
@@ -33,6 +38,28 @@ public class RSManager : MonoBehaviour {
 			robotFollow.enabled = false;
 			robotMovement.moveSpeed = 0;
 		}
+
+
+		audioSource= GetComponentInChildren<AudioSource>();
+		audioListener=  transform.parent.GetComponentInChildren<AudioListener>();
+
+		if(audioListener!=null && !isRed ){
+			audioListener.enabled = false;
+		}
+
+
+		
+	
+	}
+
+	public void playSound(string sound){
+		if(sound.Equals("hit")){
+			SoundManager.INSTANCE.PlayRamHit (audioSource);
+		}
+		else if(sound.Equals("collectLabourer")){
+			SoundManager.INSTANCE.PlayLabourPickUp (audioSource);
+		}
+
 	}
 
     public void SetPlayerOne(bool isPlayerOne){
