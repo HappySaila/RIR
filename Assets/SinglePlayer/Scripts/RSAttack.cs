@@ -76,6 +76,7 @@ public class RSAttack : MonoBehaviour {
 		if (isRamming)
 		{
 			Hit(col.gameObject, col.contacts[0].point);
+		
 		}
 	}
 
@@ -89,6 +90,7 @@ public class RSAttack : MonoBehaviour {
                 //the player has rammed a robot
 				target.GetComponentInParent<RSManager>().Die();
 			}
+			robotManager.playSound ("hit");
 		}
 	}
 

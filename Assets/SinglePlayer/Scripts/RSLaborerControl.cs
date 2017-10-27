@@ -17,6 +17,8 @@ public class RSLaborerControl : MonoBehaviour
 	[HideInInspector] public bool isBuilding;
 	public bool isFighter;
 
+	RSManager robotManager;
+
 	void Start()
 	{
 
@@ -24,6 +26,7 @@ public class RSLaborerControl : MonoBehaviour
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
 		agent.updateRotation = false;
+		robotManager = GetComponentInParent<RSManager>();
 	}
 
     private void Awake()
@@ -116,7 +119,11 @@ public class RSLaborerControl : MonoBehaviour
             GetComponentInChildren<ColorRobot>().SetColor(col.GetComponentInParent<RSManager>().isRed);
 			agent.SetDestination(target);
 			trigger.enabled = false;
+
+			robotManager.playSound ("collectLabourer");
+
 		}
+
 	}
 
     public void Reset()
