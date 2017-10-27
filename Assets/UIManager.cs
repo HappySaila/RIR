@@ -17,15 +17,32 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    //single player buttons
     public void SinglePlayerClicked(){
         cam.LookAtMultiplayer();
     }
 
-    public void MultiToMain(){
-        print("Hello");
+    public void BackToMainMenu(){
         cam.LookAtMainMenu();
     }
 
+    //register join buttons
+    public void RegisterClicked(){
+        
+    }
+
+    public void LogInClicked(){
+        cam.LookAtCreateRoom();
+    }
+
+    //join room buttons
+    public void CreateClicked(){
+        
+    }
+
+    public void JoinClicked(){
+        
+    }
 
     public void loggedIn(){
         

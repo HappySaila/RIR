@@ -8,6 +8,7 @@ public class UICamera : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        transform.LookAt(canvasPositions[0]);
 	}
 	
 	// Update is called once per frame
@@ -28,4 +29,9 @@ public class UICamera : MonoBehaviour {
     public void LookAtMainMenu(){
 		target = canvasPositions[0];
 	}
+
+    public void LookAtCreateRoom(){
+        target = canvasPositions[2];
+    }
+
 }
