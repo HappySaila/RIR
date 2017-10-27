@@ -23,117 +23,6 @@ public class masterServerManager : masterServerBehavior {
     public GameObject networkManager = null;
     private NetworkManager mgr = null;
     public GameObject panel;
-    public struct room
-    {
-        public room(NetworkingPlayer partyLeader, int roomSize, string roomName)
-        {
-            this.partyLeader = partyLeader;
-            this.roomSize = roomSize;
-            this.roomName = roomName;
-            matching = false;
-            mmrs = new List<int>();
-            players = new List<NetworkingPlayer>();
-            players.Add(this.PartyLeader);
-        }
-
-        public room(room toReplace)
-        {
-            this.partyLeader = toReplace.partyLeader;
-            this.roomName = toReplace.roomName;
-            this.roomSize = toReplace.roomSize;
-            matching = true;
-            players = toReplace.players;
-            mmrs = toReplace.Mmrs;
-        }
-        List<int> mmrs;
-        NetworkingPlayer partyLeader;
-        List<NetworkingPlayer> players;
-        bool matching;
-        int roomSize;
-        string roomName;
-
-        public NetworkingPlayer PartyLeader
-        {
-            get
-            {
-                return partyLeader;
-            }
-
-            set
-            {
-                partyLeader = value;
-            }
-        }
-
-        public List<NetworkingPlayer> Players
-        {
-            get
-            {
-                return players;
-            }
-
-            set
-            {
-                players = value;
-            }
-        }
-
-        public int RoomSize
-        {
-            get
-            {
-                return roomSize;
-            }
-
-            set
-            {
-                roomSize = value;
-            }
-        }
-
-        public string RoomName
-        {
-            get
-            {
-                return roomName;
-            }
-
-            set
-            {
-                roomName = value;
-            }
-        }
-
-        public bool Matching
-        {
-            get
-            {
-                return matching;
-            }
-
-            set
-            {
-                matching = value;
-            }
-        }
-
-        public List<int> Mmrs
-        {
-            get
-            {
-                return mmrs;
-            }
-
-            set
-            {
-                mmrs = value;
-            }
-        }
-    }
-
-    List<room> existingRooms;
-    List<room> searchingRooms;
-    List<room> foundGames;
 
     private room first;
     private room second;
@@ -142,6 +31,7 @@ public class masterServerManager : masterServerBehavior {
     public override void createRoom(RpcArgs args)
     {
         NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
+        pla.Name = "Steven";
         Debug.Log("sending player " + pla.NetworkId);
         string name = args.GetNext<string>();
         int roomSize = args.GetNext<int>();
@@ -149,7 +39,7 @@ public class masterServerManager : masterServerBehavior {
         room rooms = new room(pla, roomSize, name);
         rooms.Mmrs.Add(mmr);
         Debug.Log(networkObject);
-        existingRooms.Add(rooms);
+        GlobalVariables.instance.existingRooms.Add(rooms);
         networkObject.SendRpc(pla, RPC_PLAYER_JOIN_ROOM, "steven");
         Debug.Log("created room"); 
     }
@@ -160,7 +50,7 @@ public class masterServerManager : masterServerBehavior {
         int mmr = args.GetNext<int>();
         NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
         Debug.Log("found player with " + pla.Name);
-        foreach (room rooms in existingRooms)
+        foreach (room rooms in GlobalVariables.instance.existingRooms)
         {
             if (rooms.RoomName == name)
             {
@@ -187,13 +77,13 @@ public class masterServerManager : masterServerBehavior {
         string team1 = args.GetNext<string>();
         string team2 = args.GetNext<string>();
         Debug.Log("game should be started between " + team1 + " and " + team2);
-        room room1 = foundGames.Find(i => i.RoomName.Equals(team1));
-        room room2 = foundGames.Find(i => i.RoomName.Equals(team2));
+        room room1 = GlobalVariables.instance.foundGames.Find(i => i.RoomName.Equals(team1));
+        room room2 = GlobalVariables.instance.foundGames.Find(i => i.RoomName.Equals(team2));
         currentUsedPort++;
         string myport = currentUsedPort.ToString();
         NetWorker.PingForFirewall(ushort.Parse(myport));
-        foundGames.Remove(room1);
-        foundGames.Remove(room2);
+        //GlobalVariables.instance.foundGames.Remove(room1);
+        //GlobalVariables.instance.foundGames.Remove(room2);
         foreach(NetworkingPlayer player in room1.Players)
         {
             networkObject.SendRpc(player, RPC_STOP_SEARCHING, team1, team2);
@@ -262,9 +152,9 @@ public class masterServerManager : masterServerBehavior {
         
         Debug.Log("started game as " + isServer);
         networkObject.Networker.GetPlayerById(networkObject.MyPlayerId).Name = isServer;
-        existingRooms = new List<room>();
-        foundGames = new List<room>();
-        searchingRooms = new List<room>();
+        GlobalVariables.instance.existingRooms = new List<room>();
+        GlobalVariables.instance.foundGames = new List<room>();
+        GlobalVariables.instance.searchingRooms = new List<room>();
     }
 
     public void createRoom()
@@ -294,15 +184,15 @@ public class masterServerManager : masterServerBehavior {
             timer += 1;
             matchMaking.text = "matching for " + timer;
         }
-        if(existingRooms == null)
+        if(GlobalVariables.instance.existingRooms == null)
         {
             return;
         }
-        List<room> rooms = existingRooms.FindAll(m => m.RoomSize == m.Players.Count);
+        List<room> rooms = GlobalVariables.instance.existingRooms.FindAll(m => m.RoomSize == m.Players.Count);
         foreach (room foundRooms in rooms)
         {
-            searchingRooms.Add(new room(foundRooms));
-            existingRooms.Remove(foundRooms);
+            GlobalVariables.instance.searchingRooms.Add(new room(foundRooms));
+            GlobalVariables.instance.existingRooms.Remove(foundRooms);
             differences.Add(0);
             foreach (NetworkingPlayer player in foundRooms.Players){
                 networkObject.SendRpc(player, RPC_START_MATCHING, foundRooms.RoomName);
@@ -310,15 +200,15 @@ public class masterServerManager : masterServerBehavior {
             
             Debug.Log("room " + foundRooms.RoomName + " has enough players");
         }
-        if (searchingRooms.Count > 1)
+        if (GlobalVariables.instance.searchingRooms.Count > 1)
         {
             bool found = searchForGame();
             if (found)
             {
-                differences.Remove(searchingRooms.IndexOf(first));
-                differences.Remove(searchingRooms.IndexOf(second));
-                searchingRooms.Remove(first);
-                searchingRooms.Remove(second);
+                differences.Remove(GlobalVariables.instance.searchingRooms.IndexOf(first));
+                differences.Remove(GlobalVariables.instance.searchingRooms.IndexOf(second));
+                GlobalVariables.instance.searchingRooms.Remove(first);
+                GlobalVariables.instance.searchingRooms.Remove(second);
             }
         }
 	}
@@ -335,17 +225,17 @@ public class masterServerManager : masterServerBehavior {
     List<float> differences = new List<float>();
     bool searchForGame()
     {
-        foreach(room rooms in searchingRooms)
+        foreach(room rooms in GlobalVariables.instance.searchingRooms)
         {
-            float room1mmr = differences[searchingRooms.IndexOf(rooms)];
+            float room1mmr = differences[GlobalVariables.instance.searchingRooms.IndexOf(rooms)];
             float lowerBound = getAverageMMR(rooms) - room1mmr;
             float upperBound = getAverageMMR(rooms) + room1mmr;
-            differences[searchingRooms.IndexOf(rooms)] += 1f;
-            foreach (room toFight in searchingRooms)
+            differences[GlobalVariables.instance.searchingRooms.IndexOf(rooms)] += 10f;
+            foreach (room toFight in GlobalVariables.instance.searchingRooms)
             {
                 if (!toFight.Equals(rooms))
                 {
-                    float room2mmr = differences[searchingRooms.IndexOf(rooms)];
+                    float room2mmr = differences[GlobalVariables.instance.searchingRooms.IndexOf(rooms)];
                     float lowerBound2 = getAverageMMR(toFight) - room2mmr;
                     float upperBound2 = getAverageMMR(toFight) + room2mmr;
                     Debug.Log(getAverageMMR(rooms) - lowerBound2);
@@ -355,8 +245,8 @@ public class masterServerManager : masterServerBehavior {
                         Debug.Log("match");
                         first = rooms;
                         second = toFight;
-                        foundGames.Add(rooms);
-                        foundGames.Add(toFight);
+                        GlobalVariables.instance.foundGames.Add(rooms);
+                        GlobalVariables.instance.foundGames.Add(toFight);
                         networkObject.SendRpc(RPC_START_GAME,Receivers.Server, toFight.RoomName, rooms.RoomName);
                         return true;
                     }
@@ -366,8 +256,8 @@ public class masterServerManager : masterServerBehavior {
                         //party 1 matches with party 2
                         first = rooms;
                         second = toFight;
-                        foundGames.Add(rooms);
-                        foundGames.Add(toFight);
+                        GlobalVariables.instance.foundGames.Add(rooms);
+                        GlobalVariables.instance.foundGames.Add(toFight);
                         networkObject.SendRpc(RPC_START_GAME, Receivers.Server, toFight.RoomName, rooms.RoomName);
                         return true;
                     }
