@@ -23,88 +23,69 @@ public class masterServerManager : masterServerBehavior {
     public GameObject networkManager = null;
     private NetworkManager mgr = null;
     public GameObject panel;
+    List<float> differences = new List<float>();
+    double timer = 0;
 
     private room first;
     private room second;
 
-
-    public override void createRoom(RpcArgs args)
+    void Start()
     {
-        NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
-        pla.Name = "Steven";
-        Debug.Log("sending player " + pla.NetworkId);
-        string name = args.GetNext<string>();
-        int roomSize = args.GetNext<int>();
-        int mmr = args.GetNext<int>();
-        room rooms = new room(pla, roomSize, name);
-        rooms.Mmrs.Add(mmr);
-        Debug.Log(networkObject);
-        GlobalVariables.instance.existingRooms.Add(rooms);
-        networkObject.SendRpc(pla, RPC_PLAYER_JOIN_ROOM, "steven");
-        Debug.Log("created room"); 
+        GlobalVariables.instance.existingRooms = new List<room>();
+        GlobalVariables.instance.foundGames = new List<room>();
+        GlobalVariables.instance.searchingRooms = new Dictionary<int, List<room>>();
+        GlobalVariables.instance.players = new Dictionary<int, GlobalVariables.PlayerDetails>();
     }
 
-    public override void joinRoom(RpcArgs args)
+
+    // Update is called once per frame
+    void Update()
     {
-        string name = args.GetNext<string>();
-        int mmr = args.GetNext<int>();
-        NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
-        Debug.Log("found player with " + pla.Name);
-        foreach (room rooms in GlobalVariables.instance.existingRooms)
+        if (matching == true)
         {
-            if (rooms.RoomName == name)
+            timer += 1;
+            matchMaking.text = "matching for " + timer;
+        }
+        if (GlobalVariables.instance.existingRooms == null)
+        {
+            return;
+        }
+        List<room> rooms = GlobalVariables.instance.existingRooms.FindAll(m => m.RoomSize == m.Players.Count);
+        foreach (room foundRooms in rooms)
+        {
+            if (!GlobalVariables.instance.searchingRooms.ContainsKey(foundRooms.RoomSize))
             {
-                foreach (NetworkingPlayer player in rooms.Players)
+                GlobalVariables.instance.searchingRooms.Add(foundRooms.RoomSize,new List<room>());
+                
+            }
+            GlobalVariables.instance.searchingRooms[foundRooms.RoomSize].Add(new room(foundRooms));
+            Debug.Log(GlobalVariables.instance.searchingRooms[foundRooms.RoomSize].Count);
+            GlobalVariables.instance.existingRooms.Remove(foundRooms);
+            differences.Add(0);
+            foreach (NetworkingPlayer player in foundRooms.Players)
+            {
+                networkObject.SendRpc(player, RPC_START_MATCHING, foundRooms.RoomName);
+            }
+
+            Debug.Log("room " + foundRooms.RoomName + " has enough players");
+        }
+        foreach (List<room> theRooms in GlobalVariables.instance.searchingRooms.Values)
+        {
+            if (theRooms.Count > 1)
+            {
+                bool found = searchForGame();
+                if (found)
                 {
-                    Debug.Log(player);
-                    networkObject.SendRpc(player,RPC_PLAYER_JOIN_ROOM, "player");
-                    
+                    differences.Remove(GlobalVariables.instance.searchingRooms[first.RoomSize].IndexOf(first));
+                    differences.Remove(GlobalVariables.instance.searchingRooms[first.RoomSize].IndexOf(second));
+                    GlobalVariables.instance.searchingRooms[first.RoomSize].Remove(first);
+                    GlobalVariables.instance.searchingRooms[second.RoomSize].Remove(second);
                 }
-                rooms.Players.Add(pla);
-                rooms.Mmrs.Add(mmr);
-                foreach(NetworkingPlayer player in rooms.Players)
-                {
-                    networkObject.SendRpc(pla, RPC_PLAYER_JOIN_ROOM, "player");
-                }
-                Debug.Log("added player to room " + name);
             }
         }
-        
     }
 
-    public override void StartGame(RpcArgs args)
-    {
-        string team1 = args.GetNext<string>();
-        string team2 = args.GetNext<string>();
-        Debug.Log("game should be started between " + team1 + " and " + team2);
-        room room1 = GlobalVariables.instance.foundGames.Find(i => i.RoomName.Equals(team1));
-        room room2 = GlobalVariables.instance.foundGames.Find(i => i.RoomName.Equals(team2));
-        currentUsedPort++;
-        string myport = currentUsedPort.ToString();
-        NetWorker.PingForFirewall(ushort.Parse(myport));
-        //GlobalVariables.instance.foundGames.Remove(room1);
-        //GlobalVariables.instance.foundGames.Remove(room2);
-        foreach(NetworkingPlayer player in room1.Players)
-        {
-            networkObject.SendRpc(player, RPC_STOP_SEARCHING, team1, team2);
-        }
-        foreach (NetworkingPlayer player in room2.Players)
-        {
-            networkObject.SendRpc(player, RPC_STOP_SEARCHING, team1, team2);
-        }
-        Host();
-        foreach (NetworkingPlayer player in room1.Players)
-        {
-            networkObject.SendRpc(player, RPC_CONNECT_TO_NEW_SERVER, (ushort)(currentUsedPort-1));
-        }
-        foreach (NetworkingPlayer player in room2.Players)
-        {
-            networkObject.SendRpc(player, RPC_CONNECT_TO_NEW_SERVER, (ushort)(currentUsedPort-1));
-        }
-        //now I need to create a newServer with this being the host
-
-    }
-
+    #region spawningNewInstance
     public void Host()
     {
         NetWorker server;
@@ -142,77 +123,16 @@ public class masterServerManager : masterServerBehavior {
         }
     }
 
-    public override void startMatching(RpcArgs args)
+    public void Connect(ushort port)
     {
-        matching = true;
+        NetWorker client;
+        client = new TCPClient();
+        ((TCPClient)client).Connect(ip, port);
+        Connected(client);
     }
-
-    void Start () {
-        string isServer = networkObject.IsServer ? "Server" : "client";
-        
-        Debug.Log("started game as " + isServer);
-        networkObject.Networker.GetPlayerById(networkObject.MyPlayerId).Name = isServer;
-        GlobalVariables.instance.existingRooms = new List<room>();
-        GlobalVariables.instance.foundGames = new List<room>();
-        GlobalVariables.instance.searchingRooms = new List<room>();
-    }
-
-    public void createRoom()
-    {
-        if (string.IsNullOrEmpty(input.text))
-        {
-            return;
-        }
-        panel.SetActive(false);
-        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.Server, input.text, int.Parse(roomSize.text),Random.RandomRange(500,2000));
-    }
-	
-    public void joinRoom()
-    {
-        if (string.IsNullOrEmpty(input.text))
-        {
-            return;
-        }
-        panel.SetActive(false);
-        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.Server, input.text,Random.Range(500,2000));
-    }
-    double timer = 0;
-	// Update is called once per frame
-	void Update () {
-        if(matching == true)
-        {
-            timer += 1;
-            matchMaking.text = "matching for " + timer;
-        }
-        if(GlobalVariables.instance.existingRooms == null)
-        {
-            return;
-        }
-        List<room> rooms = GlobalVariables.instance.existingRooms.FindAll(m => m.RoomSize == m.Players.Count);
-        foreach (room foundRooms in rooms)
-        {
-            GlobalVariables.instance.searchingRooms.Add(new room(foundRooms));
-            GlobalVariables.instance.existingRooms.Remove(foundRooms);
-            differences.Add(0);
-            foreach (NetworkingPlayer player in foundRooms.Players){
-                networkObject.SendRpc(player, RPC_START_MATCHING, foundRooms.RoomName);
-            }
-            
-            Debug.Log("room " + foundRooms.RoomName + " has enough players");
-        }
-        if (GlobalVariables.instance.searchingRooms.Count > 1)
-        {
-            bool found = searchForGame();
-            if (found)
-            {
-                differences.Remove(GlobalVariables.instance.searchingRooms.IndexOf(first));
-                differences.Remove(GlobalVariables.instance.searchingRooms.IndexOf(second));
-                GlobalVariables.instance.searchingRooms.Remove(first);
-                GlobalVariables.instance.searchingRooms.Remove(second);
-            }
-        }
-	}
-
+#endregion
+    
+    #region matchmaking
     public float getAverageMMR(room rooms){
         float total = 0;
         foreach(int mmr in rooms.Mmrs)
@@ -222,77 +142,177 @@ public class masterServerManager : masterServerBehavior {
         total /= rooms.Mmrs.Count;
         return total;
     }
-    List<float> differences = new List<float>();
+    
     bool searchForGame()
     {
-        foreach(room rooms in GlobalVariables.instance.searchingRooms)
+        foreach(List<room> rooms in GlobalVariables.instance.searchingRooms.Values)
         {
-            float room1mmr = differences[GlobalVariables.instance.searchingRooms.IndexOf(rooms)];
-            float lowerBound = getAverageMMR(rooms) - room1mmr;
-            float upperBound = getAverageMMR(rooms) + room1mmr;
-            differences[GlobalVariables.instance.searchingRooms.IndexOf(rooms)] += 10f;
-            foreach (room toFight in GlobalVariables.instance.searchingRooms)
-            {
-                if (!toFight.Equals(rooms))
+            foreach(room room in rooms) { 
+                float room1mmr = differences[rooms.IndexOf(room)];
+                float lowerBound = getAverageMMR(room) - room1mmr;
+                float upperBound = getAverageMMR(room) + room1mmr;
+                differences[rooms.IndexOf(room)] += 10f;
+                foreach (room toFight in rooms)
                 {
-                    float room2mmr = differences[GlobalVariables.instance.searchingRooms.IndexOf(rooms)];
-                    float lowerBound2 = getAverageMMR(toFight) - room2mmr;
-                    float upperBound2 = getAverageMMR(toFight) + room2mmr;
-                    Debug.Log(getAverageMMR(rooms) - lowerBound2);
-                    if (getAverageMMR(rooms) > lowerBound2 && getAverageMMR(rooms) < upperBound2)
-                    {
-                        //party 2 matches with party 1
-                        Debug.Log("match");
-                        first = rooms;
-                        second = toFight;
-                        GlobalVariables.instance.foundGames.Add(rooms);
-                        GlobalVariables.instance.foundGames.Add(toFight);
-                        networkObject.SendRpc(RPC_START_GAME,Receivers.Server, toFight.RoomName, rooms.RoomName);
-                        return true;
-                    }
-                    if (getAverageMMR(toFight) > lowerBound && getAverageMMR(toFight) < upperBound)
-                    {
-                        Debug.Log("match");
-                        //party 1 matches with party 2
-                        first = rooms;
-                        second = toFight;
-                        GlobalVariables.instance.foundGames.Add(rooms);
-                        GlobalVariables.instance.foundGames.Add(toFight);
-                        networkObject.SendRpc(RPC_START_GAME, Receivers.Server, toFight.RoomName, rooms.RoomName);
-                        return true;
-                    }
+                        if (!toFight.Equals(rooms))
+                        {
+                            float room2mmr = differences[rooms.IndexOf(room)];
+                            float lowerBound2 = getAverageMMR(toFight) - room2mmr;
+                            float upperBound2 = getAverageMMR(toFight) + room2mmr;
+                            Debug.Log(getAverageMMR(room) - lowerBound2);
+                            if (getAverageMMR(room) > lowerBound2 && getAverageMMR(room) < upperBound2)
+                            {
+                                //party 2 matches with party 1
+                                Debug.Log("match");
+                                first = room;
+                                second = toFight;
+                                GlobalVariables.instance.foundGames.Add(room);
+                                GlobalVariables.instance.foundGames.Add(toFight);
+                                networkObject.SendRpc(RPC_START_GAME, Receivers.Server, toFight.RoomName, room.RoomName);
+                                return true;
+                            }
+                            if (getAverageMMR(toFight) > lowerBound && getAverageMMR(toFight) < upperBound)
+                            {
+                                Debug.Log("match");
+                                //party 1 matches with party 2
+                                first = room;
+                                second = toFight;
+                                GlobalVariables.instance.foundGames.Add(room);
+                                GlobalVariables.instance.foundGames.Add(toFight);
+                                networkObject.SendRpc(RPC_START_GAME, Receivers.Server, toFight.RoomName, room.RoomName);
+                                return true;
+                            }
+                        }
                 }
             }
         }
         return false;
     }
+#endregion
     
-    public override void playerJoinRoom(RpcArgs args)
+    #region buttonPresses
+    public void createRoom()
     {
+        networkObject.Networker.Me.Name = "steven";
+        if (string.IsNullOrEmpty(input.text))
+        {
+            return;
+        }
+        panel.SetActive(false);
+        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.Server, input.text, int.Parse(roomSize.text), Random.RandomRange(500, 2000), networkObject.Networker.Me.Name);
+    }
+
+    public void joinRoom()
+    {
+        networkObject.Networker.Me.Name = "Jacob";
+        if (string.IsNullOrEmpty(input.text))
+        {
+            return;
+        }
+        panel.SetActive(false);
+        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.Server, input.text, Random.Range(500, 2000), networkObject.Networker.Me.Name);
+    }
+    #endregion
+    #region RPCS
+
+    public override void startMatching(RpcArgs args)
+    {
+        matching = true;
+    }
+
+    public override void joinRoom(RpcArgs args)
+    {
+        string name = args.GetNext<string>();
+        int mmr = args.GetNext<int>();
+        NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
         string playerName = args.GetNext<string>();
-        if (currentRoomSize == 0)
+        GlobalVariables.instance.players[(int)args.Info.SendingPlayer.NetworkId] = new GlobalVariables.PlayerDetails(playerName,mmr);
+        Debug.Log("found player with " + GlobalVariables.instance.players[(int)args.Info.SendingPlayer.NetworkId].Name);
+        foreach (room rooms in GlobalVariables.instance.existingRooms)
+        {
+            if (rooms.RoomName == name)
+            {
+                foreach (NetworkingPlayer player in rooms.Players)
+                {
+                    //sends to each player in the room that you have joined
+                    networkObject.SendRpc(player, RPC_PLAYER_JOIN_ROOM, GlobalVariables.instance.players[(int)args.Info.SendingPlayer.NetworkId].Name);
+
+                }
+                rooms.Players.Add(pla);
+                rooms.Mmrs.Add(mmr);
+                int counter = 0;
+                foreach (NetworkingPlayer player in rooms.Players)
+                {
+                    Debug.Log(GlobalVariables.instance.players[(int)player.NetworkId].Name);
+                    addToRoom(GlobalVariables.instance.players[(int)player.NetworkId].Name, counter++);
+                }
+                Debug.Log("added player to room " + name);
+            }
+        }
+    }
+
+    public override void StartGame(RpcArgs args)
+    {
+        string team1 = args.GetNext<string>();
+        string team2 = args.GetNext<string>();
+        Debug.Log("game should be started between " + team1 + " and " + team2);
+        room room1 = GlobalVariables.instance.foundGames.Find(i => i.RoomName.Equals(team1));
+        room room2 = GlobalVariables.instance.foundGames.Find(i => i.RoomName.Equals(team2));
+        currentUsedPort++;
+        string myport = currentUsedPort.ToString();
+        NetWorker.PingForFirewall(ushort.Parse(myport));
+        //GlobalVariables.instance.foundGames.Remove(room1);
+        //GlobalVariables.instance.foundGames.Remove(room2);
+        foreach (NetworkingPlayer player in room1.Players)
+        {
+            networkObject.SendRpc(player, RPC_STOP_SEARCHING, team1, team2);
+        }
+        foreach (NetworkingPlayer player in room2.Players)
+        {
+            networkObject.SendRpc(player, RPC_STOP_SEARCHING, team1, team2);
+        }
+        Host();
+        foreach (NetworkingPlayer player in room1.Players)
+        {
+            networkObject.SendRpc(player, RPC_CONNECT_TO_NEW_SERVER, (ushort)(currentUsedPort - 1));
+        }
+        foreach (NetworkingPlayer player in room2.Players)
+        {
+            networkObject.SendRpc(player, RPC_CONNECT_TO_NEW_SERVER, (ushort)(currentUsedPort - 1));
+        }
+        //now I need to create a newServer with this being the host
+    }
+
+    //this doesn't do anything
+    public override void readyUp(RpcArgs args)
+    {
+        string roomName = args.GetNext<string>();
+        NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
+    }
+    public void addToRoom(string playerName,int counter)
+    { 
+        if (counter == 0)
         {
             one.text = playerName + " 0";
         }
-        if (currentRoomSize == 1)
+        if (counter == 1)
         {
             two.text = playerName + " 1";
         }
-        if (currentRoomSize == 2)
+        if (counter == 2)
         {
             three.text = playerName + " 2";
         }
-        if (currentRoomSize == 3)
+        if (counter == 3)
         {
             four.text = playerName + " 3";
         }
         currentRoomSize++;
     }
-
-    public override void readyUp(RpcArgs args)
+    public override void playerJoinRoom(RpcArgs args)
     {
-        string roomName = args.GetNext<string>();
-        NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
+        string playerName = args.GetNext<string>();
+        addToRoom(playerName,currentRoomSize);
     }
 
     public override void stopSearching(RpcArgs args)
@@ -302,13 +322,6 @@ public class masterServerManager : masterServerBehavior {
         matching = false;
         matchMaking.text = "found game!";
     }
-    public void Connect(ushort port)
-    {
-        NetWorker client;
-        client = new TCPClient();
-        ((TCPClient)client).Connect(ip, port);
-        Connected(client);
-    }
 
     public override void connectToNewServer(RpcArgs args)
     {
@@ -317,4 +330,25 @@ public class masterServerManager : masterServerBehavior {
         Connect(port);
         Debug.Log("connected");
     }
+
+    public override void createRoom(RpcArgs args)
+    {
+        NetworkingPlayer pla = networkObject.Networker.GetPlayerById(args.Info.SendingPlayer.NetworkId);
+        Debug.Log("sending player " + pla.NetworkId);
+        string name = args.GetNext<string>();
+        int roomSize = args.GetNext<int>();
+        Debug.Log("sending player " + pla.Name);
+        Debug.Log("in global storage");
+        int mmr = args.GetNext<int>();
+        string playerName = args.GetNext<string>();
+        GlobalVariables.instance.players[(int)args.Info.SendingPlayer.NetworkId] = new GlobalVariables.PlayerDetails(playerName, mmr);
+        Debug.Log("found player with " + GlobalVariables.instance.players[(int)args.Info.SendingPlayer.NetworkId].Name);
+        room rooms = new room(pla, roomSize, name);
+        rooms.Mmrs.Add(mmr);
+        Debug.Log(networkObject);
+        GlobalVariables.instance.existingRooms.Add(rooms);
+        networkObject.SendRpc(pla, RPC_PLAYER_JOIN_ROOM, GlobalVariables.instance.players[(int)args.Info.SendingPlayer.NetworkId].Name);
+        Debug.Log("created room");
+    }
+#endregion
 }
