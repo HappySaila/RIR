@@ -18,7 +18,7 @@ public class RSManager : MonoBehaviour {
 	[HideInInspector] public RSLaborerControl robotLaborerControl;
 
 	AudioSource audioSource;
-	AudioListener audioListener;
+	public AudioListener audioListener;
 
 
 	// Use this for initialization
@@ -40,10 +40,9 @@ public class RSManager : MonoBehaviour {
 		}
 
 
+		//sound town
 		audioSource= GetComponentInChildren<AudioSource>();
-		audioListener=  transform.parent.GetComponentInChildren<AudioListener>();
-
-
+		//audioListener=  transform.parent.GetComponentInChildren<AudioListener>();
 		//if in multiplayer dont need to do the is red check
 		if(audioListener!=null && !isRed && !isAI){//at the start only the blue player in single and split screen
 			audioListener.enabled = true;

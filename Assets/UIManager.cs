@@ -42,7 +42,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void MultiPlayerClicked(){
-		audioMixerScript.INSTANCE.ChangeSnapShot (0);
+		
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
 		cam.LookAtMultiplayer();
 	}
