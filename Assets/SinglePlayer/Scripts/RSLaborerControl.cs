@@ -50,9 +50,14 @@ public class RSLaborerControl : MonoBehaviour
 
         if (isBuilding){
             timeMachine.Build();
+
+
         }
 
             
+	}
+	public void playHammerSoundFromAnimation(){
+		robotManager.playSound ("hammer");
 	}
 
     public void StartBuilding(TimeMachine t){

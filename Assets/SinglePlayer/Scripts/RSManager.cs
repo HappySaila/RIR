@@ -52,13 +52,25 @@ public class RSManager : MonoBehaviour {
 	
 	}
 
-	public void playSound(string sound){
-		if(sound.Equals("hit")){
-			SoundManager.INSTANCE.PlayRamHit (audioSource);
+	public void playSound(string sound){//this methord exsist so that the audio souce is accses through here
+
+		switch (sound) {
+			case "hit":
+				SoundManager.INSTANCE.PlayRamHit (audioSource);
+				break;
+		case "collectLabourer":
+				SoundManager.INSTANCE.PlayLabourPickUp (audioSource);
+				break;
+		case "hammer":
+			SoundManager.INSTANCE.PlayHammer (audioSource);
+				break;
+			case "spannereeraSDASF":
+				//SoundManager.INSTANCE.PlayRamHit (audioSource);
+				break;
+
 		}
-		else if(sound.Equals("collectLabourer")){
-			SoundManager.INSTANCE.PlayLabourPickUp (audioSource);
-		}
+
+	
 
 	}
 
