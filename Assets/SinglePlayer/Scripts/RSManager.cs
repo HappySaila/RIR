@@ -39,7 +39,6 @@ public class RSManager : MonoBehaviour {
 			robotMovement.moveSpeed = 0;
 		}
 
-
 		//sound town
 		audioSource= GetComponentInChildren<AudioSource>();
 		//audioListener=  transform.parent.GetComponentInChildren<AudioListener>();

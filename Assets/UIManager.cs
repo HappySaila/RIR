@@ -104,6 +104,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void loggedIn(){
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         cam.LookAtCreateRoom();
     }
 
