@@ -77,8 +77,7 @@ public class RSLaborerControl : MonoBehaviour
             SetLaborer();
         } else {
             Invoke("CallSetLaborer", 0.2f);
-        }
-            
+        }       
 	}
 
 	void SetLaborer()

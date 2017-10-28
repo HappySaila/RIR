@@ -13,7 +13,9 @@ public class RMMovement : MonoBehaviour {
     public float y = 0;
 
     Animator anim;
-    Rigidbody rigid;
+    public Rigidbody rigid;
+
+    int numberOfAnimations = 4;
     // Use this for initialization
     void Start () {
         anim = GetComponent<Animator>();
@@ -25,9 +27,10 @@ public class RMMovement : MonoBehaviour {
 		
 	}
 
-    public Vector3 move()
+    public Vector3 move(int team)
     {
-        UpdateMovement();
+        if(team != 0)
+            UpdateMovement();
         return transform.position;
     }
 
@@ -70,6 +73,13 @@ public class RMMovement : MonoBehaviour {
     {
         transform.position = networkPosition;
         Animate(x, y);
+    }
+
+    public void Die()
+    {
+        anim.SetTrigger("Die");
+        //disable contraints on rigid body
+        rigid.constraints = RigidbodyConstraints.None;
     }
 
     public void setPosition(Vector3 position, Quaternion rotation)
