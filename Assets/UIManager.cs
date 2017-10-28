@@ -87,7 +87,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void JoinClicked(){
-        
+        cam.LookAtWaitingRoom();
     }
 
     public void loggedIn(){
