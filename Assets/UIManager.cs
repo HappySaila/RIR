@@ -19,7 +19,7 @@ public class UIManager : MonoBehaviour {
     private void Awake()
     {
 		audioSource= GetComponentInChildren<AudioSource>();
-
+		audioMixerScript.INSTANCE.ChangeSnapShot (0);
         if (instance == null){
             instance = this;
         } else {
@@ -29,14 +29,14 @@ public class UIManager : MonoBehaviour {
 
     //single player buttons
     public void SinglePlayerClicked(){
-		audioMixerScript.INSTANCE.ChangeSnapShot (0);
-		SoundManager.INSTANCE.PlayRamHit (audioSource);
+		audioMixerScript.INSTANCE.ChangeSnapShot (1);
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
 		SceneManager.LoadScene(2);
 
 	}
 
     public void SplitScreenClicked(){
-		audioMixerScript.INSTANCE.ChangeSnapShot (0);
+		audioMixerScript.INSTANCE.ChangeSnapShot (1);
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         SceneManager.LoadScene(1);
     }
