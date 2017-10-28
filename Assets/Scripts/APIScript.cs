@@ -24,8 +24,8 @@ public class APIScript : MonoBehaviour {
         string query = defaultIP + ":" + defaultPort + "/api/users/login/?username=" + username + "&password=" + pass;
         Debug.Log(query);
         string response = Http.Get(query);
-        Debug.Log(response);
-        if (response.Equals("{ \"error\":\"Server error\"}"))
+        Debug.LogFormat("Server response: {0}", response);
+        if (response.Equals("{ \"error\":\"Server error\"}") || response.Length<3)
         {
             return false;
         }

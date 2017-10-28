@@ -13,8 +13,8 @@ public class RegisterScript : APIScript {
     public GameObject toShow;
     public void buttonPressed()
     {
-        toShow.SetActive(true);
-        toHide.SetActive(false);
+        //toShow.SetActive(true);
+        //toHide.SetActive(false);
         if (string.IsNullOrEmpty(username.text) || string.IsNullOrEmpty(password.text) || string.IsNullOrEmpty(confirmPassword.text))
         {
             error.text = "no fields can be blank";
@@ -26,13 +26,12 @@ public class RegisterScript : APIScript {
             return;
         }
         bool registered = RegisterUser(username.text,password.text);
-        if (!registered)
-        {
-            toShow.SetActive(false);
-            toHide.SetActive(true);
-        }else
-        {
-            UIManager.instance.loggedIn();
+        Debug.LogFormat("registered {0}", registered);
+
+        if (registered){
+			UIManager.instance.loggedIn();
+        } else {
+            //throw error
         }
     }
 }
