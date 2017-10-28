@@ -43,8 +43,10 @@ public class RSManager : MonoBehaviour {
 		audioSource= GetComponentInChildren<AudioSource>();
 		audioListener=  transform.parent.GetComponentInChildren<AudioListener>();
 
-		if(audioListener!=null && !isRed ){
-			audioListener.enabled = false;
+
+		//if in multiplayer dont need to do the is red check
+		if(audioListener!=null && !isRed && !isAI){//at the start only the blue player in single and split screen
+			audioListener.enabled = true;
 		}
 
 

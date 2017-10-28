@@ -27,8 +27,10 @@ public class SoundManager : MonoBehaviour {
 
 	void Awake(){
 		DontDestroyOnLoad (gameObject);
-		if (INSTANCE == null){
-			INSTANCE = GameObject.FindObjectOfType <SoundManager>().GetComponent <SoundManager>();
+		if (INSTANCE == null) {
+			INSTANCE = this;
+		} else {
+			Destroy (gameObject);
 		}
 			
 	}
@@ -41,6 +43,9 @@ public class SoundManager : MonoBehaviour {
 	}
 	public void PlayHammer(AudioSource s){
 		s.PlayOneShot(hammer);
+	}
+	public void PlayButtonClicked(AudioSource s){
+		s.PlayOneShot(UIClick);
 	}
 
 
