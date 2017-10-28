@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 02ed521497fd64f04a4f9fb540a6fad4
+timeCreated: 1509116856
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: RomanGridCaps
+  fontNames:
+  - RomanGridCaps
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
