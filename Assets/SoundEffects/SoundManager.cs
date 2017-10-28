@@ -17,7 +17,7 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip ramHit;
 	public AudioClip gameOverLose;
 	public AudioClip gameOverWin;
-
+	public AudioClip hammer;
 
 
     float lowPitch = 0.8f;
@@ -39,6 +39,11 @@ public class SoundManager : MonoBehaviour {
 	public void PlayLabourPickUp(AudioSource s){
 		s.PlayOneShot(AudioClipsForGettingUp[Random.Range(0,AudioClipsForGettingUp.Length)]);
 	}
+	public void PlayHammer(AudioSource s){
+		s.PlayOneShot(hammer);
+	}
+
+
 
 
     void BendPitch(AudioSource source){
