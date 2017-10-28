@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour {
 
     public static UIManager instance;
     public UICamera cam;
+    public masterServerManager masterServer;
     public InputField RegisterPassword;
     public InputField RegisterPasswordConfirm;
     public Text RegisterErrorMessage;
@@ -21,6 +22,11 @@ public class UIManager : MonoBehaviour {
         } else {
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        masterServer = GetComponent<masterServerManager>();
     }
 
     //single player buttons
@@ -83,11 +89,16 @@ public class UIManager : MonoBehaviour {
 
     //join room buttons
     public void CreateClicked(){
-        
+		if (!RoomErrorMessage.enabled)
+		{
+            masterServer.createRoom();
+		}
     }
 
     public void JoinClicked(){
-        
+        if (!RoomErrorMessage.enabled){
+            masterServer.joinRoom();
+        }
     }
 
     public void loggedIn(){

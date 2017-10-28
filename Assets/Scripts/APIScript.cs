@@ -43,6 +43,7 @@ public class APIScript : MonoBehaviour {
         form.AddField("salt", "none");
         string response = Http.Post(query,form);
         Debug.Log(response);
+        GlobalVariables.instance.me.Name = "cary";
         if(response.Equals("{ \"error\":\"Server error\"}"))
         {
             return false;
