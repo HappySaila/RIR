@@ -221,10 +221,17 @@ public class RSMovement : MonoBehaviour {
     }
 
     public void enterBase(){
+		if (robotManager.isMainPlayer) {
+			audioMixerScript.INSTANCE.ChangeSnapShot (1);
+		}
         inBase = true;
     }
 
     public void exitBase(){
+		if(robotManager.isMainPlayer){
+			audioMixerScript.INSTANCE.ChangeSnapShot (2);
+		}
+
         inBase = false;
     }
 

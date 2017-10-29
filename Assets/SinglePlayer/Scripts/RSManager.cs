@@ -19,7 +19,7 @@ public class RSManager : MonoBehaviour {
 
 	AudioSource audioSource;
 	public AudioListener audioListener;
-
+	[HideInInspector] public bool isMainPlayer;
 
 	// Use this for initialization
 	void Start () {
@@ -41,9 +41,10 @@ public class RSManager : MonoBehaviour {
 
 		//sound town
 		audioSource= GetComponentInChildren<AudioSource>();
-		//audioListener=  transform.parent.GetComponentInChildren<AudioListener>();
+		isMainPlayer=false;
 		//if in multiplayer dont need to do the is red check
 		if(audioListener!=null && !isRed && !isAI){//at the start only the blue player in single and split screen
+			isMainPlayer=true;
 			audioListener.enabled = true;
 		}
 
@@ -52,10 +53,12 @@ public class RSManager : MonoBehaviour {
 	
 	}
 
+
 	public void playSound(string sound){//this methord exsist so that the audio souce is accses through here
 
 		switch (sound) {
 			case "hit":
+				
 				SoundManager.INSTANCE.PlayRamHit (audioSource);
 				break;
 		case "collectLabourer":
