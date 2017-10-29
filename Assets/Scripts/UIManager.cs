@@ -56,9 +56,11 @@ public class UIManager : MonoBehaviour {
     }
 
     public void SplitScreenClicked(){
-		audioMixerScript.INSTANCE.ChangeSnapShot (2);
-		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
-        SceneManager.LoadScene(1);
+		FadeMusic();
+		SoundManager.INSTANCE.PlayButtonClicked(audioSource);
+		Invoke("LoadScene", 2f);
+		sceneNumber = 2;
+		FadeBlack();
     }
 
     public void MultiPlayerClicked(){
