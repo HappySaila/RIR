@@ -86,6 +86,7 @@ public class RSLaborerControl : MonoBehaviour
 		{
 			trigger = GetComponent<SphereCollider>();
 		}
+        Debug.Log("enabled triggers");
 
 		trigger.enabled = true;
 		isIdleLaborer = true;

@@ -8,7 +8,7 @@ public class RMLabourerController : MonoBehaviour {
     public Transform blueConstructionSite;
     Vector3 target;
     NavMeshAgent agent;
-    SphereCollider trigger;
+    public SphereCollider trigger;
     Rigidbody rigid;
     Animator anim;
     TimeMachine timeMachine;
@@ -26,9 +26,67 @@ public class RMLabourerController : MonoBehaviour {
         agent.updateRotation = false;
         robotManager = GetComponentInParent<RSManager>();
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    public void OnTriggerStay(Collider col)
+    {
+        if (col.GetComponentInParent<RMManager>() != null)
+        {
+            if (col.GetComponentInParent<RMManager>().team != 0)
+            {
+
+                if (col.GetComponentInParent<RMManager>().type != RMManager.types.DYING)
+                {
+                    if (isIdleLaborer)
+                    {
+                        StandUp(col);
+                    }
+                }
+            }
+        }
+    }
+
+    void StandUp(Collider col)
+    {
+        transform.up = Vector3.Lerp(transform.up, Vector3.up, Time.deltaTime);
+        if (Vector3.Distance(transform.up.normalized, Vector3.up) < 0.1)
+        {
+            //player has completed standing up
+            isIdleLaborer = false;
+            isFighter = false;
+            transform.up = Vector2.up;
+            anim.SetTrigger("Spin");
+            agent.enabled = true;
+            GetComponentInParent<RMManager>().team = col.GetComponentInParent<RMManager>().team;
+            GetComponentInParent<RMManager>().type = RMManager.types.MOVINGTOBASE;
+            target = col.GetComponentInParent<RMManager>().team == 1 ?
+                        TimeMachine.redTimeMachine.targetPosition.position :
+                        TimeMachine.blueTimeMachine.targetPosition.position;
+            GetComponentInChildren<ColorRobot>().SetColor(col.GetComponentInParent<RMManager>().team == 1);
+            agent.SetDestination(target);
+            trigger.enabled = false;
+
+            //robotManager.playSound("collectLabourer");
+
+        }
+
+    }
+
+    public void SetLaborer()
+    {
+        if (trigger == null)
+        {
+            trigger = GetComponent<SphereCollider>();
+        }
+        trigger.enabled = true;
+        Debug.Log("enabled trigger");
+        isIdleLaborer = true;
+        rigid.constraints = RigidbodyConstraints.FreezeRotationX |
+            RigidbodyConstraints.FreezeRotationZ |
+            RigidbodyConstraints.FreezeRotationY;
+    }
+
+    public Vector3 move()
+    {
         if (agent.enabled && !isFighter)
         {
             transform.forward = -(target - transform.position);
@@ -40,7 +98,10 @@ public class RMLabourerController : MonoBehaviour {
                 agent.enabled = false;
             }
         }
-
+        return transform.position;
+    }
+    // Update is called once per frame
+    void Update () {
         if (isBuilding)
         {
             timeMachine.Build();
@@ -49,7 +110,7 @@ public class RMLabourerController : MonoBehaviour {
 
     public void playHammerSoundFromAnimation()
     {
-        robotManager.playSound("hammer");
+        //robotManager.playSound("hammer");
     }
 
     public void StartBuilding(TimeMachine t)

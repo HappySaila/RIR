@@ -35,8 +35,7 @@ public class gameManager : MonoBehaviour {
                 Debug.Log("created server Robot");
             }
         }
-        
-        Invoke("spawnPlayers", 0.2f);
+        Invoke("spawnPlayers", 0.3f);
         
         /*if (NetworkManager.Instance.IsServer)
         {

@@ -7,22 +7,30 @@ using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine.AI;
 
 public class RMManager : RobotManagerBehavior {
+    public enum types
+    {
+        FIGHTER,DEADLABOURER,BUILDER,MOVINGTOBASE,DYING
+    }
+
     #region fields
         [HideInInspector] public RMMovement robotMovement;
         [HideInInspector] public RMAttack robotAttack;
-
+        [HideInInspector] public RMLabourerController labourerController;
     [Tooltip("Collider that makes robot hover above ground.")] public SphereCollider hoverBase;
     public Camera Camara;
-        int team = 0;
+    [HideInInspector] public int team = 0;
+    [HideInInspector] public types type; 
     #endregion
 
     #region unity
     // Use this for initialization
     void Start()
     {
+            type = types.FIGHTER;
             robotMovement = GetComponentInChildren<RMMovement>();
-            
+            labourerController = GetComponentInChildren<RMLabourerController>();
             robotAttack = GetComponentInChildren<RMAttack>();
+            labourerController.isIdleLaborer = false;
             if (networkObject.NetworkId == 1)
             {
                 GetComponentInChildren<ColorRobot>().SetColor(true);
@@ -51,7 +59,7 @@ public class RMManager : RobotManagerBehavior {
     // Update is called once per frame
     void Update()
     {
-        if (networkObject.IsOwner)
+        if (networkObject.IsOwner && (type == types.FIGHTER || type == types.DEADLABOURER))
         {
 
             // FrontCamera.enabled = true
@@ -62,6 +70,9 @@ public class RMManager : RobotManagerBehavior {
             if (team != 0) { 
                 robotAttack.attack();
             }
+        }else if (networkObject.IsOwner && type == types.MOVINGTOBASE)
+        {
+            networkObject.position = labourerController.move();
         }
         else
         {
@@ -89,8 +100,7 @@ public class RMManager : RobotManagerBehavior {
 
     #endregion
     public void makeIntoLabouer()
-    {
-        
+    { 
         Die();
     }
     public void Die()
@@ -99,6 +109,7 @@ public class RMManager : RobotManagerBehavior {
         //robotMovement.enabled = false;
         hoverBase.enabled = false;
         GetComponentInChildren<NavMeshAgent>().enabled = false;
+        
 
         robotAttack.enabled = false;
 
@@ -109,8 +120,15 @@ public class RMManager : RobotManagerBehavior {
         if (networkObject.IsServer) {
             networkObject.TakeOwnership();
         }
+        Invoke("makeIntoDead", 1f);
     }
 
+    public void makeIntoDead()
+    {
+        Debug.Log("dead dead dead");
+        labourerController.SetLaborer();
+        //type = types.DEADLABOURER;
+    }
 #region RPC
     public override void ramPlayer(RpcArgs args)
     {
