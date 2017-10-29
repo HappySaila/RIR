@@ -77,8 +77,7 @@ public class RSLaborerControl : MonoBehaviour
             SetLaborer();
         } else {
             Invoke("CallSetLaborer", 0.2f);
-        }
-            
+        }       
 	}
 
 	void SetLaborer()
@@ -87,6 +86,7 @@ public class RSLaborerControl : MonoBehaviour
 		{
 			trigger = GetComponent<SphereCollider>();
 		}
+        Debug.Log("enabled triggers");
 
 		trigger.enabled = true;
 		isIdleLaborer = true;

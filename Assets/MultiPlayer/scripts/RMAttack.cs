@@ -11,17 +11,19 @@ public class RMAttack : MonoBehaviour {
     Rigidbody rigid;
     public bool canRam = true;
     bool isRamming = false;
+    RMManager robotManger;
     // Use this for initialization
     void Start () {
         anim = GetComponent<Animator>();
         rigid = GetComponentInChildren<Rigidbody>();
+        robotManger = GetComponentInParent<RMManager>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        
-		
-	}
+        UpdateFire();
+
+    }
     public void attack()
     {
         float attack = Input.GetAxis("Jump");
@@ -63,4 +65,50 @@ public class RMAttack : MonoBehaviour {
     {
         canRam = true;
     }
+
+    public void OnCollisionEnter(Collision col)
+    {
+        if (isRamming)
+            Hit(col.gameObject, col.contacts[0].point);
+    }
+
+    void Hit(GameObject target, Vector3 point)
+    {
+        if (target.tag == "Hittable")
+        {
+            Debug.Log("hit");
+            //robotManger.networkObject.SendRpc(robotManger.networkObject.Owner,"ramPlayer",BeardedManStudios.Forge.Networking.Receivers.Target, -transform.forward * ramForce, point);
+            target.GetComponent<Rigidbody>().AddForceAtPosition(-transform.forward * ramForce, point, ForceMode.VelocityChange);
+            if (target.GetComponentInParent<RMManager>() != null)
+            {
+                //the player has rammed a robot
+                target.GetComponentInParent<RMManager>().Die();
+            }
+        }
+
+    }
+
+    void UpdateFire()
+    {
+        float ramVal = robotManger.SendRamData();
+        //set network objects jumpval
+        if (ramVal > 0 && canRam)
+        {
+            canRam = false;
+            anim.SetTrigger("Ram");
+        }
+    }
+    public void getHit(Vector3 force, Vector3 point)
+    {
+        anim.SetTrigger("Ram");
+        rigid.GetComponent<Rigidbody>().AddForceAtPosition(-force, point, ForceMode.VelocityChange);
+    }
+
+    public void Die()
+    {
+        //player has just died an must turn into a laborer
+        canRam = false;
+        isRamming = false;
+    }
+
 }
