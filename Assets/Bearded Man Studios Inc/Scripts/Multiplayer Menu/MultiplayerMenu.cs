@@ -12,54 +12,23 @@ public class MultiplayerMenu : MonoBehaviour
 	public InputField ipAddress = null;
 	public InputField portNumber = null;
 	public bool DontChangeSceneOnConnect = false;
-	public string masterServerHost = string.Empty;
-	public ushort masterServerPort = 15940;
-	public string natServerHost = string.Empty;
-	public ushort natServerPort = 15941;
-	public bool connectUsingMatchmaking = false;
-	public bool useElo = false;
-	public int myElo = 0;
-	public int eloRequired = 0;
 
 	public GameObject networkManager = null;
 	public GameObject[] ToggledButtons;
 	private NetworkManager mgr = null;
 
 	private List<Button> _uiButtons = new List<Button>();
-	private bool _matchmaking = false;
-	public bool useMainThreadManagerForRPCs = true;
-	public bool useInlineChat = false;
-
-	public bool getLocalNetworkConnections = false;
-
-	public bool useTCP = false;
 
 	private void Start()
 	{
 		ipAddress.text = "127.0.0.1";
 		portNumber.text = "15937";
 
-		for (int i = 0; i < ToggledButtons.Length; ++i)
-		{
-			Button btn = ToggledButtons[i].GetComponent<Button>();
-			if (btn != null)
-				_uiButtons.Add(btn);
-		}
-
-		if (!useTCP)
-		{
 			// Do any firewall opening requests on the operating system
 			NetWorker.PingForFirewall(ushort.Parse(portNumber.text));
-		}
+		
 
-		if (useMainThreadManagerForRPCs)
 			Rpc.MainThreadRunner = MainThreadManager.Instance;
-
-		if (getLocalNetworkConnections)
-		{
-			NetWorker.localServerLocated += LocalServerLocated;
-			NetWorker.RefreshLocalUdpListings(ushort.Parse(portNumber.text));
-		}
 	}
 
 	private void LocalServerLocated(NetWorker.BroadcastEndpoints endpoint, NetWorker sender)
@@ -69,11 +38,6 @@ public class MultiplayerMenu : MonoBehaviour
 
 	public void Connect()
 	{
-		if (connectUsingMatchmaking)
-		{
-			ConnectToMatchmaking();
-			return;
-		}
 		ushort port;
 		if(!ushort.TryParse(portNumber.text, out port))
 		{
@@ -83,81 +47,29 @@ public class MultiplayerMenu : MonoBehaviour
 
 		NetWorker client;
 
-		if (useTCP)
-		{
-			client = new TCPClient();
-			((TCPClient)client).Connect(ipAddress.text, (ushort)port);
-		}
-		else
-		{
-			client = new UDPClient();
-			if (natServerHost.Trim().Length == 0)
-				((UDPClient)client).Connect(ipAddress.text, (ushort)port);
-			else
-				((UDPClient)client).Connect(ipAddress.text, (ushort)port, natServerHost, natServerPort);
-		}
+
+		client = new UDPClient();
+		((UDPClient)client).Connect(ipAddress.text, (ushort)port);
+
 
 		Connected(client);
-	}
-
-	public void ConnectToMatchmaking()
-	{
-		if (_matchmaking)
-			return;
-
-		SetToggledButtons(false);
-		_matchmaking = true;
-
-		if (mgr == null && networkManager == null)
-			throw new System.Exception("A network manager was not provided, this is required for the tons of fancy stuff");
-		
-		mgr = Instantiate(networkManager).GetComponent<NetworkManager>();
-
-		mgr.MatchmakingServersFromMasterServer(masterServerHost, masterServerPort, myElo, (response) =>
-		{
-			_matchmaking = false;
-			SetToggledButtons(true);
-			Debug.LogFormat("Matching Server(s) count[{0}]", response.serverResponse.Count);
-
-			//TODO: YOUR OWN MATCHMAKING EXTRA LOGIC HERE!
-			// I just make it randomly pick a server... you can do whatever you please!
-			if (response != null && response.serverResponse.Count > 0)
-			{
-				MasterServerResponse.Server server = response.serverResponse[Random.Range(0, response.serverResponse.Count)];
-				//TCPClient client = new TCPClient();
-				UDPClient client = new UDPClient();
-				client.Connect(server.Address, server.Port);
-				Connected(client);
-			}
-		});
 	}
 
 	public void Host()
 	{
 		NetWorker server;
 
-		if (useTCP)
-		{
-			server = new TCPServer(64);
-			((TCPServer)server).Connect();
-		}
-		else
-		{
-			server = new UDPServer(64);
+		server = new UDPServer(64);
 
-			if (natServerHost.Trim().Length == 0)
-				((UDPServer)server).Connect(ipAddress.text, ushort.Parse(portNumber.text));
-			else
-				((UDPServer)server).Connect(natHost: natServerHost, natPort: natServerPort);
-		}
+			((UDPServer)server).Connect(ipAddress.text, ushort.Parse(portNumber.text));
+
 
 		server.playerTimeout += (player, sender) =>
 		{
 			Debug.Log("Player " + player.NetworkId + " timed out");
 		};
-		//LobbyService.Instance.Initialize(server);
-
-		Connected(server);
+        NetworkManager.Instance.Initialize(server);
+        Connected(server);
 	}
 
 	private void Update()
@@ -196,34 +108,31 @@ public class MultiplayerMenu : MonoBehaviour
 		else if (mgr == null)
 			mgr = Instantiate(networkManager).GetComponent<NetworkManager>();
 
-		// If we are using the master server we need to get the registration data
-		JSONNode masterServerData = null;
-		if (!string.IsNullOrEmpty(masterServerHost))
-		{
-			string serverId = "myGame";
-			string serverName = "Forge Game";
-			string type = "Deathmatch";
-			string mode = "Teams";
-			string comment = "Demo comment...";
 
-			masterServerData = mgr.MasterServerRegisterData(networker, serverId, serverName, type, mode, comment, useElo, eloRequired);
-		}
-
-		mgr.Initialize(networker, masterServerHost, masterServerPort, masterServerData);
-
-		if (useInlineChat && networker.IsServer)
+		if (networker.IsServer)
 			SceneManager.sceneLoaded += CreateInlineChat;
 
 		if (networker is IServer)
 		{
-			if (!DontChangeSceneOnConnect)
-				SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-			else
+                Debug.Log("I AM THE SERVER");
 				NetworkObject.Flush(networker); //Called because we are already in the correct scene!
-		}
+                Debug.Log(networker.NetworkObjectList.Count);
+                Debug.Log(networker.IsServer);
+
+        }
+        Invoke("spawnObject", 1f);
 	}
 
-	private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)
+    public void spawnObject()
+    {
+
+        //Debug.Log(mgr.IsServer);
+        Debug.Log(NetworkManager.Instance.IsServer);
+        NetworkManager.Instance.InstantiatemasterServer();
+        //NetworkManager.Instance.
+    }
+
+    private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)
 	{
 		SceneManager.sceneLoaded -= CreateInlineChat;
 		var chat = NetworkManager.Instance.InstantiateChatManager();
@@ -238,7 +147,5 @@ public class MultiplayerMenu : MonoBehaviour
 
 	private void OnApplicationQuit()
 	{
-		if (getLocalNetworkConnections)
-			NetWorker.EndSession();
 	}
 }
