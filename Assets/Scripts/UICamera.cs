@@ -5,6 +5,10 @@ using UnityEngine;
 public class UICamera : MonoBehaviour {
     public Transform[] canvasPositions;
     public Transform target;
+    bool isMoving;
+    Transform CurrentRoom;
+    public Transform MainRoom;
+    public Transform JoiningRoom;
 
 	// Use this for initialization
 	void Start () {
@@ -18,8 +22,14 @@ public class UICamera : MonoBehaviour {
 		transform.rotation = Quaternion.RotateTowards(transform.rotation, 
                                                       Quaternion.LookRotation(lTargetDir), 10);
 
-
-        //transform.LookAt(position);	
+        if (isMoving){
+			transform.position = Vector3.Lerp(transform.position, CurrentRoom.position, 0.1f);
+			transform.rotation = Quaternion.Slerp(transform.rotation, CurrentRoom.rotation, 0.02f);
+            if (Vector3.Distance(transform.position, CurrentRoom.position) < 0.001f){
+                isMoving = false;
+            }
+        }
+		
 	}
 
     public void LookAtMultiplayer(){
@@ -28,10 +38,19 @@ public class UICamera : MonoBehaviour {
 
     public void LookAtMainMenu(){
 		target = canvasPositions[0];
+        CurrentRoom = MainRoom;
+        isMoving = true;
 	}
 
     public void LookAtCreateRoom(){
+        CurrentRoom = MainRoom;
+		isMoving = true;
         target = canvasPositions[2];
     }
 
+    public void LookAtWaitingRoom(){
+        CurrentRoom = JoiningRoom;
+		isMoving = true;
+        target = canvasPositions[3];
+    }
 }
