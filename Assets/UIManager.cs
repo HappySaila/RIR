@@ -15,8 +15,12 @@ public class UIManager : MonoBehaviour {
 	public Text RoomErrorMessage;
 	public Text RoomNumber;
 
+	AudioSource audioSource;
+
     private void Awake()
     {
+		audioSource= GetComponentInChildren<AudioSource>();
+		audioMixerScript.INSTANCE.ChangeSnapShot (0);
         if (instance == null){
             instance = this;
         } else {
@@ -31,23 +35,32 @@ public class UIManager : MonoBehaviour {
 
     //single player buttons
     public void SinglePlayerClicked(){
+		audioMixerScript.INSTANCE.ChangeSnapShot (1);
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
 		SceneManager.LoadScene(2);
+
 	}
 
     public void SplitScreenClicked(){
+		audioMixerScript.INSTANCE.ChangeSnapShot (1);
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         SceneManager.LoadScene(1);
     }
 
     public void MultiPlayerClicked(){
+		
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
 		cam.LookAtMultiplayer();
 	}
 
     public void BackToMainMenu(){
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         cam.LookAtMainMenu();
     }
 
     //register join buttons
     public void LogInClicked(){
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         cam.LookAtCreateRoom();
     }
 
@@ -102,6 +115,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void loggedIn(){
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         cam.LookAtCreateRoom();
     }
 
