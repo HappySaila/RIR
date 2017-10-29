@@ -23,6 +23,7 @@ public class InitialSpawnManager : MonoBehaviour {
     }
 
     void Start () {
+        audioMixerScript.INSTANCE.ChangeSnapShot(2);
         SpawnRobots();
         SpawnLaborers();
     }

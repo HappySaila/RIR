@@ -14,9 +14,8 @@ public class UIManager : MonoBehaviour {
     public Text RegisterErrorMessage;
 	public Text RoomErrorMessage;
 	public Text RoomNumber;
-    public Image fadeBlack;
-    public AudioSource musicSource;
-
+    public GameObject FadeCanvas;
+    int sceneNumber = 0;
 	AudioSource audioSource;
 
     private void Awake()
@@ -44,12 +43,17 @@ public class UIManager : MonoBehaviour {
     //single player buttons
     public void SinglePlayerClicked(){
 		FadeMusic();
-		//audioMixerScript.INSTANCE.ChangeSnapShot (2);
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
-        StartCoroutine(FadeIn(2));
-		//SceneManager.LoadScene(2);
-
+        Invoke("LoadScene", 2f);
+        sceneNumber = 1;
+        FadeBlack();
 	}
+
+    public void LoadScene(){
+        //will load scene(sceneNumber)
+        SceneManager.LoadScene(sceneNumber);
+        print("Load scene");
+    }
 
     public void SplitScreenClicked(){
 		audioMixerScript.INSTANCE.ChangeSnapShot (2);
@@ -129,18 +133,14 @@ public class UIManager : MonoBehaviour {
         cam.LookAtCreateRoom();
     }
 
-    IEnumerator FadeIn(int sceneNumber){
-        if (fadeBlack.color.a > 0.99f){
-            //openScene
-            SceneManager.LoadScene(sceneNumber);
-        }
-        fadeBlack.color = Color.Lerp(fadeBlack.color, Color.black, Time.deltaTime*2);
-        yield return new WaitForEndOfFrame();
-        StartCoroutine(FadeIn(sceneNumber));
-    }
+
 
     void FadeMusic(){
         audioMixerScript.INSTANCE.Mute();
+    }
+
+    void FadeBlack(){
+        Instantiate(FadeCanvas, transform.position, Quaternion.identity);
     }
 
 }
