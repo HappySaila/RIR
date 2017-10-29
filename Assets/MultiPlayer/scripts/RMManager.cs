@@ -9,7 +9,7 @@ using UnityEngine.AI;
 public class RMManager : RobotManagerBehavior {
     public enum types
     {
-        FIGHTER,DEADLABOURER,BUILDER,MOVINGTOBASE,DYING
+        FIGHTER = 0,DEADLABOURER = 1,BUILDER = 2,MOVINGTOBASE = 3,DYING = 4
     }
 
     #region fields
@@ -19,41 +19,41 @@ public class RMManager : RobotManagerBehavior {
     [Tooltip("Collider that makes robot hover above ground.")] public SphereCollider hoverBase;
     public Camera Camara;
     [HideInInspector] public int team = 0;
-    [HideInInspector] public types type; 
+    [HideInInspector] public types type;
     #endregion
 
     #region unity
     // Use this for initialization
     void Start()
     {
-            type = types.FIGHTER;
-            robotMovement = GetComponentInChildren<RMMovement>();
-            labourerController = GetComponentInChildren<RMLabourerController>();
-            robotAttack = GetComponentInChildren<RMAttack>();
-            labourerController.isIdleLaborer = false;
-            if (networkObject.NetworkId == 1)
-            {
-                GetComponentInChildren<ColorRobot>().SetColor(true);
-                team = 1;
-            }
-            else
-            {
-                GetComponentInChildren<ColorRobot>().SetColor(false);
-                team = 2;
-            }
-            if (networkObject.IsServer)
-            {
-                Debug.Log("server bois");
-            }
-            if (networkObject.IsOwner)
-            {
-                Camara.enabled = true;
-            }
-            else
-            {
-                Camara.enabled = false;
-            }
-        
+        type = types.FIGHTER;
+        robotMovement = GetComponentInChildren<RMMovement>();
+        labourerController = GetComponentInChildren<RMLabourerController>();
+        robotAttack = GetComponentInChildren<RMAttack>();
+        labourerController.isIdleLaborer = false;
+        if (networkObject.NetworkId == 1)
+        {
+            GetComponentInChildren<ColorRobot>().SetColor(true);
+            team = 1;
+        }
+        else
+        {
+            GetComponentInChildren<ColorRobot>().SetColor(false);
+            team = 2;
+        }
+        if (networkObject.IsServer)
+        {
+            Debug.Log("server bois");
+        }
+        if (networkObject.IsOwner)
+        {
+            Camara.enabled = true;
+        }
+        else
+        {
+            Camara.enabled = false;
+        }
+
     }
 
     // Update is called once per frame
@@ -61,7 +61,7 @@ public class RMManager : RobotManagerBehavior {
     {
         if (networkObject.IsOwner && (type == types.FIGHTER || type == types.DEADLABOURER))
         {
-
+            
             // FrontCamera.enabled = true
             networkObject.position = robotMovement.move(team);
             networkObject.rotation = robotMovement.getRotation();
@@ -70,15 +70,27 @@ public class RMManager : RobotManagerBehavior {
             if (team != 0) { 
                 robotAttack.attack();
             }
+            if (type == types.FIGHTER)
+            {
+                Camara.enabled = true;
+            }
         }else if (networkObject.IsOwner && type == types.MOVINGTOBASE)
         {
             networkObject.position = labourerController.move();
+            networkObject.rotation = labourerController.rotation();
+            labourerController.tryStartBuilding();
         }
         else
         {
             // FrontCamera.enabled = false;
             robotMovement.move(networkObject.position, networkObject.x, networkObject.y);
             robotMovement.setRotation(networkObject.rotation);
+            Camara.enabled = false;
+            if (type == types.MOVINGTOBASE)
+            {
+                
+                labourerController.tryStartBuilding();
+            }
         }
         
 
@@ -100,7 +112,8 @@ public class RMManager : RobotManagerBehavior {
 
     #endregion
     public void makeIntoLabouer()
-    { 
+    {
+        
         Die();
     }
     public void Die()
@@ -109,24 +122,40 @@ public class RMManager : RobotManagerBehavior {
         //robotMovement.enabled = false;
         hoverBase.enabled = false;
         GetComponentInChildren<NavMeshAgent>().enabled = false;
-        
+        type = types.DEADLABOURER;
 
         robotAttack.enabled = false;
-
+        labourerController.isFighter = false;
         Camara.enabled = false;
 
         GetComponentInChildren<ColorRobot>().SetGrey();
         team = 0;
-        if (networkObject.IsServer) {
-            networkObject.TakeOwnership();
-        }
-        Invoke("makeIntoDead", 1f);
+        
+        Invoke("makeIntoDead", 3f);
+        Camara.enabled = false;
     }
 
     public void makeIntoDead()
     {
-        Debug.Log("dead dead dead");
+        if (networkObject.IsServer && !networkObject.IsOwner)
+        {
+            NetworkingPlayer oldOwner = networkObject.Owner;
+            networkObject.TakeOwnership();
+            if (team == 1)
+            {
+                gameManager.instance.redTeamDead.Enqueue(oldOwner);
+                Debug.Log("amount of dead red players " + gameManager.instance.redTeamDead.Count);
+            }
+            else
+            {
+                gameManager.instance.blueTeamDead.Enqueue(oldOwner);
+                Debug.Log("amount of dead blue players " + gameManager.instance.blueTeamDead.Count);
+            }
+            
+        }
+        networkObject.SendRpc("syncRobotState", Receivers.AllBuffered, 0, 1);
         labourerController.SetLaborer();
+        
         //type = types.DEADLABOURER;
     }
 #region RPC
@@ -146,6 +175,7 @@ public class RMManager : RobotManagerBehavior {
         networkObject.rotation = args.GetNext<Quaternion>();
         robotMovement.setPosition(networkObject.position, networkObject.rotation);
         team = args.GetNext<int>();
+        GetComponentInChildren<ColorRobot>().SetColor(team == 1);
         if (networkObject.IsOwner)
         {
             Camara.enabled = true;
@@ -158,11 +188,67 @@ public class RMManager : RobotManagerBehavior {
 
     public override void makeIntoLabourer(RpcArgs args)
     {
-        Debug.Log("make into labourer called");
         robotMovement.rigid.velocity = new Vector3(0, 0, 0);
         networkObject.position = args.GetNext<Vector3>();
         transform.position = networkObject.position;
         makeIntoLabouer();
+    }
+
+    public override void syncRobotState(RpcArgs args)
+    {
+        team = args.GetNext<int>();
+        switch (args.GetNext<int>())
+        {
+            case (0):
+                type = types.FIGHTER;
+                labourerController.isFighter = true;
+                break;
+            case (1):
+                labourerController.anim.SetTrigger("Die");
+                type = types.DEADLABOURER;
+                labourerController.isFighter = false;
+                break;
+            case (2):
+                type = types.BUILDER;
+                labourerController.isBuilding = true;
+                labourerController.isFighter = false;
+                labourerController.anim.SetBool("isBuilding", true);
+                labourerController.agent.enabled = false;
+                if(team == 1)
+                {
+                    TimeMachine.redTimeMachine.MAddLaborerToAvailableLaborer(gameObject);
+                    Debug.Log(" red labouerer count " + TimeMachine.redTimeMachine.MAvalableLaboreres.Count);
+                }
+                else
+                {
+                    
+                    TimeMachine.blueTimeMachine.MAddLaborerToAvailableLaborer(gameObject);
+                    Debug.Log(" blue labouerer count " + TimeMachine.blueTimeMachine.MAvalableLaboreres.Count);
+                }
+                break;
+            case (3):
+                type = types.MOVINGTOBASE;
+                labourerController.anim.SetTrigger("Spin");
+                labourerController.agent.enabled = true;
+                labourerController.isFighter = false;
+                break;
+            case (4):
+                type = types.DYING;
+                labourerController.isFighter = false;
+                break;
+        }
+        if (team != 0) {
+            GetComponentInChildren<ColorRobot>().SetColor(team == 1);
+        }
+        else
+        {
+            GetComponentInChildren<ColorRobot>().SetGrey();
+        }
+    }
+
+    public override void destroyMyself(RpcArgs args)
+    {
+        Destroy(this);
     }
 
     #endregion

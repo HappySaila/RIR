@@ -34,7 +34,7 @@ public class masterServerManager : masterServerBehavior {
         GlobalVariables.instance.existingRooms = new List<room>();
         GlobalVariables.instance.foundGames = new List<room>();
         GlobalVariables.instance.searchingRooms = new Dictionary<int, List<room>>();
-        GlobalVariables.instance.players = new Dictionary<int, GlobalVariables.PlayerDetails>();
+
     }
 
 
@@ -154,7 +154,7 @@ public class masterServerManager : masterServerBehavior {
                 differences[rooms.IndexOf(room)] += 10f;
                 foreach (room toFight in rooms)
                 {
-                        if (!toFight.Equals(rooms))
+                        if (!toFight.Equals(room))
                         {
                             float room2mmr = differences[rooms.IndexOf(room)];
                             float lowerBound2 = getAverageMMR(toFight) - room2mmr;
@@ -179,7 +179,7 @@ public class masterServerManager : masterServerBehavior {
                                 second = toFight;
                                 GlobalVariables.instance.foundGames.Add(room);
                                 GlobalVariables.instance.foundGames.Add(toFight);
-                                networkObject.SendRpc(RPC_START_GAME, Receivers.Server, toFight.RoomName, room.RoomName);
+                                networkObject.SendRpc(RPC_START_GAME, Receivers.Server, room.RoomName, toFight.RoomName);
                                 return true;
                             }
                         }
@@ -193,24 +193,24 @@ public class masterServerManager : masterServerBehavior {
     #region buttonPresses
     public void createRoom()
     {
-        networkObject.Networker.Me.Name = "steven";
+        networkObject.Networker.Me.Name = GlobalVariables.instance.me.Name;
         if (string.IsNullOrEmpty(input.text))
         {
             return;
         }
         panel.SetActive(false);
-        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.Server, input.text, int.Parse(roomSize.text), Random.RandomRange(500, 2000), networkObject.Networker.Me.Name);
+        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.Server, input.text, int.Parse(roomSize.text), GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
 
     public void joinRoom()
     {
-        networkObject.Networker.Me.Name = "Jacob";
+        networkObject.Networker.Me.Name = GlobalVariables.instance.me.Name;
         if (string.IsNullOrEmpty(input.text))
         {
             return;
         }
         panel.SetActive(false);
-        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.Server, input.text, Random.Range(500, 2000), networkObject.Networker.Me.Name);
+        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.Server, input.text, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
     #endregion
     #region RPCS
@@ -291,6 +291,7 @@ public class masterServerManager : masterServerBehavior {
     }
     public void addToRoom(string playerName,int counter)
     { 
+        Debug.LogFormat("Player {0} has joined the room", playerName);
         if (counter == 0)
         {
             one.text = playerName + " 0";

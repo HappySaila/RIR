@@ -18,6 +18,7 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip gameOverLose;
 	public AudioClip gameOverWin;
 	public AudioClip hammer;
+	public AudioClip stab;
 
 
     float lowPitch = 0.8f;
@@ -41,7 +42,7 @@ public class SoundManager : MonoBehaviour {
 		//to ensure that when alot of things are hit that it dosnt sound terrible.... Improves sfx feal
 		if (hitSoundCallCount >0) {
 			hitSoundCallCount--;
-		}//UnityEngine.Debug.Log (hitSoundCallCount);
+		}
 	}
 	public void PlayRamHit(AudioSource s){
 		hitSoundCallCount++;
@@ -60,9 +61,18 @@ public class SoundManager : MonoBehaviour {
 	public void PlayButtonClicked(AudioSource s){
 		s.PlayOneShot(UIClick);
 	}
-
-
-
+	public void PlayStab(AudioSource s)
+	{
+        if (canStab){
+			s.PlayOneShot(stab);
+            canStab = false;
+		}
+        Invoke("StopStab", 0.5f);    
+	}
+    bool canStab = true;
+    void StopStab(){
+        canStab = true;
+    }
 
     void BendPitch(AudioSource source){
 		source.pitch = Random.Range (lowPitch, highPitch);

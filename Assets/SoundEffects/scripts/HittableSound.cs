@@ -33,7 +33,7 @@ public class HittableSound : MonoBehaviour
 		
 		if (col.relativeVelocity.magnitude >= 5f &&alowedToMakeNoise) {
 			audioSource.volume = (col.relativeVelocity.magnitude / 5) + 0.5f;
-			audioSource.pitch = Random.Range (-2.9f, 2.9f);
+			//audioSource.pitch = Random.Range (-2.9f, 2.9f);
 			SoundManager.INSTANCE.PlayRamHit (audioSource);
 		}
 	

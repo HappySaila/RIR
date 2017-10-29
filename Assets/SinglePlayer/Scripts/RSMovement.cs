@@ -277,19 +277,19 @@ public class RSMovement : MonoBehaviour
 	public void enterBase ()
 	{
 		if (robotManager.isMainPlayer) {
-			audioMixerScript.INSTANCE.ChangeSnapShot (1);
+			audioMixerScript.INSTANCE.ChangeSnapShot (2);
+			SoundManager.INSTANCE.PlayStab(GetComponentInParent<AudioSource>());
 		}
 		inBase = true;
 	}
 
-	public void exitBase ()
-	{
-		if (robotManager.isMainPlayer) {
-			audioMixerScript.INSTANCE.ChangeSnapShot (2);
+    public void exitBase(){
+        if(robotManager.isMainPlayer){
+            audioMixerScript.INSTANCE.ChangeSnapShot (1);
+			SoundManager.INSTANCE.PlayStab(GetComponentInParent<AudioSource>());
 		}
-
-		inBase = false;
-	}
+        inBase = false;
+    }
 
 
 }
