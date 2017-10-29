@@ -30,6 +30,8 @@ public class RegisterScript : APIScript {
 
         if (registered){
 			UIManager.instance.loggedIn();
+            GlobalVariables.instance.me.Name = username.text;
+            Debug.LogFormat("username: {0}", username.text);
         } else {
             //throw error
         }

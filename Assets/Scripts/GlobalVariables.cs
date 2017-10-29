@@ -49,7 +49,7 @@ public class GlobalVariables : MonoBehaviour {
     public Dictionary<int, List<room>> searchingRooms;
     public List<room> foundGames;
     public Dictionary<int, PlayerDetails> players;
-
+    public PlayerDetails me = new PlayerDetails();
     private void Awake()
     {
         if (instance != null)

@@ -58,7 +58,6 @@ public class RSManager : MonoBehaviour {
 
 		switch (sound) {
 			case "hit":
-				
 				SoundManager.INSTANCE.PlayRamHit (audioSource);
 				break;
 		case "collectLabourer":

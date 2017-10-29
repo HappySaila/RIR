@@ -194,24 +194,24 @@ public class masterServerManager : masterServerBehavior {
     #region buttonPresses
     public void createRoom()
     {
-        networkObject.Networker.Me.Name = "steven";
+        networkObject.Networker.Me.Name = GlobalVariables.instance.me.Name;
         if (string.IsNullOrEmpty(input.text))
         {
             return;
         }
         panel.SetActive(false);
-        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.Server, input.text, int.Parse(roomSize.text), Random.RandomRange(500, 2000), networkObject.Networker.Me.Name);
+        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.Server, input.text, int.Parse(roomSize.text), GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
 
     public void joinRoom()
     {
-        networkObject.Networker.Me.Name = "Jacob";
+        networkObject.Networker.Me.Name = GlobalVariables.instance.me.Name;
         if (string.IsNullOrEmpty(input.text))
         {
             return;
         }
         panel.SetActive(false);
-        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.Server, input.text, Random.Range(500, 2000), networkObject.Networker.Me.Name);
+        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.Server, input.text, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
     #endregion
     #region RPCS
@@ -292,6 +292,7 @@ public class masterServerManager : masterServerBehavior {
     }
     public void addToRoom(string playerName,int counter)
     { 
+        Debug.LogFormat("Player {0} has joined the room", playerName);
         if (counter == 0)
         {
             one.text = playerName + " 0";

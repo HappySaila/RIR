@@ -19,6 +19,7 @@ public class LoginScript : APIScript
         if (registered)
         {
             UIManager.instance.loggedIn();
+            GlobalVariables.instance.me.Name = username.text;
         }
     }
 }
