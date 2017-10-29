@@ -14,7 +14,8 @@ public class hittableSearchScript : MonoBehaviour
 		if (HaveColidersOnEveryHittable) {
 			hittableGameObjects = GameObject.FindGameObjectsWithTag ("Hittable");
 			foreach (GameObject hittable in hittableGameObjects) {
-				hittable.AddComponent<AudioSource> ();
+				AudioSource AS = hittable.AddComponent<AudioSource> ();
+				AS.spatialBlend = 1;
 				hittable.AddComponent<HittableSound> ();
 
 			}

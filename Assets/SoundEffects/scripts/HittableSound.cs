@@ -8,15 +8,15 @@ public class HittableSound : MonoBehaviour
 {
 
 	AudioSource audioSource;
+	Rigidbody rb;
 	private bool alowedToMakeNoise;
-
 
 
 	// Use this for initialization
 	void Start ()
 	{
 		audioSource = gameObject.GetComponent<AudioSource> ();
-
+		rb=gameObject.GetComponent<Rigidbody> ();
 		alowedToMakeNoise = false;
 		StartCoroutine (DelayedNoise ());
 
@@ -31,13 +31,13 @@ public class HittableSound : MonoBehaviour
 	public void OnCollisionEnter (Collision col)
 	{
 		
-		if (col.relativeVelocity.sqrMagnitude > 0.5f &&alowedToMakeNoise) {
-			audioSource.volume = (col.relativeVelocity.sqrMagnitude / 5) + 0.5f;
+		if (col.relativeVelocity.magnitude >= 5f &&alowedToMakeNoise) {
+			audioSource.volume = (col.relativeVelocity.magnitude / 5) + 0.5f;
 			audioSource.pitch = Random.Range (-2.9f, 2.9f);
 			SoundManager.INSTANCE.PlayRamHit (audioSource);
 		}
 	
-		//Debug.Log (col.relativeVelocity+" "+audioSource.volume);
+		//Debug.Log (col.relativeVelocity+" "+audioSource.volume+ " " + rb.GetPointVelocity(transform.position).x);
 	}
 	IEnumerator DelayedNoise ()
 	{	

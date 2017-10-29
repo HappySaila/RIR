@@ -25,6 +25,8 @@ public class SoundManager : MonoBehaviour {
 	float lowVolume = 0.6f;
 	float highVolume = 1f;
 
+	int hitSoundCallCount;
+
 	void Awake(){
 		DontDestroyOnLoad (gameObject);
 		if (INSTANCE == null) {
@@ -34,9 +36,20 @@ public class SoundManager : MonoBehaviour {
 		}
 			
 	}
-
+	private void Update()
+	{
+		//to ensure that when alot of things are hit that it dosnt sound terrible.... Improves sfx feal
+		if (hitSoundCallCount >0) {
+			hitSoundCallCount--;
+		}//UnityEngine.Debug.Log (hitSoundCallCount);
+	}
 	public void PlayRamHit(AudioSource s){
-		s.PlayOneShot(ramHit);
+		hitSoundCallCount++;
+		if(hitSoundCallCount<2){
+			s.PlayOneShot(ramHit);
+		}
+
+
 	}
 	public void PlayLabourPickUp(AudioSource s){
 		s.PlayOneShot(AudioClipsForGettingUp[Random.Range(0,AudioClipsForGettingUp.Length)]);
