@@ -34,7 +34,8 @@ public class masterServerManager : masterServerBehavior {
         GlobalVariables.instance.existingRooms = new List<room>();
         GlobalVariables.instance.foundGames = new List<room>();
         GlobalVariables.instance.searchingRooms = new Dictionary<int, List<room>>();
-
+        GlobalVariables.instance.players = new Dictionary<int, GlobalVariables.PlayerDetails>();
+        Debug.Log("master server started");
     }
 
 
