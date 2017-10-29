@@ -15,8 +15,10 @@ public class TimeMachine : MonoBehaviour {
 	public float buildSpeed;
 	public float buildSpeedMultiplier;
     float maxBuildSpeed;
+    bool multiplayer;
 
     public Queue<RSManager> AvailableLaborers = new Queue<RSManager>();
+    public Queue<GameObject> MAvalableLaboreres = new Queue<GameObject>();
 
 	// Use this for initialization
 	void Start () {
@@ -55,11 +57,25 @@ public class TimeMachine : MonoBehaviour {
 
     private void OnTriggerEnter(Collider col)
     {
-        if (col.GetComponentInParent<RSManager>()!=null){
-            if (!col.GetComponentInParent<RSManager>().robotLaborerControl.isFighter)
+        if (!multiplayer)
+        {
+            if (col.GetComponentInParent<RSManager>() != null)
             {
-				col.GetComponentInParent<RSManager>().robotLaborerControl.StartBuilding(this);
-			}
+                if (!col.GetComponentInParent<RSManager>().robotLaborerControl.isFighter)
+                {
+                    col.GetComponentInParent<RSManager>().robotLaborerControl.StartBuilding(this);
+                }
+            }
+        }
+        else
+        {
+            if (col.GetComponentInParent<RMManager>() != null)
+            {
+                if (!col.GetComponentInParent<RMManager>().labourerController.isFighter)
+                {
+                    col.GetComponentInParent<RMManager>().labourerController.StartBuilding(this);
+                }
+            }
         }
 
     }
@@ -68,6 +84,12 @@ public class TimeMachine : MonoBehaviour {
 	{
 		AvailableLaborers.Enqueue(controller);
 	}
+
+    public void MAddLaborerToAvailableLaborer(GameObject controller)
+    {
+        MAvalableLaboreres.Enqueue(controller);
+        
+    }
 
 
 }

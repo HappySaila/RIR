@@ -9,6 +9,23 @@ public class gameManager : MonoBehaviour {
     public Transform[] RedPositions;
     public Transform[] BluePositions;
     public BoxCollider LaborerSpawn;
+    public Queue<NetworkingPlayer> redTeamDead = new Queue<NetworkingPlayer>();
+    public Queue<NetworkingPlayer> blueTeamDead = new Queue<NetworkingPlayer>();
+    public static gameManager instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Invoke("spawnPlayers", 0.2f);
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+        }
+    }
+
     // Use this for initialization
     IEnumerator setLabourer(RobotManagerBehavior rmb, float delay){
 
@@ -19,12 +36,55 @@ public class gameManager : MonoBehaviour {
         Vector3 spawnPos = new Vector3(x, LaborerSpawn.transform.position.y, z);
         rmb.networkObject.SendRpc("makeIntoLabourer",Receivers.All, spawnPos);
     }
-
+    /*
+     * if (team == 1)
+        {
+            rmb.networkObject.SendRpc("setStarting", Receivers.AllBuffered, RedPositions[position].position, RedPositions[position].rotation, 1);
+        }
+        else
+        {
+            rmb.networkObject.SendRpc("setStarting", Receivers.AllBuffered, BluePositions[position].position, BluePositions[position].rotation, 2);
+        }*/
+    IEnumerator setPlayerPositions(RobotManagerBehavior rmb,int team,int position,NetworkingPlayer toGive, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (team == 1) {
+            rmb.networkObject.SendRpc("setStarting", Receivers.All, RedPositions[position].position, RedPositions[position].rotation, team);
+        }
+        else
+        {
+            rmb.networkObject.SendRpc("setStarting", Receivers.All, BluePositions[position].position, BluePositions[position].rotation, team);
+        }
+        if (toGive != null)
+        {
+            rmb.networkObject.AssignOwnership(toGive);
+        }
+    }
+    /*
+    
+    */
     void spawnPlayers()
     {
-        RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
+        room room1 = GlobalVariables.instance.foundGames[0];
+        room room2 = GlobalVariables.instance.foundGames[1];
+        Debug.Log(GlobalVariables.instance.foundGames.Count);
+        int counter = 0;
+        foreach (NetworkingPlayer player in room1.Players)
+        {
+            Debug.Log("player " + player.Name + " in game with id " + player.NetworkId);
+            RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
+            StartCoroutine(setPlayerPositions(behavior, 1, counter, player, 0.1f));
+        }
+        counter = 0;
+        foreach (NetworkingPlayer player in room2.Players)
+        {
+            Debug.Log("player " + player.Name + " in game with id " + player.NetworkId);
+            RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
+            StartCoroutine(setPlayerPositions(behavior, 2, counter, player, 0.1f));
+        }
     }
         void Start () {
+        DontDestroyOnLoad(gameObject);
         RobotManagerBehavior behavior;
         if (NetworkManager.Instance.IsServer)
         {
@@ -32,42 +92,12 @@ public class gameManager : MonoBehaviour {
             {
                 behavior = NetworkManager.Instance.InstantiateRobotManager();
                 StartCoroutine(setLabourer(behavior, 0.1f));
-                Debug.Log("created server Robot");
             }
         }
-        Invoke("spawnPlayers", 0.3f);
-        
-        /*if (NetworkManager.Instance.IsServer)
+        if (NetworkManager.Instance.IsServer)
         {
-                room room1 = GlobalVariables.instance.foundGames[0];
-                room room2 = GlobalVariables.instance.foundGames[1];
-                Debug.Log("room " + room1.RoomName);
-                int counter = 0;
-                foreach (NetworkingPlayer player in room1.Players)
-                {
-                    Debug.Log("player " + player.Name + " in game with id " + player.NetworkId);
-                    RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
-                    behavior.networkObject.AssignOwnership(player);
-                    // Debug.Log("player put " + RedPositions[counter].position.x + " " + RedPositions[counter].position.y + " " + RedPositions[counter].position.z);
-                    behavior.networkObject.SendRpc("setStarting", Receivers.All, RedPositions[counter].position, RedPositions[counter].rotation, 1);
-                    counter++;
-            }
-          /*  counter = 0;
-            foreach (NetworkingPlayer player in room2.Players)
-            {
-                Debug.Log("player " + GlobalVariables.instance.players[(int)player.NetworkId] + " in game with id " + player.NetworkId);
-                RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
-                behavior.networkObject.AssignOwnership(player);
-                behavior.networkObject.SendRpc("setStarting", Receivers.All, BluePositions[counter++].position, BluePositions[counter].rotation, 2);
-                counter++;
-            }
+            Invoke("spawnPlayers", 0.2f);
         }
-        else
-        {
-            RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
-            Debug.Log("I am not the server");
-        }*/
-        // behavior = NetworkManager.Instance.InstantiateRobot(position: new Vector3(-1000, 0, 0));
     }
 
     private void OnPlayerDisconnected(NetworkPlayer player)
@@ -77,6 +107,37 @@ public class gameManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-		
+        if (NetworkManager.Instance.IsServer)
+        { 
+            if (TimeMachine.blueTimeMachine.MAvalableLaboreres.Count > 0)
+            {
+                Debug.Log("avaliable labourers " + TimeMachine.blueTimeMachine.MAvalableLaboreres.Count);
+            }
+            if (blueTeamDead.Count > 0)
+            {
+                if (TimeMachine.blueTimeMachine.MAvalableLaboreres.Count > 0)
+                {
+                    Debug.Log("respawning player");
+                    NetworkingPlayer toGive = blueTeamDead.Dequeue();
+                    GameObject obj = TimeMachine.blueTimeMachine.MAvalableLaboreres.Dequeue();
+                    obj.GetComponent<RMManager>().networkObject.Destroy();
+                    RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
+                    StartCoroutine(setPlayerPositions(behavior, 2,2, toGive, 0.1f));
+                    
+                }
+            }
+            if (redTeamDead.Count > 0)
+            {
+                if (TimeMachine.redTimeMachine.MAvalableLaboreres.Count > 0)
+                {
+                    Debug.Log("respawning player");
+                    NetworkingPlayer toGive = redTeamDead.Dequeue();
+                    TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue().GetComponent<RMManager>().networkObject.SendRpc("destroyMyself", Receivers.All);
+                    //Destroy(TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue());
+                    RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
+                    StartCoroutine(setPlayerPositions(behavior, 1,2, toGive, 0.1f));
+                }
+            }
+        }
 	}
 }
