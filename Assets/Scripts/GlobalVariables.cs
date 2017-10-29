@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using BeardedManStudios.Forge.Networking;
 public class GlobalVariables : MonoBehaviour {
 
     public struct PlayerDetails
@@ -42,8 +42,9 @@ public class GlobalVariables : MonoBehaviour {
         }
     }
 
-    public static GlobalVariables instance; 
-     
+    public static GlobalVariables instance;
+
+    
     public List<room> existingRooms;
     public Dictionary<int, List<room>> searchingRooms;
     public List<room> foundGames;

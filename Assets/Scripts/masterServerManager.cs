@@ -154,7 +154,7 @@ public class masterServerManager : masterServerBehavior {
                 differences[rooms.IndexOf(room)] += 10f;
                 foreach (room toFight in rooms)
                 {
-                        if (!toFight.Equals(rooms))
+                        if (!toFight.Equals(room))
                         {
                             float room2mmr = differences[rooms.IndexOf(room)];
                             float lowerBound2 = getAverageMMR(toFight) - room2mmr;
@@ -179,7 +179,7 @@ public class masterServerManager : masterServerBehavior {
                                 second = toFight;
                                 GlobalVariables.instance.foundGames.Add(room);
                                 GlobalVariables.instance.foundGames.Add(toFight);
-                                networkObject.SendRpc(RPC_START_GAME, Receivers.Server, toFight.RoomName, room.RoomName);
+                                networkObject.SendRpc(RPC_START_GAME, Receivers.Server, room.RoomName, toFight.RoomName);
                                 return true;
                             }
                         }
