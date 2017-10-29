@@ -150,7 +150,9 @@ public class RSMovement : MonoBehaviour
 		}
 
 
-		if(!robotTarget.robotMovement.inBase){
+		if (!robotTarget.robotMovement.inBase) {
+			
+			//	agent.SetDestination (robotTarget.rigid.position);
 			agent.SetDestination (AITarget.position);
 		}
 
@@ -158,7 +160,6 @@ public class RSMovement : MonoBehaviour
 		transform.LookAt (AITarget);
 		transform.Rotate (0, 180, 0);
 
-		//Debug.Log ("target"+AITarget.position+" my position:"+transform.position+" ");
 
 		if (robotTarget == null) {
 			return;
@@ -195,7 +196,7 @@ public class RSMovement : MonoBehaviour
 		
 		MustGoForFighter = false;
 		if (DistanceToPrioritizeFighters == 0) {
-			DistanceToPrioritizeFighters = 150;
+			DistanceToPrioritizeFighters = 60;
 		}
 
 		RSManager[] robots = FindObjectsOfType<RSManager> ();
@@ -210,7 +211,7 @@ public class RSMovement : MonoBehaviour
 			}
 			//if the current robot is not on our team
 			else if (robot.robotMovement.inBase) {
-			//	Debug.Log ("robot.robotMovement.inBase");
+				//	Debug.Log ("robot.robotMovement.inBase");
 				continue;
 			} else if (robotManager.isRed == robot.isRed) {
 				//Debug.Log ("red");
@@ -219,7 +220,7 @@ public class RSMovement : MonoBehaviour
 
 			if (robot.robotLaborerControl.isFighter) {
 				//Debug.Log (" Fighter spottted" +robot.robotLaborerControl.isFighter+" "+robot.isMainPlayer + " red:  " + robot.isRed+DistanceToPrioritizeFighters);
-			//Debug.Log ((Vector3.Distance (transform.position, robot.transform.position))+""+ (Vector3.Distance (transform.position, robot.transform.position) <= DistanceToPrioritizeFighters));
+				//Debug.Log ((Vector3.Distance (transform.position, robot.transform.position))+""+ (Vector3.Distance (transform.position, robot.transform.position) <= DistanceToPrioritizeFighters));
 				if (Vector3.Distance (transform.position, robot.rigid.transform.position) <= DistanceToPrioritizeFighters) {
 					//Debug.Log ("WillgoFOr Fighter");
 					currentTarget = robot;
@@ -229,14 +230,13 @@ public class RSMovement : MonoBehaviour
 			}
 	
 			if (currentTarget == null) {
-			//	Debug.Log (" null");
+				//	Debug.Log (" null");
 				currentTarget = robot;
 				//Debug.Log ("distancenull"+Vector3.Distance (transform.position, robot.rigid.transform.position) );
 
-			} 
-			else if (!MustGoForFighter) {
+			} else if (!MustGoForFighter) {
 				
-					//if the robot is closer than the current target
+				//if the robot is closer than the current target
 				//Debug.Log ("isMainPlayer robot"+robot.isMainPlayer+Vector3.Distance (transform.position, robot.transform.position) );
 				//Debug.Log ("player Transform" + robot.transform.position.x + " " + robot.transform.position.y + " " + robot.transform.position.z);
 				//Debug.Log (" currentTarget" +Vector3.Distance (transform.position, currentTarget.transform.position));
@@ -244,9 +244,9 @@ public class RSMovement : MonoBehaviour
 
 				if (Vector3.Distance (transform.position, robot.rigid.transform.position) < Vector3.Distance (transform.position, currentTarget.rigid.transform.position)) {
 					//Debug.Log ("distance"+Vector3.Distance (transform.position, robot.rigid.transform.position) );
-						currentTarget = robot;
-					}      
-				} 
+					currentTarget = robot;
+				}      
+			} 
 
 		}
 
@@ -265,8 +265,9 @@ public class RSMovement : MonoBehaviour
 	}
 
 	public IEnumerator FindTarget ()
-	{	yield return new WaitForSeconds (3);
-		if(robotManager.robotLaborerControl.isFighter){
+	{
+		yield return new WaitForSeconds (3);
+		if (robotManager.robotLaborerControl.isFighter) {
 			GetAITarget ();
 
 			StartCoroutine (FindTarget ());
@@ -278,18 +279,19 @@ public class RSMovement : MonoBehaviour
 	{
 		if (robotManager.isMainPlayer) {
 			audioMixerScript.INSTANCE.ChangeSnapShot (2);
-			SoundManager.INSTANCE.PlayStab(GetComponentInParent<AudioSource>());
+			SoundManager.INSTANCE.PlayStab (GetComponentInParent<AudioSource> ());
 		}
 		inBase = true;
 	}
 
-    public void exitBase(){
-        if(robotManager.isMainPlayer){
-            audioMixerScript.INSTANCE.ChangeSnapShot (1);
-			SoundManager.INSTANCE.PlayStab(GetComponentInParent<AudioSource>());
+	public void exitBase ()
+	{
+		if (robotManager.isMainPlayer) {
+			audioMixerScript.INSTANCE.ChangeSnapShot (1);
+			SoundManager.INSTANCE.PlayStab (GetComponentInParent<AudioSource> ());
 		}
-        inBase = false;
-    }
+		inBase = false;
+	}
 
 
 }
