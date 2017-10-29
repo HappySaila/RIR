@@ -42,7 +42,7 @@ public class SoundManager : MonoBehaviour {
 		//to ensure that when alot of things are hit that it dosnt sound terrible.... Improves sfx feal
 		if (hitSoundCallCount >0) {
 			hitSoundCallCount--;
-		}//UnityEngine.Debug.Log (hitSoundCallCount);
+		}
 	}
 	public void PlayRamHit(AudioSource s){
 		hitSoundCallCount++;

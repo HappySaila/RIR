@@ -14,6 +14,8 @@ public class UIManager : MonoBehaviour {
     public Text RegisterErrorMessage;
 	public Text RoomErrorMessage;
 	public Text RoomNumber;
+    public Image fadeBlack;
+    public AudioSource musicSource;
 
 	AudioSource audioSource;
 
@@ -28,6 +30,12 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0)){
+        }
+    }
+
     private void Start()
     {
         masterServer = GetComponent<masterServerManager>();
@@ -35,14 +43,16 @@ public class UIManager : MonoBehaviour {
 
     //single player buttons
     public void SinglePlayerClicked(){
-		audioMixerScript.INSTANCE.ChangeSnapShot (1);
+		FadeMusic();
+		//audioMixerScript.INSTANCE.ChangeSnapShot (2);
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
-		SceneManager.LoadScene(2);
+        StartCoroutine(FadeIn(2));
+		//SceneManager.LoadScene(2);
 
 	}
 
     public void SplitScreenClicked(){
-		audioMixerScript.INSTANCE.ChangeSnapShot (1);
+		audioMixerScript.INSTANCE.ChangeSnapShot (2);
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         SceneManager.LoadScene(1);
     }
@@ -117,6 +127,20 @@ public class UIManager : MonoBehaviour {
     public void loggedIn(){
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         cam.LookAtCreateRoom();
+    }
+
+    IEnumerator FadeIn(int sceneNumber){
+        if (fadeBlack.color.a > 0.99f){
+            //openScene
+            SceneManager.LoadScene(sceneNumber);
+        }
+        fadeBlack.color = Color.Lerp(fadeBlack.color, Color.black, Time.deltaTime*2);
+        yield return new WaitForEndOfFrame();
+        StartCoroutine(FadeIn(sceneNumber));
+    }
+
+    void FadeMusic(){
+        audioMixerScript.INSTANCE.Mute();
     }
 
 }
