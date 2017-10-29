@@ -48,9 +48,6 @@ public class SoundManager : MonoBehaviour {
 		s.PlayOneShot(UIClick);
 	}
 
-
-
-
     void BendPitch(AudioSource source){
 		source.pitch = Random.Range (lowPitch, highPitch);
 	}
