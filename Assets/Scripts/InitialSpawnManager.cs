@@ -54,6 +54,7 @@ public class InitialSpawnManager : MonoBehaviour {
             //just spawn 1 player
 			robot = Instantiate(RobotPlayer, BluePositions[1].position, BluePositions[1].rotation);
 			robot.GetComponent<RSController>().SetTeam(false);
+            robot.GetComponent<RSController>().SetPlayer(true);
         }
 		
 
