@@ -19,6 +19,7 @@ public class RSManager : MonoBehaviour {
 
 	AudioSource audioSource;
 	public AudioListener audioListener;
+	public AudioListener FlyCamaudioListener;
 	[HideInInspector] public bool isMainPlayer;
 
 	// Use this for initialization
@@ -83,6 +84,15 @@ public class RSManager : MonoBehaviour {
 
 	public void Die()
 	{
+
+		//so there is still and audioListener
+		if(audioListener!=null){
+			
+			if(audioListener.enabled){
+				FlyCamaudioListener.enabled=true;
+			}
+		}
+
 		//player has been hit and will turn into a laborer
 		//stop movement
 		robotMovement.Die();
@@ -104,10 +114,13 @@ public class RSManager : MonoBehaviour {
 		robotLaborerControl.isIdleLaborer = true;
         GetComponentInChildren<ColorRobot>().SetGrey();
 
+
         //detach robot from controlling parent
         if (GetComponentInParent<RSController>()!=null){
 			GetComponentInParent<RSController>().Die();
 		}
+
+
             
 	}
 

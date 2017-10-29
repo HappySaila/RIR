@@ -10,6 +10,7 @@ public class InitialSpawnManager : MonoBehaviour {
 	public GameObject RobotAI;
 	public GameObject RobotPlayer;
 	public GameObject IdleLaborer;
+    public GameObject FadeBlack;
     public bool isSplitScreen;
 	[Range(0, 4)]
     public int blueBots;

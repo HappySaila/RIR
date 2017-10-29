@@ -8,7 +8,8 @@ public class UICamera : MonoBehaviour {
     bool isMoving;
     Transform CurrentRoom;
     public Transform MainRoom;
-    public Transform JoiningRoom;
+	public Transform JoiningRoom;
+	public Transform GameOverRoom;
 
 	// Use this for initialization
 	void Start () {
@@ -29,7 +30,7 @@ public class UICamera : MonoBehaviour {
                 isMoving = false;
             }
         }
-		
+       
 	}
 
     public void LookAtMultiplayer(){
@@ -53,4 +54,11 @@ public class UICamera : MonoBehaviour {
 		isMoving = true;
         target = canvasPositions[3];
     }
+
+	public void LookAtGameOverRoom()
+	{
+        CurrentRoom = GameOverRoom;
+		isMoving = true;
+		target = canvasPositions[4];
+	}
 }

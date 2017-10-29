@@ -32,11 +32,12 @@ public class TimeMachine : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(1))
-        {
-			Debug.LogFormat("Available {0}", AvailableLaborers.Count);
-        }
+        
 	}
+
+    void ChangeToGameOver(){
+        SceneManager.LoadScene(0);
+    }
 
     public void Build(){
         currentProgress += buildSpeedMultiplier * buildSpeed;
@@ -51,8 +52,9 @@ public class TimeMachine : MonoBehaviour {
     }
 
     public void EndGame(){
-        //team has won. Show end Game Screen
-        SceneManager.LoadScene("GameOverMenu");
+		Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
+		audioMixerScript.INSTANCE.Mute();
+		Invoke("ChangeToGameOver", 3f);
     }
 
     private void OnTriggerEnter(Collider col)
