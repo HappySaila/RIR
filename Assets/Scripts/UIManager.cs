@@ -125,9 +125,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void JoinClicked(){
-        if (!RoomErrorMessage.enabled){
-            masterServer.joinRoom();
-        }
+        cam.LookAtWaitingRoom();
     }
 
     public void loggedIn(){
