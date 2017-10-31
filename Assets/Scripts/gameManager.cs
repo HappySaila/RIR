@@ -109,15 +109,11 @@ public class gameManager : MonoBehaviour {
     void Update () {
         if (NetworkManager.Instance.IsServer)
         { 
-            if (TimeMachine.blueTimeMachine.MAvalableLaboreres.Count > 0)
-            {
-                Debug.Log("avaliable labourers " + TimeMachine.blueTimeMachine.MAvalableLaboreres.Count);
-            }
             if (blueTeamDead.Count > 0)
             {
                 if (TimeMachine.blueTimeMachine.MAvalableLaboreres.Count > 0)
                 {
-                    Debug.Log("respawning player");
+                    Debug.Log("respawning player as blue");
                     NetworkingPlayer toGive = blueTeamDead.Dequeue();
                     GameObject obj = TimeMachine.blueTimeMachine.MAvalableLaboreres.Dequeue();
                     obj.GetComponent<RMManager>().networkObject.Destroy();
@@ -128,9 +124,10 @@ public class gameManager : MonoBehaviour {
             }
             if (redTeamDead.Count > 0)
             {
+                Debug.Log("this is right");
                 if (TimeMachine.redTimeMachine.MAvalableLaboreres.Count > 0)
                 {
-                    Debug.Log("respawning player");
+                    Debug.Log("respawning player as red");
                     NetworkingPlayer toGive = redTeamDead.Dequeue();
                     TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue().GetComponent<RMManager>().networkObject.SendRpc("destroyMyself", Receivers.All);
                     //Destroy(TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue());
