@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class room {
-        public room(NetworkingPlayer partyLeader, int roomSize, string roomName)
+        public room(GlobalVariables.PlayerDetails partyLeader, int roomSize, string roomName)
         {
             this.partyLeader = partyLeader;
             this.roomSize = roomSize;
             this.roomName = roomName;
             matching = false;
             mmrs = new List<int>();
-            players = new List<NetworkingPlayer>();
-            players.Add(this.PartyLeader);
+            players = new List<GlobalVariables.PlayerDetails>();
+            players.Add(partyLeader);
         }
 
         public room(room toReplace)
@@ -25,13 +25,15 @@ public class room {
             mmrs = toReplace.Mmrs;
         }
         List<int> mmrs;
-        NetworkingPlayer partyLeader;
-        List<NetworkingPlayer> players;
+        GlobalVariables.PlayerDetails partyLeader;
+        List<GlobalVariables.PlayerDetails> players;
         bool matching;
         int roomSize;
         string roomName;
+        public int mmrLowerBound = 0;
+        public int mmrUpperBound = 0;
 
-        public NetworkingPlayer PartyLeader
+        public GlobalVariables.PlayerDetails PartyLeader
         {
             get
             {
@@ -44,7 +46,7 @@ public class room {
             }
         }
 
-        public List<NetworkingPlayer> Players
+        public List<GlobalVariables.PlayerDetails> Players
         {
             get
             {

@@ -92,9 +92,16 @@ public class RMManager : RobotManagerBehavior {
                 labourerController.tryStartBuilding();
             }
         }
-        
 
-      //d  }
+        if (networkObject.IsServer)
+        {
+            networkObject.blueTeamTimemachine = TimeMachine.blueTimeMachine.currentProgress;
+            networkObject.redTeamTimemachine = TimeMachine.redTimeMachine.currentProgress;
+        }
+        TimeMachine.blueTimeMachine.currentProgress = networkObject.blueTeamTimemachine;
+        TimeMachine.redTimeMachine.currentProgress = networkObject.redTeamTimemachine;
+
+        //d  }
     }
 
     public float SendRamData()

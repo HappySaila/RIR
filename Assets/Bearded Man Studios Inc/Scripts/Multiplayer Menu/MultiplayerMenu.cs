@@ -109,9 +109,10 @@ public class MultiplayerMenu : MonoBehaviour
 			mgr = Instantiate(networkManager).GetComponent<NetworkManager>();
 
 
-		if (networker.IsServer)
+		/*if (networker.IsServer)
 			SceneManager.sceneLoaded += CreateInlineChat;
-
+            */
+        
 		if (networker is IServer)
 		{
                 Debug.Log("I AM THE SERVER");
@@ -120,7 +121,11 @@ public class MultiplayerMenu : MonoBehaviour
                 Debug.Log(networker.IsServer);
 
         }
-        Invoke("spawnObject", 1f);
+        if (true)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
+        //Invoke("spawnObject", 1f);
 	}
 
     public void spawnObject()

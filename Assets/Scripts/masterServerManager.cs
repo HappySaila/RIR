@@ -7,8 +7,8 @@ using UnityEngine.UI;
 using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine.SceneManagement;
 
-public class masterServerManager : masterServerBehavior {
-
+public class masterServerManager : MonoBehaviour {
+    /*
     public InputField input;
     public InputField roomSize;
     public Text one;
@@ -63,9 +63,9 @@ public class masterServerManager : masterServerBehavior {
             Debug.Log(GlobalVariables.instance.searchingRooms[foundRooms.RoomSize].Count);
             GlobalVariables.instance.existingRooms.Remove(foundRooms);
             differences.Add(0);
-            foreach (NetworkingPlayer player in foundRooms.Players)
+            foreach (GlobalVariables.PlayerDetails player in foundRooms.Players)
             {
-                networkObject.SendRpc(player, RPC_START_MATCHING, foundRooms.RoomName);
+                networkObject.SendRpc(player.Player, RPC_START_MATCHING, foundRooms.RoomName);
             }
 
             Debug.Log("room " + foundRooms.RoomName + " has enough players");
@@ -353,4 +353,5 @@ public class masterServerManager : masterServerBehavior {
         Debug.Log("created room");
     }
 #endregion
+*/
 }

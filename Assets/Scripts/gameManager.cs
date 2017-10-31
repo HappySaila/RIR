@@ -69,18 +69,18 @@ public class gameManager : MonoBehaviour {
         room room2 = GlobalVariables.instance.foundGames[1];
         Debug.Log(GlobalVariables.instance.foundGames.Count);
         int counter = 0;
-        foreach (NetworkingPlayer player in room1.Players)
+        foreach (GlobalVariables.PlayerDetails player in room1.Players)
         {
-            Debug.Log("player " + player.Name + " in game with id " + player.NetworkId);
+            Debug.Log("player " + player.Name + " in game with id " + player.Player.NetworkId);
             RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
-            StartCoroutine(setPlayerPositions(behavior, 1, counter, player, 0.1f));
+            StartCoroutine(setPlayerPositions(behavior, 1, counter, player.Player, 0.1f));
         }
         counter = 0;
-        foreach (NetworkingPlayer player in room2.Players)
+        foreach (GlobalVariables.PlayerDetails player in room2.Players)
         {
-            Debug.Log("player " + player.Name + " in game with id " + player.NetworkId);
+            Debug.Log("player " + player.Name + " in game with id " + player.Player.NetworkId);
             RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
-            StartCoroutine(setPlayerPositions(behavior, 2, counter, player, 0.1f));
+            StartCoroutine(setPlayerPositions(behavior, 2, counter, player.Player, 0.1f));
         }
     }
         void Start () {
