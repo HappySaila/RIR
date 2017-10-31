@@ -34,8 +34,6 @@ public class MultiplayerMenu : MonoBehaviour
 	public void Connect()
 	{
 		ushort port;
-        GlobalVariables.instance.IpAdress = ipAddress.text;
-        GlobalVariables.instance.PortNumber = int.Parse(portNumber.text);
 		if(!ushort.TryParse(portNumber.text, out port))
 		{
 			Debug.LogError("The supplied port number is not within the allowed range 0-" + ushort.MaxValue);

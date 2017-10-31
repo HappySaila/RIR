@@ -76,40 +76,12 @@ public class GlobalVariables : MonoBehaviour {
 
     public static GlobalVariables instance;
 
-    private string ipAdress;
-    private int portNumber;
     public List<room> existingRooms;
     public Dictionary<int, List<room>> searchingRooms;
     public List<Pair<room,room>> foundGames;
     public Dictionary<int, PlayerDetails> players;
     public PlayerDetails me = new PlayerDetails();
     public List<room> toRemove;
-
-    public string IpAdress
-    {
-        get
-        {
-            return ipAdress;
-        }
-
-        set
-        {
-            ipAdress = value;
-        }
-    }
-
-    public int PortNumber
-    {
-        get
-        {
-            return portNumber;
-        }
-
-        set
-        {
-            portNumber = value;
-        }
-    }
 
     private void Awake()
     {

@@ -18,7 +18,7 @@ public class MasterServerScript : masterServerBehavior
     // Use this for initialization
     void Start()
     {
-        Debug.Log("master server started");
+        BMSLogger.Instance.Log("master server started");
         timer = 0;
         matching = false;
         GlobalVariables.instance.players = new Dictionary<int, GlobalVariables.PlayerDetails>();
@@ -41,7 +41,7 @@ public class MasterServerScript : masterServerBehavior
     {
         if (networkObject.IsServer)
         {
-            Debug.Log("player connected with ID " + player.NetworkId);
+            BMSLogger.Instance.Log("player connected with ID " + player.NetworkId);
         }
     }
 
@@ -49,7 +49,7 @@ public class MasterServerScript : masterServerBehavior
 
     public void createRoomButtonPressed()
     {
-        Debug.Log("connected");
+        BMSLogger.Instance.Log("connected");
         //@Grant add logic in here where you want to get the size and name of the room, I am leaving a default for now
         string roomN = roomName.text;
         int size = int.Parse(roomSize.text);
@@ -118,11 +118,12 @@ public class MasterServerScript : masterServerBehavior
     public void NewServer()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        
     }
 
     #region dynamicServerSpawningLogic
 
-    public void Connect()
+   /* public void Connect()
     {
         
     }
@@ -151,13 +152,14 @@ public class MasterServerScript : masterServerBehavior
     {
 
         
-    }
+    }*/
+
     #endregion
     public void stopSearching()
     {
         foreach (GlobalVariables.Pair<room, room> pairs in GlobalVariables.instance.foundGames)
         {
-            Debug.Log("stopping the searching between 2 clients");
+            BMSLogger.Instance.Log("stopping the searching between 2 clients");
             //stop searching for the people who have found games
             foreach (GlobalVariables.PlayerDetails players in pairs.First.Players)
             {
@@ -197,7 +199,7 @@ public class MasterServerScript : masterServerBehavior
                         || (averageMMR2 - room2.mmrLowerBound <= averageMMR && averageMMR2 + room2.mmrUpperBound >= averageMMR))
                     {
                         GlobalVariables.instance.foundGames.Add(new GlobalVariables.Pair<room,room>(room1,room2));
-                        Debug.Log("pairing 2 games together");
+                        BMSLogger.Instance.Log("pairing 2 games together");
                         GlobalVariables.instance.toRemove.Add(room1);
                         GlobalVariables.instance.toRemove.Add(room2);
                         //yay they should be matched
@@ -213,13 +215,13 @@ public class MasterServerScript : masterServerBehavior
     }
     public void serverJoinRoom(string roomName, int playerID)
     {
-        Debug.Log("player joined room " + roomName);
+        BMSLogger.Instance.Log("player joined room " + roomName);
         GlobalVariables.instance.existingRooms.Find(i => i.RoomName == roomName).Players.Add(GlobalVariables.instance.players[playerID]);
     }
 
     public void serverCreateRoom(string roomName, int roomSize, int playerID)
     {
-        Debug.Log("player created room " + roomName);
+        BMSLogger.Instance.Log("player created room " + roomName);
         GlobalVariables.instance.existingRooms.Add(new room(GlobalVariables.instance.players[playerID], roomSize, roomName));
     }
 
@@ -267,7 +269,7 @@ public class MasterServerScript : masterServerBehavior
         }
         if (networkObject.IsServer)
         {
-            Debug.Log("room joined");
+            BMSLogger.Instance.Log("room joined");
             serverCreateRoom(roomName, roomSize, playerID);
         }
         else
@@ -292,7 +294,7 @@ public class MasterServerScript : masterServerBehavior
         }
         else
         {
-            Debug.Log("room joined");
+            BMSLogger.Instance.Log("room joined");
             clientJoinRoom(roomName, playerID);
         }
     }
@@ -314,7 +316,7 @@ public class MasterServerScript : masterServerBehavior
 
     public override void startMatching(RpcArgs args)
     {
-        Debug.Log("you should start matching");
+        BMSLogger.Instance.Log("you should start matching");
         matching = true;
         //@Grant, put your logic in here. this will display something on the clients side saying that they are matching
     }
@@ -324,6 +326,12 @@ public class MasterServerScript : masterServerBehavior
 
         matching = false;
         matchingText.text = "match found!";
+        Invoke("disableGameObject", 1f);
+    }
+
+    void disableGameObject()
+    {
+        this.gameObject.SetActive(false);
     }
 #endregion
 }
