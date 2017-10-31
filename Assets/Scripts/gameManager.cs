@@ -65,8 +65,8 @@ public class gameManager : MonoBehaviour {
     */
     void spawnPlayers()
     {
-        room room1 = GlobalVariables.instance.foundGames[0];
-        room room2 = GlobalVariables.instance.foundGames[1];
+        room room1 = GlobalVariables.instance.foundGames[0].First;
+        room room2 = GlobalVariables.instance.foundGames[0].Second;
         Debug.Log(GlobalVariables.instance.foundGames.Count);
         int counter = 0;
         foreach (GlobalVariables.PlayerDetails player in room1.Players)

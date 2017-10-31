@@ -31,14 +31,11 @@ public class MultiplayerMenu : MonoBehaviour
 			Rpc.MainThreadRunner = MainThreadManager.Instance;
 	}
 
-	private void LocalServerLocated(NetWorker.BroadcastEndpoints endpoint, NetWorker sender)
-	{
-		Debug.Log("Found endpoint: " + endpoint.Address + ":" + endpoint.Port);
-	}
-
 	public void Connect()
 	{
 		ushort port;
+        GlobalVariables.instance.IpAdress = ipAddress.text;
+        GlobalVariables.instance.PortNumber = int.Parse(portNumber.text);
 		if(!ushort.TryParse(portNumber.text, out port))
 		{
 			Debug.LogError("The supplied port number is not within the allowed range 0-" + ushort.MaxValue);
@@ -93,7 +90,8 @@ public class MultiplayerMenu : MonoBehaviour
 
 	public void Connected(NetWorker networker)
 	{
-		if (!networker.IsBound)
+        NetworkManager.Instance.Initialize(networker);
+        if (!networker.IsBound)
 		{
 			Debug.LogError("NetWorker failed to bind");
 			return;
@@ -109,30 +107,30 @@ public class MultiplayerMenu : MonoBehaviour
 			mgr = Instantiate(networkManager).GetComponent<NetworkManager>();
 
 
-		/*if (networker.IsServer)
+        /*if (networker.IsServer)
 			SceneManager.sceneLoaded += CreateInlineChat;
             */
-        
-		if (networker is IServer)
+        NetworkObject.Flush(networker);
+        /*if (networker is IServer)
 		{
                 Debug.Log("I AM THE SERVER");
 				NetworkObject.Flush(networker); //Called because we are already in the correct scene!
                 Debug.Log(networker.NetworkObjectList.Count);
                 Debug.Log(networker.IsServer);
 
-        }
-        if (true)
+        }*/
+        if (false)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
-        //Invoke("spawnObject", 1f);
-	}
+        Invoke("spawnObject", 1f);
+    }
 
     public void spawnObject()
     {
 
         //Debug.Log(mgr.IsServer);
-        Debug.Log(NetworkManager.Instance.IsServer);
+        //Debug.Log(NetworkManager.Instance.IsServer);
         NetworkManager.Instance.InstantiatemasterServer();
         //NetworkManager.Instance.
     }

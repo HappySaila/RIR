@@ -4,15 +4,21 @@ using UnityEngine;
 using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Unity;
-
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class MasterServerScript : masterServerBehavior
 {
+
+    public InputField roomName;
+    public InputField roomSize;
+    public Text matchingText;
     bool matching;
     int timer;
     room myRoom;
     // Use this for initialization
     void Start()
     {
+        Debug.Log("master server started");
         timer = 0;
         matching = false;
         GlobalVariables.instance.players = new Dictionary<int, GlobalVariables.PlayerDetails>();
@@ -21,6 +27,14 @@ public class MasterServerScript : masterServerBehavior
         GlobalVariables.instance.toRemove = new List<room>();
         GlobalVariables.instance.searchingRooms = new Dictionary<int, List<room>>();
         networkObject.Networker.playerConnected += Networker_playerConnected;
+        networkObject.Networker.playerDisconnected += Networker_playerDisconnected;
+        GlobalVariables.instance.me = new GlobalVariables.PlayerDetails("hi",1200,networkObject.Networker.Me);
+    }
+
+    private void Networker_playerDisconnected(NetworkingPlayer player, NetWorker sender)
+    {
+        GlobalVariables.instance.players.Remove((int)player.NetworkId);
+        GlobalVariables.instance.existingRooms.FindAll(room => room.Players.FindAll(pla => pla.Player.NetworkId == player.NetworkId).Count > 0).RemoveAll(i => true);
     }
 
     private void Networker_playerConnected(NetworkingPlayer player, NetWorker sender)
@@ -31,20 +45,23 @@ public class MasterServerScript : masterServerBehavior
         }
     }
 
+
+
     public void createRoomButtonPressed()
     {
+        Debug.Log("connected");
         //@Grant add logic in here where you want to get the size and name of the room, I am leaving a default for now
-        string roomName = "room1";
-        int size = 2;
+        string roomN = roomName.text;
+        int size = int.Parse(roomSize.text);
         //The global variables.me needs to be instantiated when the player logs on.
-        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.Server, name, size, GlobalVariables.instance.me.Name, GlobalVariables.instance.me.Mmr);
+        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.AllBuffered, roomN, size, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
 
     public void joinRoomButtonPressed()
     {
         //@Grant add logic in here where you want to get the name of the room, I am leaving a default for now
-        string roomName = "room1";
-        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.Server, roomName, GlobalVariables.instance.me.Name, GlobalVariables.instance.me.Mmr);
+        string roomN = roomName.text;
+        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.AllBuffered, roomN, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
     // Update is called once per frame
     void Update()
@@ -93,14 +110,54 @@ public class MasterServerScript : masterServerBehavior
 
 
         stopSearching();
+        
         //remove the found games so it doesn't try and start twice
         //GlobalVariables.instance.foundGames = new List<GlobalVariables.Pair<room, room>>();
     }
 
+    public void NewServer()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    #region dynamicServerSpawningLogic
+
+    public void Connect()
+    {
+        
+    }
+
+    public void Host()
+    {
+        NetWorker server;
+
+        server = new UDPServer(64);
+
+        ((UDPServer)server).Connect(GlobalVariables.instance.IpAdress, (ushort)++GlobalVariables.instance.PortNumber);
+
+        server.playerTimeout += (player, sender) =>
+        {
+            Debug.Log("Player " + player.NetworkId + " timed out");
+        };
+        Connected(server);
+    }
+
+    public void Connected(NetWorker networker)
+    {
+       
+    }
+
+    public void spawnObject()
+    {
+
+        
+    }
+    #endregion
     public void stopSearching()
     {
         foreach (GlobalVariables.Pair<room, room> pairs in GlobalVariables.instance.foundGames)
         {
+            Debug.Log("stopping the searching between 2 clients");
             //stop searching for the people who have found games
             foreach (GlobalVariables.PlayerDetails players in pairs.First.Players)
             {
@@ -111,17 +168,18 @@ public class MasterServerScript : masterServerBehavior
             {
                 networkObject.SendRpc(players.Player, RPC_STOP_SEARCHING, pairs.First.RoomName, pairs.Second.RoomName);
             }
+            NewServer();
         }
     }
 
     public float getAverageMMR(room rooms)
     {
         float total = 0;
-        foreach (int mmr in rooms.Mmrs)
+        foreach (GlobalVariables.PlayerDetails players in rooms.Players)
         {
-            total += mmr;
+            total += players.Mmr;
         }
-        total /= rooms.Mmrs.Count;
+        total /= rooms.Players.Count;
         return total;
     }
 
@@ -135,8 +193,8 @@ public class MasterServerScript : masterServerBehavior
                 if(room1 != room2)
                 {
                     float averageMMR2 = getAverageMMR(room2);
-                    if((averageMMR - room1.mmrLowerBound < averageMMR2 && averageMMR + room1.mmrUpperBound > averageMMR2) 
-                        || (averageMMR2 - room2.mmrLowerBound < averageMMR && averageMMR2 + room2.mmrUpperBound > averageMMR))
+                    if ((averageMMR - room1.mmrLowerBound <= averageMMR2 && averageMMR + room1.mmrUpperBound >= averageMMR2) 
+                        || (averageMMR2 - room2.mmrLowerBound <= averageMMR && averageMMR2 + room2.mmrUpperBound >= averageMMR))
                     {
                         GlobalVariables.instance.foundGames.Add(new GlobalVariables.Pair<room,room>(room1,room2));
                         Debug.Log("pairing 2 games together");
@@ -148,13 +206,20 @@ public class MasterServerScript : masterServerBehavior
             }
             room1.mmrUpperBound += 1;
             room1.mmrLowerBound -= 1;
+            
             //make the bound slightly bigger
 
         }
     }
+    public void serverJoinRoom(string roomName, int playerID)
+    {
+        Debug.Log("player joined room " + roomName);
+        GlobalVariables.instance.existingRooms.Find(i => i.RoomName == roomName).Players.Add(GlobalVariables.instance.players[playerID]);
+    }
 
     public void serverCreateRoom(string roomName, int roomSize, int playerID)
     {
+        Debug.Log("player created room " + roomName);
         GlobalVariables.instance.existingRooms.Add(new room(GlobalVariables.instance.players[playerID], roomSize, roomName));
     }
 
@@ -165,8 +230,9 @@ public class MasterServerScript : masterServerBehavior
         {
          if(matching == true)
             {
-                Debug.Log(timer++);
-            }   
+            matchingText.text = timer + "";
+            }
+            timer += 1;
         }
 
         public void clientCreateRoom(string roomName, int roomSize, int playerID)
@@ -178,6 +244,7 @@ public class MasterServerScript : masterServerBehavior
         public void clientJoinRoom(string roomName, int playerID)
         {
             myRoom = GlobalVariables.instance.existingRooms.Find(roomname => roomname.RoomName == roomName);
+            myRoom.Players.Add(GlobalVariables.instance.players[playerID]);
         }
         #endregion
     #region RPC
@@ -200,6 +267,7 @@ public class MasterServerScript : masterServerBehavior
         }
         if (networkObject.IsServer)
         {
+            Debug.Log("room joined");
             serverCreateRoom(roomName, roomSize, playerID);
         }
         else
@@ -210,13 +278,22 @@ public class MasterServerScript : masterServerBehavior
 
     public override void joinRoom(RpcArgs args)
     {
+        string roomName = args.GetNext<string>();
+        int playerID = (int)args.Info.SendingPlayer.NetworkId;
+        int mmr = args.GetNext<int>();
+        string playerName = args.GetNext<string>();
+        if (!GlobalVariables.instance.players.ContainsKey(playerID))
+        {
+            GlobalVariables.instance.players[playerID] = new GlobalVariables.PlayerDetails(playerName, mmr, args.Info.SendingPlayer);
+        }
         if (networkObject.IsServer)
         {
-
+            serverJoinRoom(roomName, playerID);
         }
         else
         {
-
+            Debug.Log("room joined");
+            clientJoinRoom(roomName, playerID);
         }
     }
 
@@ -237,12 +314,16 @@ public class MasterServerScript : masterServerBehavior
 
     public override void startMatching(RpcArgs args)
     {
+        Debug.Log("you should start matching");
+        matching = true;
         //@Grant, put your logic in here. this will display something on the clients side saying that they are matching
     }
 
     public override void stopSearching(RpcArgs args)
     {
-        throw new System.NotImplementedException();
+
+        matching = false;
+        matchingText.text = "match found!";
     }
 #endregion
 }
