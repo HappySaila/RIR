@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedInterpol("{\"inter\":[0.15,0.15,0,0,0,0,0]")]
+	[GeneratedInterpol("{\"inter\":[0.15,0.15,0,0,0]")]
 	public partial class RobotManagerNetworkObject : NetworkObject
 	{
 		public const int IDENTITY = 6;
@@ -165,66 +165,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			if (ramChanged != null) ramChanged(_ram, timestep);
 			if (fieldAltered != null) fieldAltered("ram", _ram, timestep);
 		}
-		private float _blueTeamTimemachine;
-		public event FieldEvent<float> blueTeamTimemachineChanged;
-		public InterpolateFloat blueTeamTimemachineInterpolation = new InterpolateFloat() { LerpT = 0f, Enabled = false };
-		public float blueTeamTimemachine
-		{
-			get { return _blueTeamTimemachine; }
-			set
-			{
-				// Don't do anything if the value is the same
-				if (_blueTeamTimemachine == value)
-					return;
-
-				// Mark the field as dirty for the network to transmit
-				_dirtyFields[0] |= 0x20;
-				_blueTeamTimemachine = value;
-				hasDirtyFields = true;
-			}
-		}
-
-		public void SetblueTeamTimemachineDirty()
-		{
-			_dirtyFields[0] |= 0x20;
-			hasDirtyFields = true;
-		}
-
-		private void RunChange_blueTeamTimemachine(ulong timestep)
-		{
-			if (blueTeamTimemachineChanged != null) blueTeamTimemachineChanged(_blueTeamTimemachine, timestep);
-			if (fieldAltered != null) fieldAltered("blueTeamTimemachine", _blueTeamTimemachine, timestep);
-		}
-		private float _redTeamTimemachine;
-		public event FieldEvent<float> redTeamTimemachineChanged;
-		public InterpolateFloat redTeamTimemachineInterpolation = new InterpolateFloat() { LerpT = 0f, Enabled = false };
-		public float redTeamTimemachine
-		{
-			get { return _redTeamTimemachine; }
-			set
-			{
-				// Don't do anything if the value is the same
-				if (_redTeamTimemachine == value)
-					return;
-
-				// Mark the field as dirty for the network to transmit
-				_dirtyFields[0] |= 0x40;
-				_redTeamTimemachine = value;
-				hasDirtyFields = true;
-			}
-		}
-
-		public void SetredTeamTimemachineDirty()
-		{
-			_dirtyFields[0] |= 0x40;
-			hasDirtyFields = true;
-		}
-
-		private void RunChange_redTeamTimemachine(ulong timestep)
-		{
-			if (redTeamTimemachineChanged != null) redTeamTimemachineChanged(_redTeamTimemachine, timestep);
-			if (fieldAltered != null) fieldAltered("redTeamTimemachine", _redTeamTimemachine, timestep);
-		}
 
 		protected override void OwnershipChanged()
 		{
@@ -239,8 +179,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			xInterpolation.current = xInterpolation.target;
 			yInterpolation.current = yInterpolation.target;
 			ramInterpolation.current = ramInterpolation.target;
-			blueTeamTimemachineInterpolation.current = blueTeamTimemachineInterpolation.target;
-			redTeamTimemachineInterpolation.current = redTeamTimemachineInterpolation.target;
 		}
 
 		public override int UniqueIdentity { get { return IDENTITY; } }
@@ -252,8 +190,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			UnityObjectMapper.Instance.MapBytes(data, _x);
 			UnityObjectMapper.Instance.MapBytes(data, _y);
 			UnityObjectMapper.Instance.MapBytes(data, _ram);
-			UnityObjectMapper.Instance.MapBytes(data, _blueTeamTimemachine);
-			UnityObjectMapper.Instance.MapBytes(data, _redTeamTimemachine);
 
 			return data;
 		}
@@ -280,14 +216,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			ramInterpolation.current = _ram;
 			ramInterpolation.target = _ram;
 			RunChange_ram(timestep);
-			_blueTeamTimemachine = UnityObjectMapper.Instance.Map<float>(payload);
-			blueTeamTimemachineInterpolation.current = _blueTeamTimemachine;
-			blueTeamTimemachineInterpolation.target = _blueTeamTimemachine;
-			RunChange_blueTeamTimemachine(timestep);
-			_redTeamTimemachine = UnityObjectMapper.Instance.Map<float>(payload);
-			redTeamTimemachineInterpolation.current = _redTeamTimemachine;
-			redTeamTimemachineInterpolation.target = _redTeamTimemachine;
-			RunChange_redTeamTimemachine(timestep);
 		}
 
 		protected override BMSByte SerializeDirtyFields()
@@ -305,10 +233,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _y);
 			if ((0x10 & _dirtyFields[0]) != 0)
 				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _ram);
-			if ((0x20 & _dirtyFields[0]) != 0)
-				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _blueTeamTimemachine);
-			if ((0x40 & _dirtyFields[0]) != 0)
-				UnityObjectMapper.Instance.MapBytes(dirtyFieldsData, _redTeamTimemachine);
 
 			// Reset all the dirty fields
 			for (int i = 0; i < _dirtyFields.Length; i++)
@@ -390,32 +314,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					RunChange_ram(timestep);
 				}
 			}
-			if ((0x20 & readDirtyFlags[0]) != 0)
-			{
-				if (blueTeamTimemachineInterpolation.Enabled)
-				{
-					blueTeamTimemachineInterpolation.target = UnityObjectMapper.Instance.Map<float>(data);
-					blueTeamTimemachineInterpolation.Timestep = timestep;
-				}
-				else
-				{
-					_blueTeamTimemachine = UnityObjectMapper.Instance.Map<float>(data);
-					RunChange_blueTeamTimemachine(timestep);
-				}
-			}
-			if ((0x40 & readDirtyFlags[0]) != 0)
-			{
-				if (redTeamTimemachineInterpolation.Enabled)
-				{
-					redTeamTimemachineInterpolation.target = UnityObjectMapper.Instance.Map<float>(data);
-					redTeamTimemachineInterpolation.Timestep = timestep;
-				}
-				else
-				{
-					_redTeamTimemachine = UnityObjectMapper.Instance.Map<float>(data);
-					RunChange_redTeamTimemachine(timestep);
-				}
-			}
 		}
 
 		public override void InterpolateUpdate()
@@ -447,16 +345,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			{
 				_ram = (float)ramInterpolation.Interpolate();
 				//RunChange_ram(ramInterpolation.Timestep);
-			}
-			if (blueTeamTimemachineInterpolation.Enabled && !blueTeamTimemachineInterpolation.current.UnityNear(blueTeamTimemachineInterpolation.target, 0.0015f))
-			{
-				_blueTeamTimemachine = (float)blueTeamTimemachineInterpolation.Interpolate();
-				//RunChange_blueTeamTimemachine(blueTeamTimemachineInterpolation.Timestep);
-			}
-			if (redTeamTimemachineInterpolation.Enabled && !redTeamTimemachineInterpolation.current.UnityNear(redTeamTimemachineInterpolation.target, 0.0015f))
-			{
-				_redTeamTimemachine = (float)redTeamTimemachineInterpolation.Interpolate();
-				//RunChange_redTeamTimemachine(redTeamTimemachineInterpolation.Timestep);
 			}
 		}
 

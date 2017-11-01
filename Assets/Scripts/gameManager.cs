@@ -129,8 +129,8 @@ public class gameManager : MonoBehaviour {
                 {
                     Debug.Log("respawning player as red");
                     NetworkingPlayer toGive = redTeamDead.Dequeue();
-                    TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue().GetComponent<RMManager>().networkObject.SendRpc("destroyMyself", Receivers.All);
-                    //Destroy(TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue());
+                    GameObject obj = TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue();
+                    obj.GetComponent<RMManager>().networkObject.Destroy();
                     RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
                     StartCoroutine(setPlayerPositions(behavior, 1,2, toGive, 0.1f));
                 }

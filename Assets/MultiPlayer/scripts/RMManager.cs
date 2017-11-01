@@ -83,18 +83,10 @@ public class RMManager : RobotManagerBehavior {
             Camara.enabled = false;
             if (type == types.MOVINGTOBASE)
             {
-                
+
                 labourerController.tryStartBuilding();
             }
         }
-
-        if (networkObject.IsServer)
-        {
-            networkObject.blueTeamTimemachine = TimeMachine.blueTimeMachine.currentProgress;
-            networkObject.redTeamTimemachine = TimeMachine.redTimeMachine.currentProgress;
-        }
-        TimeMachine.blueTimeMachine.currentProgress = networkObject.blueTeamTimemachine;
-        TimeMachine.redTimeMachine.currentProgress = networkObject.redTeamTimemachine;
 
         //d  }
     }
@@ -133,37 +125,26 @@ public class RMManager : RobotManagerBehavior {
         GetComponentInChildren<ColorRobot>().SetGrey();
 
         oldteam = team;
+        networkObject.SendRpc("iDied", Receivers.Server, team);
         team = 0;
         Invoke("makeIntoDead", 3f);
         Camara.enabled = false;
         if(networkObject.IsOwner)
         BMSLogger.Instance.Log("I am  " + team);
+        
     }
 
+    IEnumerator changeTeam(int team)
+    {
+        yield return new WaitForSeconds(1);
+        this.team = team;
+    }
     public void makeIntoDead()
     {
         if (networkObject.IsOwner)
             BMSLogger.Instance.Log("now I am  " + team);
-        if (networkObject.IsServer && !networkObject.IsOwner)
-        {
-            NetworkingPlayer oldOwner = networkObject.Owner;
-            
-            if (oldteam == 1)
-            {
-                gameManager.instance.redTeamDead.Enqueue(oldOwner);
-                Debug.Log("amount of dead red players " + gameManager.instance.redTeamDead.Count);
-            }
-            else
-            {
-                gameManager.instance.blueTeamDead.Enqueue(oldOwner);
-                Debug.Log("amount of dead blue players " + gameManager.instance.blueTeamDead.Count);
-            }
-
-            networkObject.TakeOwnership();
-        }
-        team = 0;
-
-        networkObject.SendRpc("syncRobotState", Receivers.AllBuffered, 0, 1);
+        
+        
         labourerController.SetLaborer();
         
         //type = types.DEADLABOURER;
@@ -263,6 +244,31 @@ public class RMManager : RobotManagerBehavior {
     public override void destroyMyself(RpcArgs args)
     {
         Destroy(this);
+    }
+
+    public override void iDied(RpcArgs args)
+    {
+        int thisTeam = args.GetNext<int>();
+        if (networkObject.IsServer && !networkObject.IsOwner)
+        {
+            NetworkingPlayer oldOwner = networkObject.Owner;
+
+            if (thisTeam == 1)
+            {
+                gameManager.instance.redTeamDead.Enqueue(oldOwner);
+                Debug.Log("amount of dead red players " + gameManager.instance.redTeamDead.Count);
+            }
+            else
+            {
+                gameManager.instance.blueTeamDead.Enqueue(oldOwner);
+                Debug.Log("amount of dead blue players " + gameManager.instance.blueTeamDead.Count);
+            }
+
+            networkObject.TakeOwnership();
+            team = 0;
+
+            networkObject.SendRpc("syncRobotState", Receivers.AllBuffered, 0, 1);
+        }
     }
 
     #endregion

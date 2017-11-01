@@ -110,11 +110,15 @@ public class MasterServerScript : masterServerBehavior
 
 
         stopSearching();
-        
+        //Invoke("removeFromFoundGames", 2f);
         //remove the found games so it doesn't try and start twice
         //GlobalVariables.instance.foundGames = new List<GlobalVariables.Pair<room, room>>();
     }
 
+    public void removeFromFoundGames()
+    {
+        GlobalVariables.instance.foundGames = new List<GlobalVariables.Pair<room, room>>();
+    }
     public void NewServer()
     {
         SceneManager.sceneLoaded += CreateInlineChat;
