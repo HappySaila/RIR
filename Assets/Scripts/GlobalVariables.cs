@@ -82,6 +82,7 @@ public class GlobalVariables : MonoBehaviour {
     public Dictionary<int, PlayerDetails> players;
     public PlayerDetails me = new PlayerDetails();
     public List<room> toRemove;
+    public int messageGroupIncrement = 0;
 
     private void Awake()
     {

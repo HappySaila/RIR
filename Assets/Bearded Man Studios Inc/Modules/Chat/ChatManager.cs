@@ -39,18 +39,25 @@ public class ChatManager : ChatManagerBehavior
 		label.text = username + ": " + message;
 	}
 
-	public void SendMessage()
-	{
-		string message = messageInput.text.Trim();
-		if (string.IsNullOrEmpty(message))
-			return;
+    public void SendMessage()
+    {
+        string message = messageInput.text.Trim();
+        if (string.IsNullOrEmpty(message))
+            return;
 
-		string name = networkObject.Networker.Me.Name;
+        string name = GlobalVariables.instance.me.Name;
 
-		if (string.IsNullOrEmpty(name))
-			name = NetWorker.InstanceGuid.ToString().Substring(0, 5);
+        if (string.IsNullOrEmpty(name))
+            name = NetWorker.InstanceGuid.ToString().Substring(0, 5);
 
-		networkObject.SendRpc(RPC_SEND_MESSAGE, Receivers.All, name, message);
+        if (message.StartsWith("/all"))
+        {
+            networkObject.SendRpc(RPC_SEND_MESSAGE, Receivers.All, name, message);
+        }
+        else
+        {
+            networkObject.SendRpc(RPC_SEND_MESSAGE, Receivers.MessageGroup, name, message);
+        }
 		messageInput.text = "";
 		messageInput.Select();
 	}

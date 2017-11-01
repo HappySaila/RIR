@@ -105,9 +105,8 @@ public class MultiplayerMenu : MonoBehaviour
 			mgr = Instantiate(networkManager).GetComponent<NetworkManager>();
 
 
-        /*if (networker.IsServer)
-			SceneManager.sceneLoaded += CreateInlineChat;
-            */
+        //if (networker.IsServer)
+            
         NetworkObject.Flush(networker);
         /*if (networker is IServer)
 		{

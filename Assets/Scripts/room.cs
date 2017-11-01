@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class room {
-        public room(GlobalVariables.PlayerDetails partyLeader, int roomSize, string roomName)
+        public room(GlobalVariables.PlayerDetails partyLeader, int roomSize, string roomName, int messageGroup)
         {
             this.partyLeader = partyLeader;
             this.roomSize = roomSize;
@@ -13,6 +13,7 @@ public class room {
             mmrs = new List<int>();
             players = new List<GlobalVariables.PlayerDetails>();
             players.Add(partyLeader);
+            messageGroupNumber = messageGroup;
         }
 
         public room(room toReplace)
@@ -32,6 +33,7 @@ public class room {
         string roomName;
         public int mmrLowerBound = 0;
         public int mmrUpperBound = 0;
+        public int messageGroupNumber;
 
         public GlobalVariables.PlayerDetails PartyLeader
         {

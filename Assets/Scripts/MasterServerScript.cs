@@ -117,42 +117,50 @@ public class MasterServerScript : masterServerBehavior
 
     public void NewServer()
     {
+        SceneManager.sceneLoaded += CreateInlineChat;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         
     }
 
+    private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)
+    {
+        SceneManager.sceneLoaded -= CreateInlineChat;
+        var chat = NetworkManager.Instance.InstantiateChatManager();
+        DontDestroyOnLoad(chat.gameObject);
+    }
+
     #region dynamicServerSpawningLogic
 
-   /* public void Connect()
-    {
-        
-    }
+    /* public void Connect()
+     {
 
-    public void Host()
-    {
-        NetWorker server;
+     }
 
-        server = new UDPServer(64);
+     public void Host()
+     {
+         NetWorker server;
 
-        ((UDPServer)server).Connect(GlobalVariables.instance.IpAdress, (ushort)++GlobalVariables.instance.PortNumber);
+         server = new UDPServer(64);
 
-        server.playerTimeout += (player, sender) =>
-        {
-            Debug.Log("Player " + player.NetworkId + " timed out");
-        };
-        Connected(server);
-    }
+         ((UDPServer)server).Connect(GlobalVariables.instance.IpAdress, (ushort)++GlobalVariables.instance.PortNumber);
 
-    public void Connected(NetWorker networker)
-    {
-       
-    }
+         server.playerTimeout += (player, sender) =>
+         {
+             Debug.Log("Player " + player.NetworkId + " timed out");
+         };
+         Connected(server);
+     }
 
-    public void spawnObject()
-    {
+     public void Connected(NetWorker networker)
+     {
 
-        
-    }*/
+     }
+
+     public void spawnObject()
+     {
+
+
+     }*/
 
     #endregion
     public void stopSearching()
@@ -222,7 +230,9 @@ public class MasterServerScript : masterServerBehavior
     public void serverCreateRoom(string roomName, int roomSize, int playerID)
     {
         BMSLogger.Instance.Log("player created room " + roomName);
-        GlobalVariables.instance.existingRooms.Add(new room(GlobalVariables.instance.players[playerID], roomSize, roomName));
+        GlobalVariables.instance.players[playerID].Player.SetMessageGroup((ushort)GlobalVariables.instance.messageGroupIncrement);
+        GlobalVariables.instance.existingRooms.Add(new room(GlobalVariables.instance.players[playerID], roomSize, roomName,GlobalVariables.instance.messageGroupIncrement++));
+
     }
 
     #endregion
@@ -239,13 +249,16 @@ public class MasterServerScript : masterServerBehavior
 
         public void clientCreateRoom(string roomName, int roomSize, int playerID)
         {
-            GlobalVariables.instance.existingRooms.Add(new room(GlobalVariables.instance.players[playerID], roomSize, roomName));
-            myRoom = new room(GlobalVariables.instance.players[playerID], roomSize,roomName);
+            GlobalVariables.instance.players[playerID].Player.SetMessageGroup((ushort)GlobalVariables.instance.messageGroupIncrement);
+            myRoom = new room(new room(GlobalVariables.instance.players[playerID], roomSize, roomName, (ushort)GlobalVariables.instance.messageGroupIncrement));
+            GlobalVariables.instance.existingRooms.Add(myRoom);
+            
         }
 
         public void clientJoinRoom(string roomName, int playerID)
         {
             myRoom = GlobalVariables.instance.existingRooms.Find(roomname => roomname.RoomName == roomName);
+            GlobalVariables.instance.players[playerID].Player.SetMessageGroup((ushort)myRoom.messageGroupNumber);
             myRoom.Players.Add(GlobalVariables.instance.players[playerID]);
         }
         #endregion
