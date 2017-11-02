@@ -11,7 +11,8 @@ public class RandomAnimate : MonoBehaviour {
 	}
 
     IEnumerator Animate(){
-        yield return new WaitForSeconds(Random.Range(10, 20));
+        yield return new WaitForSeconds(Random.Range(5, 20));
+        anim.SetInteger("IdleNumber", Random.Range(1,100) % 4);
         anim.SetTrigger("RandomIdle");
         StartCoroutine(Animate());
     }

@@ -8,15 +8,17 @@ public class UIManager : MonoBehaviour {
 
     public static UIManager instance;
     public UICamera cam;
+	public Transform[] waitingRoomSpawnPositions;
     public InputField RegisterPassword;
     public InputField RegisterPasswordConfirm;
     public Text RegisterErrorMessage;
-	public Text RoomErrorMessage;
-	public Text RoomNumber;
+    public Text RoomErrorMessage;
+    public Text RoomNumber;
     public Text RoomName;
     public GameObject FadeCanvas;
     public GameObject FadeFromBlackPrefab;
-	GameObject FadeCanvasInstance;
+    public GameObject WaitingRobot;
+    GameObject FadeCanvasInstance;
     int sceneNumber = 0;
     AudioSource audioSource;
     public GameObject forgeCanvas;
@@ -33,10 +35,9 @@ public class UIManager : MonoBehaviour {
         }
 	}
 
-    private void Update()
+    private void Start()
     {
     }
-
     //single player buttons
     public void SinglePlayerClicked(){
 		FadeMusic();
@@ -126,7 +127,9 @@ public class UIManager : MonoBehaviour {
     }
 
     public void JoinClicked(){
-        cam.LookAtWaitingRoom();
+        SpawnRobots(4);
+		cam.LookAtWaitingRoom();
+        return;
         MasterServerScript.instance.joinRoomButtonPressed(RoomName.text);
     }
 
@@ -166,5 +169,12 @@ public class UIManager : MonoBehaviour {
 
     public void DestroyFadeBlackCanvas(){
         Destroy(FadeCanvasInstance);
+    }
+
+    public void SpawnRobots(int i){
+        foreach (Transform t in waitingRoomSpawnPositions){
+            GameObject robot = Instantiate(WaitingRobot, t.position, t.rotation);
+            robot.GetComponent<RenameRobot>().Rename("Ana da bot");
+        }
     }
 }
