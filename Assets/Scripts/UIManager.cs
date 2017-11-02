@@ -15,8 +15,10 @@ public class UIManager : MonoBehaviour {
 	public Text RoomNumber;
     public Text RoomName;
     public GameObject FadeCanvas;
+    public GameObject FadeFromBlackPrefab;
+	GameObject FadeCanvasInstance;
     int sceneNumber = 0;
-	AudioSource audioSource;
+    AudioSource audioSource;
     public GameObject forgeCanvas;
     GameObject forgeCanvasInstance;
 
@@ -59,7 +61,7 @@ public class UIManager : MonoBehaviour {
     }
 
     public void MultiPlayerClicked(){
-        cam.LookAtMultiplayer();
+        FadeBlack();
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
 		forgeCanvasInstance = (GameObject)Instantiate(forgeCanvas, transform.position, transform.rotation);
     }
@@ -117,13 +119,26 @@ public class UIManager : MonoBehaviour {
 
     //join room buttons
     public void CreateClicked(){
-		cam.LookAtWaitingRoom();
-        MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
+        if (ValidateRoomSize()){
+			cam.LookAtWaitingRoom();
+			MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
+		}
     }
 
     public void JoinClicked(){
         cam.LookAtWaitingRoom();
         MasterServerScript.instance.joinRoomButtonPressed(RoomName.text);
+    }
+
+    public bool ValidateRoomSize(){
+        string s = RoomNumber.text;
+        if (s=="1" || s == "2" || s == "3" || s == "4"){
+			RoomErrorMessage.text = "";
+			return true;
+        } else {
+            RoomErrorMessage.text = "room size must be between one and four";
+            return false;
+        }
     }
 
     public void loggedIn(){
@@ -141,6 +156,15 @@ public class UIManager : MonoBehaviour {
     }
 
     void FadeBlack(){
-        Instantiate(FadeCanvas, transform.position, Quaternion.identity);
+        FadeCanvasInstance = (GameObject) Instantiate(FadeCanvas, transform.position, Quaternion.identity);
+    }
+
+    public void FadeFromBlack(){
+        DestroyFadeBlackCanvas();
+        Instantiate(FadeFromBlackPrefab, transform.position, Quaternion.identity);
+    }
+
+    public void DestroyFadeBlackCanvas(){
+        Destroy(FadeCanvasInstance);
     }
 }
