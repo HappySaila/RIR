@@ -8,13 +8,19 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class MasterServerScript : masterServerBehavior
 {
-
+    public static MasterServerScript instance;
     public InputField roomName;
     public InputField roomSize;
     public Text matchingText;
     bool matching;
     int timer;
     room myRoom;
+
+    void Awake()
+    {
+        instance = this;
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -29,6 +35,7 @@ public class MasterServerScript : masterServerBehavior
         networkObject.Networker.playerConnected += Networker_playerConnected;
         networkObject.Networker.playerDisconnected += Networker_playerDisconnected;
         GlobalVariables.instance.me = new GlobalVariables.PlayerDetails("hi",1200,networkObject.Networker.Me);
+		
     }
 
     private void Networker_playerDisconnected(NetworkingPlayer player, NetWorker sender)
@@ -47,21 +54,18 @@ public class MasterServerScript : masterServerBehavior
 
 
 
-    public void createRoomButtonPressed()
+    public void createRoomButtonPressed(string roomName, int roomSize)
     {
         BMSLogger.Instance.Log("connected");
         //@Grant add logic in here where you want to get the size and name of the room, I am leaving a default for now
-        string roomN = roomName.text;
-        int size = int.Parse(roomSize.text);
         //The global variables.me needs to be instantiated when the player logs on.
-        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.AllBuffered, roomN, size, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
+        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.AllBuffered, roomName, roomSize, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
 
-    public void joinRoomButtonPressed()
+    public void joinRoomButtonPressed(string roomName)
     {
         //@Grant add logic in here where you want to get the name of the room, I am leaving a default for now
-        string roomN = roomName.text;
-        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.AllBuffered, roomN, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
+        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.AllBuffered, roomName, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
     }
     // Update is called once per frame
     void Update()

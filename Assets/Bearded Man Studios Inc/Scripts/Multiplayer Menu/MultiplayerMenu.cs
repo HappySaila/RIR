@@ -125,11 +125,11 @@ public class MultiplayerMenu : MonoBehaviour
 
     public void spawnObject()
     {
-
+        Debug.Log("creating master server");
         //Debug.Log(mgr.IsServer);
-        //Debug.Log(NetworkManager.Instance.IsServer);
+        Debug.Log(NetworkManager.Instance.IsServer);
         NetworkManager.Instance.InstantiatemasterServer();
-        //NetworkManager.Instance.
+        Destroy(gameObject);
     }
 
     private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)

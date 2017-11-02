@@ -62,6 +62,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					{
 						MainThreadManager.Run(() =>
 						{
+                            Debug.LogFormat("object: {0}", metadataTransform);
+                            Debug.LogFormat("instance: {0}", ObjectMapper.Instance);
 							transform.position = ObjectMapper.Instance.Map<Vector3>(metadataTransform);
 							transform.rotation = ObjectMapper.Instance.Map<Quaternion>(metadataTransform);
 						});

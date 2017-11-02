@@ -8,15 +8,17 @@ public class UIManager : MonoBehaviour {
 
     public static UIManager instance;
     public UICamera cam;
-    public MasterServerScript masterServer;
     public InputField RegisterPassword;
     public InputField RegisterPasswordConfirm;
     public Text RegisterErrorMessage;
 	public Text RoomErrorMessage;
 	public Text RoomNumber;
+    public Text RoomName;
     public GameObject FadeCanvas;
     int sceneNumber = 0;
 	AudioSource audioSource;
+    public GameObject forgeCanvas;
+    GameObject forgeCanvasInstance;
 
     private void Awake()
     {
@@ -27,17 +29,10 @@ public class UIManager : MonoBehaviour {
         } else {
             Destroy(gameObject);
         }
-    }
+	}
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0)){
-        }
-    }
-
-    private void Start()
-    {
-        masterServer = GetComponent<MasterServerScript>();
     }
 
     //single player buttons
@@ -64,10 +59,14 @@ public class UIManager : MonoBehaviour {
     }
 
     public void MultiPlayerClicked(){
-		
+        cam.LookAtMultiplayer();
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
-		cam.LookAtMultiplayer();
-	}
+		forgeCanvasInstance = (GameObject)Instantiate(forgeCanvas, transform.position, transform.rotation);
+    }
+
+    public void MultiplayerConnected(){
+        cam.LookAtMultiplayer();
+    }
 
     public void BackToMainMenu(){
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
@@ -118,14 +117,13 @@ public class UIManager : MonoBehaviour {
 
     //join room buttons
     public void CreateClicked(){
-		if (!RoomErrorMessage.enabled)
-		{
-            masterServer.createRoomButtonPressed();
-		}
+		cam.LookAtWaitingRoom();
+        MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
     }
 
     public void JoinClicked(){
         cam.LookAtWaitingRoom();
+        MasterServerScript.instance.joinRoomButtonPressed(RoomName.text);
     }
 
     public void loggedIn(){
@@ -145,5 +143,4 @@ public class UIManager : MonoBehaviour {
     void FadeBlack(){
         Instantiate(FadeCanvas, transform.position, Quaternion.identity);
     }
-
 }
