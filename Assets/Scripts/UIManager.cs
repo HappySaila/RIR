@@ -133,6 +133,9 @@ public class UIManager : MonoBehaviour {
         cam.LookAtCreateRoom();
     }
 
+    public void GameOver(){
+        cam.LookAtGameOverRoom();
+    }
 
 
     void FadeMusic(){

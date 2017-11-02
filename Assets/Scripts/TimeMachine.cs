@@ -32,11 +32,15 @@ public class TimeMachine : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        
+        if (Input.GetMouseButtonDown(0)){
+            EndGame();
+        }
 	}
 
     void ChangeToGameOver(){
-        SceneManager.LoadScene(0);
+        //look at game over
+		SceneManager.LoadScene(0);
+        BackToMenuManager.instance.Invoke("LookAtGameOver", 2f);
     }
 
     public void Build(){

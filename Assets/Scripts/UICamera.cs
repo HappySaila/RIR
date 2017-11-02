@@ -11,8 +11,8 @@ public class UICamera : MonoBehaviour {
 	public Transform JoiningRoom;
 	public Transform GameOverRoom;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         transform.LookAt(canvasPositions[0]);
 	}
 	
