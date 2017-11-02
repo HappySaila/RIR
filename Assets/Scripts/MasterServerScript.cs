@@ -19,6 +19,7 @@ public class MasterServerScript : masterServerBehavior
     void Awake()
     {
         instance = this;
+          
     }
 
     // Use this for initialization
@@ -297,6 +298,7 @@ public class MasterServerScript : masterServerBehavior
         {
             clientCreateRoom(roomName, roomSize, playerID);
         }
+        Debug.LogFormat("room: {0}", myRoom.Players.Count);
     }
 
     public override void joinRoom(RpcArgs args)
