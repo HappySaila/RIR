@@ -146,14 +146,19 @@ public class RSMovement : MonoBehaviour
 	void AIControl ()
 	{
 		if (AITarget == null) {
+			//Debug.Log("null");
 			return;
 		}
 
 
 		if (!robotTarget.robotMovement.inBase) {
 			
-			//	agent.SetDestination (robotTarget.rigid.position);
-			agent.SetDestination (AITarget.position);
+		
+			Vector3 goToPos = new Vector3 (AITarget.position.x,0,AITarget.position.z);
+			Debug.Log("agentpos"+agent.transform.position+"myPos"+transform.position+" target pos"+AITarget.position+"gotTopos"+goToPos);
+			Debug.Log ("dis" + TargetDistance ());
+			agent.SetDestination (goToPos);
+			//agent.SetDestination (AITarget.position);
 		}
 
 		Transform currentForward = transform;
@@ -165,7 +170,9 @@ public class RSMovement : MonoBehaviour
 			return;
 		}
 
-		if (robotTarget.robotLaborerControl.isFighter) {
+
+		//if (robotTarget.robotLaborerControl.isFighter) {//if enemy Fighter
+		if(robotManager.isRed != robotTarget.isRed){
 			//if distance is shorter then ram is distance - ram
 			if (TargetDistance () < AIData.GetRamDistance ()) {
 				robotManager.robotAttack.InitiateRam ();
@@ -193,7 +200,7 @@ public class RSMovement : MonoBehaviour
 
 	void GetAITarget ()
 	{
-		
+		//Debug.Log ("GetAITarget");
 		MustGoForFighter = false;
 		if (DistanceToPrioritizeFighters == 0) {
 			DistanceToPrioritizeFighters = 60;
@@ -204,16 +211,16 @@ public class RSMovement : MonoBehaviour
 		RSManager currentTarget = null;
 		foreach (RSManager robot in robots) {
 			
-
+			//Debug.Log ("robot");
 			if (robot.robotLaborerControl == null) {
-				//Debug.Log ("robot.robotLaborerControl == null");
+			//	Debug.Log ("robot.robotLaborerControl == null");
 				continue;
 			}
 			//if the current robot is not on our team
 			else if (robot.robotMovement.inBase) {
 				//	Debug.Log ("robot.robotMovement.inBase");
 				continue;
-			} else if (robotManager.isRed == robot.isRed) {
+			} else if (robotManager.isRed == robot.isRed && !robot.robotLaborerControl.isIdleLaborer) {//same team and not gray
 				//Debug.Log ("red");
 				continue;
 			} 
@@ -266,7 +273,9 @@ public class RSMovement : MonoBehaviour
 
 	public IEnumerator FindTarget ()
 	{
+		//Debug.Log ("FindTarget");
 		yield return new WaitForSeconds (3);
+		//Debug.Log ("FindTarget3333");
 		if (robotManager.robotLaborerControl.isFighter) {
 			GetAITarget ();
 

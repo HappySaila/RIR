@@ -110,7 +110,7 @@ public class RMLabourerController : MonoBehaviour {
     
 
     // Update is called once per frame
-    void Update () {
+    void Update () { 
         if (isBuilding)
         {
             if (robotManager.team == 1)

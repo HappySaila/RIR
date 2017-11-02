@@ -65,22 +65,22 @@ public class gameManager : MonoBehaviour {
     */
     void spawnPlayers()
     {
-        room room1 = GlobalVariables.instance.foundGames[0];
-        room room2 = GlobalVariables.instance.foundGames[1];
+        room room1 = GlobalVariables.instance.foundGames[0].First;
+        room room2 = GlobalVariables.instance.foundGames[0].Second;
         Debug.Log(GlobalVariables.instance.foundGames.Count);
         int counter = 0;
-        foreach (NetworkingPlayer player in room1.Players)
+        foreach (GlobalVariables.PlayerDetails player in room1.Players)
         {
-            Debug.Log("player " + player.Name + " in game with id " + player.NetworkId);
+            Debug.Log("player " + player.Name + " in game with id " + player.Player.NetworkId);
             RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
-            StartCoroutine(setPlayerPositions(behavior, 1, counter, player, 0.1f));
+            StartCoroutine(setPlayerPositions(behavior, 1, counter, player.Player, 0.1f));
         }
         counter = 0;
-        foreach (NetworkingPlayer player in room2.Players)
+        foreach (GlobalVariables.PlayerDetails player in room2.Players)
         {
-            Debug.Log("player " + player.Name + " in game with id " + player.NetworkId);
+            Debug.Log("player " + player.Name + " in game with id " + player.Player.NetworkId);
             RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
-            StartCoroutine(setPlayerPositions(behavior, 2, counter, player, 0.1f));
+            StartCoroutine(setPlayerPositions(behavior, 2, counter, player.Player, 0.1f));
         }
     }
         void Start () {
@@ -109,15 +109,11 @@ public class gameManager : MonoBehaviour {
     void Update () {
         if (NetworkManager.Instance.IsServer)
         { 
-            if (TimeMachine.blueTimeMachine.MAvalableLaboreres.Count > 0)
-            {
-                Debug.Log("avaliable labourers " + TimeMachine.blueTimeMachine.MAvalableLaboreres.Count);
-            }
             if (blueTeamDead.Count > 0)
             {
                 if (TimeMachine.blueTimeMachine.MAvalableLaboreres.Count > 0)
                 {
-                    Debug.Log("respawning player");
+                    Debug.Log("respawning player as blue");
                     NetworkingPlayer toGive = blueTeamDead.Dequeue();
                     GameObject obj = TimeMachine.blueTimeMachine.MAvalableLaboreres.Dequeue();
                     obj.GetComponent<RMManager>().networkObject.Destroy();
@@ -128,12 +124,13 @@ public class gameManager : MonoBehaviour {
             }
             if (redTeamDead.Count > 0)
             {
+                Debug.Log("this is right");
                 if (TimeMachine.redTimeMachine.MAvalableLaboreres.Count > 0)
                 {
-                    Debug.Log("respawning player");
+                    Debug.Log("respawning player as red");
                     NetworkingPlayer toGive = redTeamDead.Dequeue();
-                    TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue().GetComponent<RMManager>().networkObject.SendRpc("destroyMyself", Receivers.All);
-                    //Destroy(TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue());
+                    GameObject obj = TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue();
+                    obj.GetComponent<RMManager>().networkObject.Destroy();
                     RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
                     StartCoroutine(setPlayerPositions(behavior, 1,2, toGive, 0.1f));
                 }

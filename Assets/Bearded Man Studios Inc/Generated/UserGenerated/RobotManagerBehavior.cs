@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"Vector3\", \"Vector3\"][\"Vector3\", \"Quaternion\", \"int\"][\"Vector3\"][\"int\", \"int\"][]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"force\", \"point\"][\"Position\", \"rotation\", \"team\"][\"position\"][\"team\", \"type\"][]]")]
+	[GeneratedRPC("{\"types\":[[\"Vector3\", \"Vector3\"][\"Vector3\", \"Quaternion\", \"int\"][\"Vector3\"][\"int\", \"int\"][][\"int\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"force\", \"point\"][\"Position\", \"rotation\", \"team\"][\"position\"][\"team\", \"type\"][][\"team\"]]")]
 	public abstract partial class RobotManagerBehavior : NetworkBehavior
 	{
 		public const byte RPC_RAM_PLAYER = 0 + 5;
@@ -13,6 +13,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		public const byte RPC_MAKE_INTO_LABOURER = 2 + 5;
 		public const byte RPC_SYNC_ROBOT_STATE = 3 + 5;
 		public const byte RPC_DESTROY_MYSELF = 4 + 5;
+		public const byte RPC_I_DIED = 5 + 5;
 		
 		public RobotManagerNetworkObject networkObject = null;
 
@@ -31,6 +32,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.RegisterRpc("makeIntoLabourer", makeIntoLabourer, typeof(Vector3));
 			networkObject.RegisterRpc("syncRobotState", syncRobotState, typeof(int), typeof(int));
 			networkObject.RegisterRpc("destroyMyself", destroyMyself);
+			networkObject.RegisterRpc("iDied", iDied, typeof(int));
 
 			networkObject.onDestroy += DestroyGameObject;
 
@@ -133,6 +135,10 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		/// Arguments:
 		/// </summary>
 		public abstract void destroyMyself(RpcArgs args);
+		/// <summary>
+		/// Arguments:
+		/// </summary>
+		public abstract void iDied(RpcArgs args);
 
 		// DO NOT TOUCH, THIS GETS GENERATED PLEASE EXTEND THIS CLASS IF YOU WISH TO HAVE CUSTOM CODE ADDITIONS
 	}

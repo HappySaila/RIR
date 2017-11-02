@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour {
 
     public static UIManager instance;
     public UICamera cam;
-    public masterServerManager masterServer;
+    public MasterServerScript masterServer;
     public InputField RegisterPassword;
     public InputField RegisterPasswordConfirm;
     public Text RegisterErrorMessage;
@@ -37,7 +37,7 @@ public class UIManager : MonoBehaviour {
 
     private void Start()
     {
-        masterServer = GetComponent<masterServerManager>();
+        masterServer = GetComponent<MasterServerScript>();
     }
 
     //single player buttons
@@ -120,7 +120,7 @@ public class UIManager : MonoBehaviour {
     public void CreateClicked(){
 		if (!RoomErrorMessage.enabled)
 		{
-            masterServer.createRoom();
+            masterServer.createRoomButtonPressed();
 		}
     }
 

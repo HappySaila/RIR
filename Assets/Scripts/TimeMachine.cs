@@ -11,7 +11,7 @@ public class TimeMachine : MonoBehaviour {
     public Transform timeMachine;
     public Transform initialPosition;
     public Transform targetPosition;
-	float currentProgress;
+	public float currentProgress;
 	public float buildSpeed;
 	public float buildSpeedMultiplier;
     float maxBuildSpeed;
