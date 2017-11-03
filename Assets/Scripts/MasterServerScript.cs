@@ -14,12 +14,11 @@ public class MasterServerScript : masterServerBehavior
     public Text matchingText;
     bool matching;
     int timer;
-    room myRoom;
+    public room myRoom;
 
     void Awake()
     {
         instance = this;
-          
     }
 
     // Use this for initialization
@@ -35,8 +34,8 @@ public class MasterServerScript : masterServerBehavior
         GlobalVariables.instance.searchingRooms = new Dictionary<int, List<room>>();
         networkObject.Networker.playerConnected += Networker_playerConnected;
         networkObject.Networker.playerDisconnected += Networker_playerDisconnected;
-        GlobalVariables.instance.me = new GlobalVariables.PlayerDetails("hi",1200,networkObject.Networker.Me);
-		
+        //GlobalVariables.instance.me = new GlobalVariables.PlayerDetails("hi",1200,networkObject.Networker.Me);
+        GlobalVariables.instance.me.Player = networkObject.Networker.Me;
     }
 
     private void Networker_playerDisconnected(NetworkingPlayer player, NetWorker sender)
@@ -60,13 +59,15 @@ public class MasterServerScript : masterServerBehavior
         BMSLogger.Instance.Log("connected");
         //@Grant add logic in here where you want to get the size and name of the room, I am leaving a default for now
         //The global variables.me needs to be instantiated when the player logs on.
-        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.AllBuffered, roomName, roomSize, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
+        networkObject.SendRpc(RPC_CREATE_ROOM, Receivers.AllBuffered, roomName, roomSize, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name,(int)networkObject.MyPlayerId);
     }
 
     public void joinRoomButtonPressed(string roomName)
     {
+        BMSLogger.Instance.Log(GlobalVariables.instance.me.Name + " and my id is "  + networkObject.MyPlayerId);
         //@Grant add logic in here where you want to get the name of the room, I am leaving a default for now
-        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.AllBuffered, roomName, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name);
+        networkObject.SendRpc(RPC_JOIN_ROOM, Receivers.AllBuffered, roomName, GlobalVariables.instance.me.Mmr, GlobalVariables.instance.me.Name,(int)networkObject.MyPlayerId);
+		//int counter = 0;
     }
     // Update is called once per frame
     void Update()
@@ -251,7 +252,7 @@ public class MasterServerScript : masterServerBehavior
         {
          if(matching == true)
             {
-            matchingText.text = timer + "";
+                //matchingText.text = timer + "";
             }
             timer += 1;
         }
@@ -261,14 +262,20 @@ public class MasterServerScript : masterServerBehavior
             GlobalVariables.instance.players[playerID].Player.SetMessageGroup((ushort)GlobalVariables.instance.messageGroupIncrement);
             myRoom = new room(new room(GlobalVariables.instance.players[playerID], roomSize, roomName, (ushort)GlobalVariables.instance.messageGroupIncrement));
             GlobalVariables.instance.existingRooms.Add(myRoom);
+            BMSLogger.Instance.Log("room exist created");
             
         }
 
         public void clientJoinRoom(string roomName, int playerID)
         {
             myRoom = GlobalVariables.instance.existingRooms.Find(roomname => roomname.RoomName == roomName);
-            GlobalVariables.instance.players[playerID].Player.SetMessageGroup((ushort)myRoom.messageGroupNumber);
+            //GlobalVariables.instance.players[playerID].Player.SetMessageGroup((ushort)myRoom.messageGroupNumber);
             myRoom.Players.Add(GlobalVariables.instance.players[playerID]);
+            BMSLogger.Instance.Log("amount in room " + myRoom.Players.Count);
+            int counter = 0;
+            foreach(GlobalVariables.PlayerDetails player in GlobalVariables.instance.players.Values){
+                BMSLogger.Instance.Log(counter++ + " " + player.Name);
+            }
         }
         #endregion
     #region RPC
@@ -284,42 +291,44 @@ public class MasterServerScript : masterServerBehavior
         int roomSize= args.GetNext<int>();
         int mmr = args.GetNext<int>();
         string playerName = args.GetNext<string>();
-        int playerID = (int)args.Info.SendingPlayer.NetworkId;
+        int playerID = args.GetNext<int>();
         if (!GlobalVariables.instance.players.ContainsKey(playerID))
         {
             GlobalVariables.instance.players[playerID] = new GlobalVariables.PlayerDetails(playerName, mmr,args.Info.SendingPlayer);
         }
-        if (networkObject.IsServer)
-        {
-            BMSLogger.Instance.Log("room joined");
-            serverCreateRoom(roomName, roomSize, playerID);
-        }
-        else
-        {
+        //if (networkObject.IsServer)
+        //{
+        //    BMSLogger.Instance.Log("room joined");
+        //    serverCreateRoom(roomName, roomSize, playerID);
+        //}
+        //else
+        //{
             clientCreateRoom(roomName, roomSize, playerID);
-        }
+        //}
         Debug.LogFormat("room: {0}", myRoom.Players.Count);
     }
 
     public override void joinRoom(RpcArgs args)
     {
         string roomName = args.GetNext<string>();
-        int playerID = (int)args.Info.SendingPlayer.NetworkId;
         int mmr = args.GetNext<int>();
         string playerName = args.GetNext<string>();
-        if (!GlobalVariables.instance.players.ContainsKey(playerID))
-        {
+        int playerID = args.GetNext<int>();
+        BMSLogger.Instance.Log("sending players id " + playerID);
+        if (!GlobalVariables.instance.players.ContainsKey(playerID)){
             GlobalVariables.instance.players[playerID] = new GlobalVariables.PlayerDetails(playerName, mmr, args.Info.SendingPlayer);
+            BMSLogger.Instance.Log("this many people in players " + GlobalVariables.instance.players.Count);
         }
-        if (networkObject.IsServer)
-        {
-            serverJoinRoom(roomName, playerID);
-        }
-        else
-        {
-            BMSLogger.Instance.Log("room joined");
+        //if (networkObject.IsServer)
+        //{
+        //    serverJoinRoom(roomName, playerID);
+        //}
+        //else
+        //{
+            //BMSLogger.Instance.Log("room joined");
             clientJoinRoom(roomName, playerID);
-        }
+
+        //}
     }
 
     public override void playerJoinRoom(RpcArgs args)

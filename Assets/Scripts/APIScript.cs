@@ -25,6 +25,8 @@ public class APIScript : MonoBehaviour {
         Debug.Log(query);
         string response = Http.Get(query);
         Debug.LogFormat("Server response: {0}", response);
+        GlobalVariables.instance.me.Name = username;
+        GlobalVariables.instance.me.Mmr = 1200;
         if (response.Equals("{ \"error\":\"Server error\"}") || response.Length<3)
         {
             return false;
@@ -43,7 +45,8 @@ public class APIScript : MonoBehaviour {
         form.AddField("salt", "none");
         string response = Http.Post(query,form);
         Debug.Log(response);
-        GlobalVariables.instance.me.Name = "cary";
+        GlobalVariables.instance.me.Name = username;
+        GlobalVariables.instance.me.Mmr = 1200;
         if(response.Equals("{ \"error\":\"Server error\"}"))
         {
             return false;

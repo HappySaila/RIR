@@ -88,7 +88,7 @@ public class MultiplayerMenu : MonoBehaviour
 
 	public void Connected(NetWorker networker)
 	{
-        NetworkManager.Instance.Initialize(networker);
+		NetworkManager.Instance.Initialize(networker);
         if (!networker.IsBound)
 		{
 			Debug.LogError("NetWorker failed to bind");
@@ -103,11 +103,14 @@ public class MultiplayerMenu : MonoBehaviour
 		}
 		else if (mgr == null)
 			mgr = Instantiate(networkManager).GetComponent<NetworkManager>();
+        
+		networker.objectCreated += (networkObject) => {
+            print("Crazy! network object created");
+			//UIManager.instance.FadeFromBlack();
+		};
+		//if (networker.IsServer)
 
-
-        //if (networker.IsServer)
-            
-        NetworkObject.Flush(networker);
+		NetworkObject.Flush(networker);
         /*if (networker is IServer)
 		{
                 Debug.Log("I AM THE SERVER");
@@ -121,17 +124,17 @@ public class MultiplayerMenu : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
         Invoke("spawnObject", 1f);
+
     }
+
 
     public void spawnObject()
     {
         Debug.Log("creating master server");
-        //Debug.Log(mgr.IsServer);
         Debug.Log(NetworkManager.Instance.IsServer);
         NetworkManager.Instance.InstantiatemasterServer();
         Destroy(gameObject);
-        UIManager.instance.cam.LookAtMultiplayer();
-        UIManager.instance.FadeFromBlack();
+		//UIManager.instance.FadeFromBlack();
 	}
 
     private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)

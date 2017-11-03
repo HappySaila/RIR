@@ -23,6 +23,7 @@ public class UIManager : MonoBehaviour {
     AudioSource audioSource;
     public GameObject forgeCanvas;
     GameObject forgeCanvasInstance;
+    int waitingRobots=0;
 
     private void Awake()
     {
@@ -37,6 +38,16 @@ public class UIManager : MonoBehaviour {
 
     private void Start()
     {
+        Invoke("CheckConnection", 1f);
+
+
+    }
+
+    void CheckConnection(){
+		if (MasterServerScript.instance != null)
+		{
+			cam.LookAtMultiplayer();
+		}
     }
     //single player buttons
     public void SinglePlayerClicked(){
@@ -62,9 +73,10 @@ public class UIManager : MonoBehaviour {
     }
 
     public void MultiPlayerClicked(){
-        FadeBlack();
+        //FadeBlack();
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
 		forgeCanvasInstance = (GameObject)Instantiate(forgeCanvas, transform.position, transform.rotation);
+        cam.LookAtMultiplayer();
     }
 
     public void MultiplayerConnected(){
@@ -123,14 +135,31 @@ public class UIManager : MonoBehaviour {
         if (ValidateRoomSize()){
 			cam.LookAtWaitingRoom();
 			MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
+			StartCoroutine(SpawnWaitingRobots());
 		}
     }
 
-    public void JoinClicked(){
-        SpawnRobots(4);
-		cam.LookAtWaitingRoom();
-        return;
+    public void JoinClicked()
+    {
+        cam.LookAtWaitingRoom();
         MasterServerScript.instance.joinRoomButtonPressed(RoomName.text);
+        StartCoroutine(SpawnWaitingRobots());
+    }
+
+    IEnumerator SpawnWaitingRobots(){
+		yield return new WaitForSeconds(0.5f);
+        if (waitingRobots < MasterServerScript.instance.myRoom.Players.Count){
+            Debug.LogFormat("Name: {0}", MasterServerScript.instance.myRoom.Players[waitingRobots].Name);
+            //we need to spawn a player
+            SpawnRobot(waitingRobots, MasterServerScript.instance.myRoom.Players[waitingRobots].Name);
+            waitingRobots++;
+        }
+
+        if (waitingRobots < MasterServerScript.instance.myRoom.RoomSize){
+            //starting match making
+            StartCoroutine(SpawnWaitingRobots());
+        }
+
     }
 
     public bool ValidateRoomSize(){
@@ -171,10 +200,11 @@ public class UIManager : MonoBehaviour {
         Destroy(FadeCanvasInstance);
     }
 
-    public void SpawnRobots(int i){
-        foreach (Transform t in waitingRoomSpawnPositions){
-            GameObject robot = Instantiate(WaitingRobot, t.position, t.rotation);
-            robot.GetComponent<RenameRobot>().Rename("Ana da bot");
-        }
+    public void SpawnRobot(int playerNumber, string Name){
+		BMSLogger.Instance.LogFormat("Player number {0}", playerNumber);
+		Transform spawnPos = waitingRoomSpawnPositions[playerNumber];
+		GameObject robot = Instantiate(WaitingRobot, spawnPos.position, spawnPos.rotation);
+		robot.GetComponent<RenameRobot>().Rename(Name);
     }
+
 }

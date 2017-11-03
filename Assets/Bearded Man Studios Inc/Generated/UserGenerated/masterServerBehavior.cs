@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace BeardedManStudios.Forge.Networking.Generated
 {
-	[GeneratedRPC("{\"types\":[[\"string\", \"int\", \"int\", \"string\"][\"string\", \"int\", \"string\"][\"string\"][\"string\", \"string\"][\"string\"][\"string\"][\"string\", \"string\"][\"ushort\"]]")]
-	[GeneratedRPCVariableNames("{\"types\":[[\"name\", \"partySize\", \"mmr\", \"playerName\"][\"name\", \"mmr\", \"playerName\"][\"Name\"][\"team1\", \"team2\"][\"name\"][\"roomName\"][\"team1\", \"team2\"][\"port\"]]")]
+	[GeneratedRPC("{\"types\":[[\"string\", \"int\", \"int\", \"string\", \"int\"][\"string\", \"int\", \"string\", \"int\"][\"string\"][\"string\", \"string\"][\"string\"][\"string\"][\"string\", \"string\"][\"ushort\"]]")]
+	[GeneratedRPCVariableNames("{\"types\":[[\"name\", \"partySize\", \"mmr\", \"playerName\", \"id\"][\"name\", \"mmr\", \"playerName\", \"id\"][\"Name\"][\"team1\", \"team2\"][\"name\"][\"roomName\"][\"team1\", \"team2\"][\"port\"]]")]
 	public abstract partial class masterServerBehavior : NetworkBehavior
 	{
 		public const byte RPC_CREATE_ROOM = 0 + 5;
@@ -29,8 +29,8 @@ namespace BeardedManStudios.Forge.Networking.Generated
 			networkObject.AttachedBehavior = this;
 
 			base.SetupHelperRpcs(networkObject);
-			networkObject.RegisterRpc("createRoom", createRoom, typeof(string), typeof(int), typeof(int), typeof(string));
-			networkObject.RegisterRpc("joinRoom", joinRoom, typeof(string), typeof(int), typeof(string));
+			networkObject.RegisterRpc("createRoom", createRoom, typeof(string), typeof(int), typeof(int), typeof(string), typeof(int));
+			networkObject.RegisterRpc("joinRoom", joinRoom, typeof(string), typeof(int), typeof(string), typeof(int));
 			networkObject.RegisterRpc("startMatching", startMatching, typeof(string));
 			networkObject.RegisterRpc("StartGame", StartGame, typeof(string), typeof(string));
 			networkObject.RegisterRpc("playerJoinRoom", playerJoinRoom, typeof(string));
@@ -62,8 +62,6 @@ namespace BeardedManStudios.Forge.Networking.Generated
 					{
 						MainThreadManager.Run(() =>
 						{
-                            Debug.LogFormat("object: {0}", metadataTransform);
-                            Debug.LogFormat("instance: {0}", ObjectMapper.Instance);
 							transform.position = ObjectMapper.Instance.Map<Vector3>(metadataTransform);
 							transform.rotation = ObjectMapper.Instance.Map<Quaternion>(metadataTransform);
 						});
@@ -119,6 +117,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		/// int partySize
 		/// int mmr
 		/// string playerName
+		/// int id
 		/// </summary>
 		public abstract void createRoom(RpcArgs args);
 		/// <summary>
@@ -126,6 +125,7 @@ namespace BeardedManStudios.Forge.Networking.Generated
 		/// string name
 		/// int mmr
 		/// string playerName
+		/// int id
 		/// </summary>
 		public abstract void joinRoom(RpcArgs args);
 		/// <summary>
