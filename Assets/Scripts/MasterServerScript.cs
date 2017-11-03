@@ -366,7 +366,7 @@ public class MasterServerScript : masterServerBehavior
     {
 
         matching = false;
-        matchingText.text = "match found!";
+        //matchingText.text = "match found!";
         Invoke("disableGameObject", 1f);
     }
 
