@@ -35,6 +35,10 @@ public class RSAttack : MonoBehaviour {
 
 			}
 		}
+		if (Input.GetAxis ("Jump") > 0) {
+			Debug.Log ("hiHIHIH");
+		}
+			
             
             
 		if (attack > 0 && canRam)

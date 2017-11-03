@@ -126,7 +126,9 @@ public class RSMovement : MonoBehaviour
 
 	void Update ()
 	{
+		if (!robotManager.isAI) {
 		UpdateTaunt ();
+		}
 	}
 
 	public void UpdateTaunt ()

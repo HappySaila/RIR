@@ -63,7 +63,7 @@ public class InitialSpawnManager : MonoBehaviour {
 		//spawn bots
 		foreach (Transform t in RedPositions)
 		{
-            print(i);
+           // print(i);
             if (i != 1 && i < redBots){
 				robot = Instantiate(RobotAI, t.position, t.rotation);
 				robot.GetComponent<RSController>().SetTeam(true);
