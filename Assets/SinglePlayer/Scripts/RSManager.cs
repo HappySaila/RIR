@@ -120,7 +120,7 @@ public class RSManager : MonoBehaviour {
 			GetComponentInParent<RSController>().Die();
 		}
 
-
+		robotFollow.enabled = false;
             
 	}
 

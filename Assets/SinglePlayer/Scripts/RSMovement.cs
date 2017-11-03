@@ -126,7 +126,9 @@ public class RSMovement : MonoBehaviour
 
 	void Update ()
 	{
+		if (!robotManager.isAI) {
 		UpdateTaunt ();
+		}
 	}
 
 	public void UpdateTaunt ()
@@ -152,14 +154,13 @@ public class RSMovement : MonoBehaviour
 
 
 		if (!robotTarget.robotMovement.inBase) {
-			
-		
 			Vector3 goToPos = new Vector3 (AITarget.position.x,0,AITarget.position.z);
-			Debug.Log("agentpos"+agent.transform.position+"myPos"+transform.position+" target pos"+AITarget.position+"gotTopos"+goToPos);
-			Debug.Log ("dis" + TargetDistance ());
+			//Debug.Log("agentpos"+agent.transform.position+"myPos"+transform.position+" target pos"+AITarget.position+"gotTopos"+goToPos);
+			//Debug.Log ("dis" + TargetDistance ());
 			agent.SetDestination (goToPos);
-			//agent.SetDestination (AITarget.position);
 		}
+
+
 
 		Transform currentForward = transform;
 		transform.LookAt (AITarget);
@@ -228,8 +229,7 @@ public class RSMovement : MonoBehaviour
 			if (robot.robotLaborerControl.isFighter) {
 				//Debug.Log (" Fighter spottted" +robot.robotLaborerControl.isFighter+" "+robot.isMainPlayer + " red:  " + robot.isRed+DistanceToPrioritizeFighters);
 				//Debug.Log ((Vector3.Distance (transform.position, robot.transform.position))+""+ (Vector3.Distance (transform.position, robot.transform.position) <= DistanceToPrioritizeFighters));
-				if (Vector3.Distance (transform.position, robot.rigid.transform.position) <= DistanceToPrioritizeFighters) {
-					//Debug.Log ("WillgoFOr Fighter");
+				if (Vector3.Distance (transform.position, robot.rigid.transform.position) <= DistanceToPrioritizeFighters) {//"WillgoFOr Fighter");
 					currentTarget = robot;
 					MustGoForFighter = true;
 					continue;
@@ -274,7 +274,7 @@ public class RSMovement : MonoBehaviour
 	public IEnumerator FindTarget ()
 	{
 		//Debug.Log ("FindTarget");
-		yield return new WaitForSeconds (3);
+		yield return new WaitForSeconds (2);
 		//Debug.Log ("FindTarget3333");
 		if (robotManager.robotLaborerControl.isFighter) {
 			GetAITarget ();
