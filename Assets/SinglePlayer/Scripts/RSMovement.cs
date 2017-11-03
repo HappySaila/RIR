@@ -127,7 +127,7 @@ public class RSMovement : MonoBehaviour
 	void Update ()
 	{
 		if (!robotManager.isAI) {
-		UpdateTaunt ();
+			UpdateTaunt ();
 		}
 	}
 
@@ -147,38 +147,40 @@ public class RSMovement : MonoBehaviour
 
 	void AIControl ()
 	{
-		if (AITarget == null) {
-			//Debug.Log("null");
-			return;
-		}
-
-
-		if (!robotTarget.robotMovement.inBase) {
-			Vector3 goToPos = new Vector3 (AITarget.position.x,0,AITarget.position.z);
-			//Debug.Log("agentpos"+agent.transform.position+"myPos"+transform.position+" target pos"+AITarget.position+"gotTopos"+goToPos);
-			//Debug.Log ("dis" + TargetDistance ());
-			agent.SetDestination (goToPos);
-		}
-
-
-
-		Transform currentForward = transform;
-		transform.LookAt (AITarget);
-		transform.Rotate (0, 180, 0);
-
-
-		if (robotTarget == null) {
-			return;
-		}
-
-
-		//if (robotTarget.robotLaborerControl.isFighter) {//if enemy Fighter
-		if(robotManager.isRed != robotTarget.isRed){
-			//if distance is shorter then ram is distance - ram
-			if (TargetDistance () < AIData.GetRamDistance ()) {
-				robotManager.robotAttack.InitiateRam ();
+		if (canMove) {
+			
+			if (AITarget == null) {
+				//Debug.Log("null");
+				return;
 			}
-		}
+
+
+			if (!robotTarget.robotMovement.inBase) {
+				agent.SetDestination (AITarget.position);
+			}
+
+
+
+			Transform currentForward = transform;
+			transform.LookAt (AITarget);
+			transform.Rotate (0, 180, 0);
+
+
+			if (robotTarget == null) {
+				return;
+			}
+
+
+			//if (robotTarget.robotLaborerControl.isFighter) {//if enemy Fighter
+			if (robotManager.isRed != robotTarget.isRed && robotTarget.robotLaborerControl.isFighter) {
+				//if distance is shorter then ram is distance - ram
+				if (TargetDistance () < AIData.GetRamDistance ()) {
+					Debug.Log ("iwant to ram at time:"+ Time.time);
+						
+					robotManager.robotAttack.InitiateRam ();
+				}
+			}
+		}	
 	}
 
 	float TargetDistance ()
@@ -201,6 +203,9 @@ public class RSMovement : MonoBehaviour
 
 	void GetAITarget ()
 	{
+
+		float DistanceTORobot;
+
 		//Debug.Log ("GetAITarget");
 		MustGoForFighter = false;
 		if (DistanceToPrioritizeFighters == 0) {
@@ -214,7 +219,7 @@ public class RSMovement : MonoBehaviour
 			
 			//Debug.Log ("robot");
 			if (robot.robotLaborerControl == null) {
-			//	Debug.Log ("robot.robotLaborerControl == null");
+				//	Debug.Log ("robot.robotLaborerControl == null");
 				continue;
 			}
 			//if the current robot is not on our team
@@ -226,20 +231,24 @@ public class RSMovement : MonoBehaviour
 				continue;
 			} 
 
+			DistanceTORobot = Vector3.Distance (transform.position, robot.rigid.transform.position);
+
 			if (robot.robotLaborerControl.isFighter) {
 				//Debug.Log (" Fighter spottted" +robot.robotLaborerControl.isFighter+" "+robot.isMainPlayer + " red:  " + robot.isRed+DistanceToPrioritizeFighters);
 				//Debug.Log ((Vector3.Distance (transform.position, robot.transform.position))+""+ (Vector3.Distance (transform.position, robot.transform.position) <= DistanceToPrioritizeFighters));
-				if (Vector3.Distance (transform.position, robot.rigid.transform.position) <= DistanceToPrioritizeFighters) {//"WillgoFOr Fighter");
-					currentTarget = robot;
+				if (DistanceTORobot <= DistanceToPrioritizeFighters) {//"WillgoFOr Fighter");
+
+					if (!MustGoForFighter || DistanceTORobot < Vector3.Distance (transform.position, currentTarget.rigid.transform.position)) {
+						//Debug.Log ("distance"+Vector3.Distance (transform.position, robot.rigid.transform.position) );
+						currentTarget = robot;
+					}  
 					MustGoForFighter = true;
 					continue;
 				}
 			}
 	
 			if (currentTarget == null) {
-				//	Debug.Log (" null");
 				currentTarget = robot;
-				//Debug.Log ("distancenull"+Vector3.Distance (transform.position, robot.rigid.transform.position) );
 
 			} else if (!MustGoForFighter) {
 				
@@ -249,7 +258,7 @@ public class RSMovement : MonoBehaviour
 				//Debug.Log (" currentTarget" +Vector3.Distance (transform.position, currentTarget.transform.position));
 
 
-				if (Vector3.Distance (transform.position, robot.rigid.transform.position) < Vector3.Distance (transform.position, currentTarget.rigid.transform.position)) {
+				if (DistanceTORobot < Vector3.Distance (transform.position, currentTarget.rigid.transform.position)) {
 					//Debug.Log ("distance"+Vector3.Distance (transform.position, robot.rigid.transform.position) );
 					currentTarget = robot;
 				}      

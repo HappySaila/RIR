@@ -28,7 +28,6 @@ public class UIManager : MonoBehaviour {
     private void Awake()
     {
 		audioSource= GetComponentInChildren<AudioSource>();
-		audioMixerScript.INSTANCE.ChangeSnapShot (0);
         if (instance == null){
             instance = this;
         } else {
@@ -39,9 +38,8 @@ public class UIManager : MonoBehaviour {
     private void Start()
     {
         Invoke("CheckConnection", 1f);
-
-
-    }
+		audioMixerScript.INSTANCE.ChangeSnapShot(0);
+	}
 
     void CheckConnection(){
 		if (MasterServerScript.instance != null)
@@ -73,9 +71,11 @@ public class UIManager : MonoBehaviour {
     }
 
     public void MultiPlayerClicked(){
-        //FadeBlack();
-		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
-		forgeCanvasInstance = (GameObject)Instantiate(forgeCanvas, transform.position, transform.rotation);
+        SoundManager.INSTANCE.PlayButtonClicked (audioSource);
+        if (MasterServerScript.instance == null){
+			FadeBlack();
+			forgeCanvasInstance = (GameObject)Instantiate(forgeCanvas, transform.position, transform.rotation);
+		}
         cam.LookAtMultiplayer();
     }
 
@@ -132,18 +132,34 @@ public class UIManager : MonoBehaviour {
 
     //join room buttons
     public void CreateClicked(){
-        if (ValidateRoomSize()){
+        if (ValidateRoomSize() && ValidateRoomName()){
 			cam.LookAtWaitingRoom();
 			MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
 			StartCoroutine(SpawnWaitingRobots());
 		}
     }
 
+    bool ValidateRoomName(){
+        if (RoomName.text == "Room name..." || RoomName.text.Length == 0){
+            RoomErrorMessage.text = "Enter a room name";
+            return false;
+        } else {
+            RoomErrorMessage.text = "";
+            return true;
+        }
+    }
+
     public void JoinClicked()
     {
-        cam.LookAtWaitingRoom();
-        MasterServerScript.instance.joinRoomButtonPressed(RoomName.text);
-        StartCoroutine(SpawnWaitingRobots());
+        if (GlobalVariables.instance.existingRooms.Exists(i => i.RoomName == RoomName.text))
+        {
+            MasterServerScript.instance.joinRoomButtonPressed(RoomName.text);
+            cam.LookAtWaitingRoom();
+            StartCoroutine(SpawnWaitingRobots());
+            RoomErrorMessage.text = "";
+        } else {
+            RoomErrorMessage.text = "room doesnt exists";
+        }
     }
 
     IEnumerator SpawnWaitingRobots(){
@@ -175,6 +191,8 @@ public class UIManager : MonoBehaviour {
 
     public void loggedIn(){
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
+		GetComponent<RegisterScript>().error.text = "";
+        GetComponent<LoginScript>().error.text = "";
         cam.LookAtCreateRoom();
     }
 
@@ -197,8 +215,11 @@ public class UIManager : MonoBehaviour {
     }
 
     public void DestroyFadeBlackCanvas(){
-        Destroy(FadeCanvasInstance);
-    }
+        if (FadeCanvas!=null){
+			Destroy(FadeCanvasInstance);
+		}
+	}
+            
 
     public void SpawnRobot(int playerNumber, string Name){
 		BMSLogger.Instance.LogFormat("Player number {0}", playerNumber);

@@ -12,6 +12,8 @@ public class RSAttack : MonoBehaviour {
     RSManager robotManager;
 	bool isRamming = false;
 	public bool canRam = true;
+	public float whenIStartedRammingLast;
+
 	// Use this for initialization
 	void Start () {
 		anim = GetComponent<Animator>();
@@ -35,22 +37,24 @@ public class RSAttack : MonoBehaviour {
 
 			}
 		}
-		if (Input.GetAxis ("Jump") > 0) {
-			Debug.Log ("hiHIHIH");
-		}
+
 			
-            
-            
-		if (attack > 0 && canRam)
-		{
-            InitiateRam();
+		if (attack > 0 && canRam) {
+			InitiateRam ();
+			whenIStartedRammingLast = Time.time;
+
+		} else if(!isRamming) {
+			whenIStartedRammingLast =99999999999;
+		
 		}
 	}
 
     public void InitiateRam(){
-        if (!canRam){
+		if (!canRam){
             return;
         }
+
+		Debug.Log ("                 time in InitiateRam "+Time.time);
 		canRam = false;
 		anim.SetTrigger("Ram");
 		rigid.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY
@@ -91,11 +95,22 @@ public class RSAttack : MonoBehaviour {
 		if (target.tag == "Hittable")
 		{
 			target.GetComponent<Rigidbody>().AddForceAtPosition(-transform.forward * ramForce, point, ForceMode.VelocityChange);
-            if (target.GetComponentInParent<RSManager>() != null)
+			RSManager rsManagerofTarget = target.GetComponentInParent<RSManager> ();
+			if (rsManagerofTarget!= null) //the player has rammed a robot
 			{
-                //the player has rammed a robot
-				target.GetComponentInParent<RSManager>().Die();
+				
+				if (rsManagerofTarget.robotAttack.isRamming) {//he is also ramming
+					//if i ram first you dead
+					if (whenIStartedRammingLast <= rsManagerofTarget.robotAttack.whenIStartedRammingLast) {
+						target.GetComponentInParent<RSManager> ().Die ();
+					}
+				} else {
+					target.GetComponentInParent<RSManager> ().Die ();
+				}
+
 			}
+
+
 			robotManager.playSound ("hit");
 		}
 	}

@@ -7,8 +7,7 @@ public class RegisterScript : APIScript {
     public InputField password;
     public InputField confirmPassword;
     public Text error;
-    public GameObject toHide;
-    public GameObject toShow;
+
     public void buttonPressed()
     {
         //toShow.SetActive(true);
@@ -24,14 +23,17 @@ public class RegisterScript : APIScript {
             return;
         }
         bool registered = RegisterUser(username.text,password.text);
-        Debug.LogFormat("registered {0}", registered);
 
         if (registered){
 			UIManager.instance.loggedIn();
             GlobalVariables.instance.me.Name = username.text;
             Debug.LogFormat("username: {0}", username.text);
+            error.text = "";
         } else {
             //throw error
+            print("Already exists");
+            error.enabled = true;
+            error.text = "username already exists";
         }
     }
 }

@@ -84,6 +84,9 @@ public class RSManager : MonoBehaviour {
 
 	public void Die()
 	{
+		Debug.Log ("im dead:"+ Time.time);
+		//stop attacking
+		robotAttack.enabled = false;
 
 		//so there is still and audioListener
 		if(audioListener!=null){
@@ -100,8 +103,7 @@ public class RSManager : MonoBehaviour {
 		hoverBase.enabled = false;
 		GetComponentInChildren<NavMeshAgent>().enabled = false;
 
-		//stop attacking
-		robotAttack.enabled = false;
+
 
         //set cameras - disable camera colliders and enable ghost traveling camera
         robotFollow.SetColliders(false);

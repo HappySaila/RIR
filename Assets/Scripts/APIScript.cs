@@ -45,7 +45,7 @@ public class APIScript : MonoBehaviour {
         Debug.Log(response);
         GlobalVariables.instance.me.Name = username;
         GlobalVariables.instance.me.Mmr = 1200;
-        if(response.Equals("{ \"error\":\"Server error\"}"))
+        if(response.Equals("{\"error\":\"Server error\"}"))
         {
             return false;
         }
