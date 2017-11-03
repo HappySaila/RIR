@@ -1,7 +1,5 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Unity;
-using BeardedManStudios.Forge.Networking.Lobby;
-using BeardedManStudios.SimpleJSON;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
