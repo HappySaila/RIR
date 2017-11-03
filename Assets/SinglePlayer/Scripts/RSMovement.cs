@@ -160,7 +160,6 @@ public class RSMovement : MonoBehaviour
 
 
 
-
 		Transform currentForward = transform;
 		transform.LookAt (AITarget);
 		transform.Rotate (0, 180, 0);

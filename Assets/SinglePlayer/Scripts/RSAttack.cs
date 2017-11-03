@@ -29,8 +29,10 @@ public class RSAttack : MonoBehaviour {
         if (!robotManager.isAI){
 			if (isPlayerOne){
 				attack = Input.GetAxis("Jump");
+
 			} else {
                 attack = Input.GetButton("Ram") ? 1 : 0;
+
 			}
 		}
             
