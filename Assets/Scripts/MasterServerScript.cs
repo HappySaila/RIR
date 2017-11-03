@@ -52,7 +52,17 @@ public class MasterServerScript : masterServerBehavior
         }
     }
 
-
+    public void buttonPressed()
+    {
+        if(roomSize.text != "")
+        {
+            createRoomButtonPressed(roomName.text, int.Parse(roomSize.text));
+        }
+        else
+        {
+            joinRoomButtonPressed(roomName.text);
+        }
+    }
 
     public void createRoomButtonPressed(string roomName, int roomSize)
     {
@@ -296,13 +306,13 @@ public class MasterServerScript : masterServerBehavior
         {
             GlobalVariables.instance.players[playerID] = new GlobalVariables.PlayerDetails(playerName, mmr,args.Info.SendingPlayer);
         }
-        //if (networkObject.IsServer)
-        //{
-        //    BMSLogger.Instance.Log("room joined");
-        //    serverCreateRoom(roomName, roomSize, playerID);
-        //}
-        //else
-        //{
+        /*if (networkObject.IsServer)
+        {
+            BMSLogger.Instance.Log("room joined");
+            serverCreateRoom(roomName, roomSize, playerID);
+        }
+        else
+        {*/
             clientCreateRoom(roomName, roomSize, playerID);
         //}
         Debug.LogFormat("room: {0}", myRoom.Players.Count);
@@ -319,15 +329,14 @@ public class MasterServerScript : masterServerBehavior
             GlobalVariables.instance.players[playerID] = new GlobalVariables.PlayerDetails(playerName, mmr, args.Info.SendingPlayer);
             BMSLogger.Instance.Log("this many people in players " + GlobalVariables.instance.players.Count);
         }
-        //if (networkObject.IsServer)
-        //{
-        //    serverJoinRoom(roomName, playerID);
-        //}
-        //else
-        //{
-            //BMSLogger.Instance.Log("room joined");
+       /* if (networkObject.IsServer)
+        {
+            serverJoinRoom(roomName, playerID);
+        }
+        else
+        {
+            BMSLogger.Instance.Log("room joined");*/
             clientJoinRoom(roomName, playerID);
-
         //}
     }
 

@@ -134,7 +134,8 @@ public class MultiplayerMenu : MonoBehaviour
         Debug.Log(NetworkManager.Instance.IsServer);
         NetworkManager.Instance.InstantiatemasterServer();
         Destroy(gameObject);
-		//UIManager.instance.FadeFromBlack();
+        //UIManager.instance.cam.LookAtMultiplayer();
+       // UIManager.instance.FadeFromBlack();
 	}
 
     private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)
