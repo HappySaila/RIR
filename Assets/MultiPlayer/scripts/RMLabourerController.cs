@@ -134,9 +134,11 @@ public class RMLabourerController : MonoBehaviour {
         if (Vector3.Distance(target, transform.position) < 3f)
         {
             //target has reached its destination and must start building
+            BMSLogger.Instance.Log("building ");
             anim.SetBool("isBuilding", true);
             robotManager.type = RMManager.types.BUILDER;
             agent.enabled = false;
+            robotManager.robotMovement.enabled = false;
             isBuilding = true;
             if (robotManager.networkObject.IsServer)
             {

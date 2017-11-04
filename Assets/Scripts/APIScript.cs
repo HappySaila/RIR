@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
 using UnityEngine;
-using System.Collections.Specialized;
 using System.Text;
 using System.Security.Cryptography;
 
 public class APIScript : MonoBehaviour {
 
-    public const string defaultIP = "54.202.37.101";
+    public const string defaultIP = "http://ec2-54-202-37-101.us-west-2.compute.amazonaws.com";
     public const string defaultPort = "1337";
 
     protected bool ensureConnection(string IP = defaultIP,string PORT = defaultPort) 

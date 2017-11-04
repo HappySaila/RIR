@@ -18,6 +18,7 @@ public class RMManager : RobotManagerBehavior {
         [HideInInspector] public RMLabourerController labourerController;
     [Tooltip("Collider that makes robot hover above ground.")] public SphereCollider hoverBase;
     public Camera Camara;
+    public Camera frontCamara;
     [HideInInspector] public int team = 0;
     [HideInInspector] public types type;
     #endregion
@@ -49,11 +50,25 @@ public class RMManager : RobotManagerBehavior {
     // Update is called once per frame
     void Update()
     {
-       /* if (!networkObject.IsServer && networkObject.IsOwner)
+        /* if (!networkObject.IsServer && networkObject.IsOwner)
+         {
+             BMSLogger.Instance.Log("I am team " + team);
+         }*/
+        if (Input.GetKeyDown(KeyCode.E)){
+            if(Camara.enabled == true)
+            {
+                Camara.enabled = false;
+                frontCamara.enabled = true;
+            }
+        };
+        if (Input.GetKeyUp(KeyCode.E))
         {
-            BMSLogger.Instance.Log("I am team " + team);
-        }*/
-
+            if(frontCamara.enabled == true)
+            {
+                Camara.enabled = true;
+                frontCamara.enabled = false;
+            }
+        }
         if (networkObject.IsOwner && (type == types.FIGHTER || type == types.DEADLABOURER))
         {   
             
@@ -65,7 +80,7 @@ public class RMManager : RobotManagerBehavior {
             if (team != 0) { 
                 robotAttack.attack();
             }
-            if (type == types.FIGHTER)
+            if (type == types.FIGHTER && frontCamara.enabled == false)
             {
                 Camara.enabled = true;
             }
@@ -146,7 +161,7 @@ public class RMManager : RobotManagerBehavior {
         
         
         labourerController.SetLaborer();
-        
+
         //type = types.DEADLABOURER;
     }
 #region RPC
