@@ -12,6 +12,7 @@ public class RMManager : RobotManagerBehavior {
     {
         FIGHTER = 0,DEADLABOURER = 1,BUILDER = 2,MOVINGTOBASE = 3,DYING = 4
     }
+    public AudioSource audio;
     bool canEndGame = true;
     #region fields
         [HideInInspector] public RMMovement robotMovement;
@@ -32,6 +33,7 @@ public class RMManager : RobotManagerBehavior {
         robotMovement = GetComponentInChildren<RMMovement>();
         labourerController = GetComponentInChildren<RMLabourerController>();
         robotAttack = GetComponentInChildren<RMAttack>();
+        audio = GetComponentInChildren<AudioSource>();
         labourerController.isIdleLaborer = false;
         if (networkObject.IsServer)
         {
@@ -46,6 +48,27 @@ public class RMManager : RobotManagerBehavior {
             Camara.enabled = false;
         }
         
+    }
+
+    public void playSound(string sound)
+    {//this methord exsist so that the audio souce is accses through here
+
+        switch (sound)
+        {
+            case "hit":
+                SoundManager.INSTANCE.PlayRamHit(audio);
+                break;
+            case "collectLabourer":
+                SoundManager.INSTANCE.PlayLabourPickUp(audio);
+                break;
+            case "hammer":
+                SoundManager.INSTANCE.PlayHammer(audio);
+                break;
+            case "spannereeraSDASF":
+                //SoundManager.INSTANCE.PlayRamHit (audioSource);
+                break;
+
+        }
     }
 
     void ChangeToGameOver()

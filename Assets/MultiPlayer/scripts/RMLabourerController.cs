@@ -68,7 +68,7 @@ public class RMLabourerController : MonoBehaviour {
             agent.SetDestination(target);
             trigger.enabled = false;
 
-            //robotManager.playSound("collectLabourer");
+            robotManager.playSound("collectLabourer");
 
         }
 
@@ -126,8 +126,9 @@ public class RMLabourerController : MonoBehaviour {
 
     public void playHammerSoundFromAnimation()
     {
-        //robotManager.playSound("hammer");
+        robotManager.playSound("hammer");
     }
+
     public void tryStartBuilding()
     {
         //Debug.Log(Vector3.Distance(target, transform.position));
