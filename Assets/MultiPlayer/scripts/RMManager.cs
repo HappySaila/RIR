@@ -5,13 +5,15 @@ using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class RMManager : RobotManagerBehavior {
     public enum types
     {
         FIGHTER = 0,DEADLABOURER = 1,BUILDER = 2,MOVINGTOBASE = 3,DYING = 4
     }
-
+    public AudioSource audio;
+    bool canEndGame = true;
     #region fields
         [HideInInspector] public RMMovement robotMovement;
         [HideInInspector] public RMAttack robotAttack;
@@ -31,6 +33,7 @@ public class RMManager : RobotManagerBehavior {
         robotMovement = GetComponentInChildren<RMMovement>();
         labourerController = GetComponentInChildren<RMLabourerController>();
         robotAttack = GetComponentInChildren<RMAttack>();
+        audio = GetComponentInChildren<AudioSource>();
         labourerController.isIdleLaborer = false;
         if (networkObject.IsServer)
         {
@@ -44,7 +47,35 @@ public class RMManager : RobotManagerBehavior {
         {
             Camara.enabled = false;
         }
+        
+    }
 
+    public void playSound(string sound)
+    {//this methord exsist so that the audio souce is accses through here
+
+        switch (sound)
+        {
+            case "hit":
+                SoundManager.INSTANCE.PlayRamHit(audio);
+                break;
+            case "collectLabourer":
+                SoundManager.INSTANCE.PlayLabourPickUp(audio);
+                break;
+            case "hammer":
+                SoundManager.INSTANCE.PlayHammer(audio);
+                break;
+            case "spannereeraSDASF":
+                //SoundManager.INSTANCE.PlayRamHit (audioSource);
+                break;
+
+        }
+    }
+
+    void ChangeToGameOver()
+    {
+        //look at game over
+        SceneManager.LoadScene("GameOver");
+        audioMixerScript.INSTANCE.ChangeSnapShot(0);
     }
 
     // Update is called once per frame
@@ -54,56 +85,65 @@ public class RMManager : RobotManagerBehavior {
          {
              BMSLogger.Instance.Log("I am team " + team);
          }*/
-        if (Input.GetKeyDown(KeyCode.E)){
-            if(Camara.enabled == true)
-            {
-                Camara.enabled = false;
-                frontCamara.enabled = true;
-            }
-        };
-        if (Input.GetKeyUp(KeyCode.E))
+        if (canEndGame)
         {
-            if(frontCamara.enabled == true)
+                if (Input.GetKeyDown(KeyCode.E)){
+                if(Camara.enabled == true)
+                {
+                    Camara.enabled = false;
+                    frontCamara.enabled = true;
+                }
+            };
+            if (Input.GetKeyUp(KeyCode.E))
             {
-                Camara.enabled = true;
-                frontCamara.enabled = false;
+                if(frontCamara.enabled == true)
+                {
+                    Camara.enabled = true;
+                    frontCamara.enabled = false;
+                }
             }
-        }
-        if (networkObject.IsOwner && (type == types.FIGHTER || type == types.DEADLABOURER))
-        {   
+            if (networkObject.IsOwner && (type == types.FIGHTER || type == types.DEADLABOURER))
+            {   
             
-            // FrontCamera.enabled = true
-            networkObject.position = robotMovement.move(team);
-            networkObject.rotation = robotMovement.getRotation();
-            networkObject.x = robotMovement.x;
-            networkObject.y = robotMovement.y;
-            if (team != 0) { 
-                robotAttack.attack();
-            }
-            if (type == types.FIGHTER && frontCamara.enabled == false)
+                // FrontCamera.enabled = true
+                networkObject.position = robotMovement.move(team);
+                networkObject.rotation = robotMovement.getRotation();
+                networkObject.x = robotMovement.x;
+                networkObject.y = robotMovement.y;
+                if (team != 0) { 
+                    robotAttack.attack();
+                }
+                if (type == types.FIGHTER && frontCamara.enabled == false)
+                {
+                    Camara.enabled = true;
+                }
+            }else if (networkObject.IsOwner && type == types.MOVINGTOBASE)
             {
-                Camara.enabled = true;
-            }
-        }else if (networkObject.IsOwner && type == types.MOVINGTOBASE)
-        {
-            networkObject.position = labourerController.move();
-            networkObject.rotation = labourerController.rotation();
-            labourerController.tryStartBuilding();
-        }
-        else
-        {
-            // FrontCamera.enabled = false;
-            robotMovement.move(networkObject.position, networkObject.x, networkObject.y);
-            robotMovement.setRotation(networkObject.rotation);
-            Camara.enabled = false;
-            if (type == types.MOVINGTOBASE)
-            {
-
+                networkObject.position = labourerController.move();
+                networkObject.rotation = labourerController.rotation();
                 labourerController.tryStartBuilding();
             }
-        }
+            else
+            {
+                // FrontCamera.enabled = false;
+                robotMovement.move(networkObject.position, networkObject.x, networkObject.y);
+                robotMovement.setRotation(networkObject.rotation);
+                Camara.enabled = false;
+                if (type == types.MOVINGTOBASE)
+                {
 
-        //d  }
+                    labourerController.tryStartBuilding();
+                }
+            }
+            if (TimeMachine.blueTimeMachine.currentProgress > 99)
+            {
+                networkObject.SendRpc(RPC_SYNC_ROBOT_STATE,Receivers.All,0,5);
+            }
+            else if (TimeMachine.redTimeMachine.currentProgress > 99)
+            {
+                networkObject.SendRpc(RPC_SYNC_ROBOT_STATE, Receivers.All, 1, 5);
+            }
+        }
     }
 
     public float SendRamData()
@@ -144,9 +184,6 @@ public class RMManager : RobotManagerBehavior {
         team = 0;
         Invoke("makeIntoDead", 3f);
         Camara.enabled = false;
-        if(networkObject.IsOwner)
-        BMSLogger.Instance.Log("I am  " + team);
-        
     }
 
     IEnumerator changeTeam(int team)
@@ -181,8 +218,6 @@ public class RMManager : RobotManagerBehavior {
         networkObject.rotation = args.GetNext<Quaternion>();
         robotMovement.setPosition(networkObject.position, networkObject.rotation);
         team = args.GetNext<int>();
-        if (networkObject.IsOwner)
-            BMSLogger.Instance.Log("starting as team " + team);
         GetComponentInChildren<ColorRobot>().SetColor(team == 1);
         if (networkObject.IsOwner)
         {
@@ -204,6 +239,7 @@ public class RMManager : RobotManagerBehavior {
 
     public override void syncRobotState(RpcArgs args)
     {
+        Debug.Log("hello");
         team = args.GetNext<int>();
         if (networkObject.IsOwner)
             BMSLogger.Instance.Log("sync state called " + team);
@@ -226,13 +262,13 @@ public class RMManager : RobotManagerBehavior {
                 labourerController.agent.enabled = false;
                 if(team == 1)
                 {
-                    TimeMachine.redTimeMachine.MAddLaborerToAvailableLaborer(gameObject);
+                    TimeMachine.redTimeMachine.MAddLaborerToAvailableLaborer(this);
                     BMSLogger.Instance.Log(" red labouerer count " + TimeMachine.redTimeMachine.MAvalableLaboreres.Count);
                 }
                 else
                 {
                     
-                    TimeMachine.blueTimeMachine.MAddLaborerToAvailableLaborer(gameObject);
+                    TimeMachine.blueTimeMachine.MAddLaborerToAvailableLaborer(this);
                     BMSLogger.Instance.Log(" blue labouerer count " + TimeMachine.blueTimeMachine.MAvalableLaboreres.Count);
                 }
                 break;
@@ -245,6 +281,13 @@ public class RMManager : RobotManagerBehavior {
             case (4):
                 type = types.DYING;
                 labourerController.isFighter = false;
+                break;
+            case (5):
+                //This is really weird. should change the scene at this point
+                BMSLogger.Instance.Log("Game over called " + team);
+                PlayerPrefs.SetInt("winner", team);
+                Invoke("ChangeToGameOver", 3f);
+                canEndGame = false;
                 break;
         }
         if (team != 0) {

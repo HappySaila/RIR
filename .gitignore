@@ -35,3 +35,5 @@ sysinfo.txt
 *.unitypackage
 Build*
 WinBuild_Data/*
+linux*
+mac*

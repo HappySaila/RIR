@@ -20,7 +20,7 @@ public class TimeMachine : MonoBehaviour {
     static bool canEndGame = true;
 
     public Queue<RSManager> AvailableLaborers = new Queue<RSManager>();
-    public Queue<GameObject> MAvalableLaboreres = new Queue<GameObject>();
+    public Queue<RMManager> MAvalableLaboreres = new Queue<RMManager>();
 
 	[HideInInspector] public GameObject[] pointsAroundTimeMech;
 
@@ -65,18 +65,21 @@ public class TimeMachine : MonoBehaviour {
             timeMachine.position.z);
     }
 
-    public void EndGame(){
-		Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
-		audioMixerScript.INSTANCE.Mute();
-		Invoke("ChangeToGameOver", 3.6f);
+    public void EndGame()
+    {
+        if (!multiplayer)
+        {
+            Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
+            audioMixerScript.INSTANCE.Mute();
 		SoundManager.INSTANCE.PlayGameOverSound ();
-        PlayerPrefs.SetInt("Winner", isRed ? 1 : 0);
+            Invoke("ChangeToGameOver", 3f);
+            PlayerPrefs.SetInt("Winner", isRed ? 1 : 0);
+            Debug.Log("ye done");
+        }
     }
 
     private void OnTriggerEnter(Collider col)
     {
-        if (!multiplayer)
-        {
             if (col.GetComponentInParent<RSManager>() != null)
             {
                 if (!col.GetComponentInParent<RSManager>().robotLaborerControl.isFighter)
@@ -84,30 +87,28 @@ public class TimeMachine : MonoBehaviour {
                     col.GetComponentInParent<RSManager>().robotLaborerControl.StartBuilding(this);
                 }
             }
-        }
-        else
-        {
-            if (col.GetComponentInParent<RMManager>() != null)
+        
+        if (col.GetComponentInParent<RMManager>() != null)
             {
-                if (!col.GetComponentInParent<RMManager>().labourerController.isFighter)
+            if (col.GetComponentInParent<RMManager>().type == RMManager.types.MOVINGTOBASE)
                 {
-                    col.GetComponentInParent<RMManager>().labourerController.StartBuilding(this);
+                BMSLogger.Instance.Log("building this");
+                col.GetComponentInParent<RMManager>().labourerController.StartBuilding(this);
                 }
-            }
+           
         }
 
     }
 
     public void AddLaborerToAvailableLaborer(RSManager controller)
 	{
+        multiplayer = false;
 		AvailableLaborers.Enqueue(controller);
 	}
 
-    public void MAddLaborerToAvailableLaborer(GameObject controller)
+    public void MAddLaborerToAvailableLaborer(RMManager controller)
     {
+        multiplayer = true;
         MAvalableLaboreres.Enqueue(controller);
-        
     }
-
-
 }

@@ -82,6 +82,7 @@ public class RMAttack : MonoBehaviour {
             if (target.GetComponentInParent<RMManager>() != null)
             {
                 //the player has rammed a robot
+                robotManger.playSound("hit");
                 target.GetComponentInParent<RMManager>().Die();
             }
         }

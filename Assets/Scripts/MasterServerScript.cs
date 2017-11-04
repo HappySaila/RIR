@@ -15,15 +15,20 @@ public class MasterServerScript : masterServerBehavior
     bool matching;
     int timer;
     public room myRoom;
+    int playerCount = 0;
+    bool loaded = false;
+    bool ranOnce = false;
 
     void Awake()
     {
         instance = this;
     }
 
+
     // Use this for initialization
     void Start()
     {
+        SceneManager.sceneLoaded += SceneManager_sceneLoaded;
         BMSLogger.Instance.Log("master server started");
         timer = 0;
         matching = false;
@@ -38,10 +43,43 @@ public class MasterServerScript : masterServerBehavior
         GlobalVariables.instance.me.Player = networkObject.Networker.Me;
     }
 
+    private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+    {
+        if (arg0.name.Equals("MainMenu"))
+        {
+            gameObject.SetActive(true);
+            Debug.Log("resetting variables");
+            GlobalVariables.instance.foundGames = new List<GlobalVariables.Pair<room, room>>();
+            GlobalVariables.instance.existingRooms = new List<room>();
+            GlobalVariables.instance.players = new Dictionary<int, GlobalVariables.PlayerDetails>();
+            GlobalVariables.instance.searchingRooms = new Dictionary<int, List<room>>();
+            matching = false;
+            playerCount = 0;
+            myRoom = null;
+            loaded = false;
+            ranOnce = false;
+        };
+        if (arg0.name.Equals("MultiplayerScene"))
+        {
+                BMSLogger.Instance.Log("set master server to not be active");
+                gameObject.SetActive(false);
+        }
+    }
+
     private void Networker_playerDisconnected(NetworkingPlayer player, NetWorker sender)
     {
         GlobalVariables.instance.players.Remove((int)player.NetworkId);
         GlobalVariables.instance.existingRooms.FindAll(room => room.Players.FindAll(pla => pla.Player.NetworkId == player.NetworkId).Count > 0).RemoveAll(i => true);
+        Debug.Log(playerCount);
+        if (--playerCount < 1)
+        {
+            MainThreadManager.Run(() =>
+            {
+                Debug.Log("trying to load main menu screen");
+                SceneManager.LoadScene("MainMenu");
+            });
+            
+        }
     }
 
     private void Networker_playerConnected(NetworkingPlayer player, NetWorker sender)
@@ -50,6 +88,8 @@ public class MasterServerScript : masterServerBehavior
         {
             BMSLogger.Instance.Log("player connected with ID " + player.NetworkId);
         }
+        playerCount++;
+        Debug.Log(playerCount);
     }
 
     public void buttonPressed()
@@ -82,6 +122,7 @@ public class MasterServerScript : masterServerBehavior
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("server running");
         if (networkObject.IsServer)
         {
             serverUpdateFunction();
@@ -135,11 +176,12 @@ public class MasterServerScript : masterServerBehavior
     {
         GlobalVariables.instance.foundGames = new List<GlobalVariables.Pair<room, room>>();
     }
+
     public void NewServer()
     {
-        SceneManager.sceneLoaded += CreateInlineChat;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        
+        if(!loaded)
+            SceneManager.LoadScene("multiplayerScene");
+        loaded = true;
     }
 
     private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)
@@ -185,20 +227,24 @@ public class MasterServerScript : masterServerBehavior
     #endregion
     public void stopSearching()
     {
-        foreach (GlobalVariables.Pair<room, room> pairs in GlobalVariables.instance.foundGames)
+        if (!ranOnce)
         {
-            BMSLogger.Instance.Log("stopping the searching between 2 clients");
-            //stop searching for the people who have found games
-            foreach (GlobalVariables.PlayerDetails players in pairs.First.Players)
+            foreach (GlobalVariables.Pair<room, room> pairs in GlobalVariables.instance.foundGames)
             {
-                networkObject.SendRpc(players.Player, RPC_STOP_SEARCHING, pairs.First.RoomName, pairs.Second.RoomName);
-            }
+                ranOnce = true;
+                BMSLogger.Instance.Log("stopping the searching between 2 clients");
+                //stop searching for the people who have found games
+                foreach (GlobalVariables.PlayerDetails players in pairs.First.Players)
+                {
+                    networkObject.SendRpc(players.Player, RPC_STOP_SEARCHING, pairs.First.RoomName, pairs.Second.RoomName);
+                }
 
-            foreach (GlobalVariables.PlayerDetails players in pairs.Second.Players)
-            {
-                networkObject.SendRpc(players.Player, RPC_STOP_SEARCHING, pairs.First.RoomName, pairs.Second.RoomName);
+                foreach (GlobalVariables.PlayerDetails players in pairs.Second.Players)
+                {
+                    networkObject.SendRpc(players.Player, RPC_STOP_SEARCHING, pairs.First.RoomName, pairs.Second.RoomName);
+                }
+                NewServer();
             }
-            NewServer();
         }
     }
 
@@ -366,6 +412,7 @@ public class MasterServerScript : masterServerBehavior
     {
 
         matching = false;
+        BMSLogger.Instance.Log("I need to stop searching, I have found a game");
         //matchingText.text = "match found!";
         Invoke("disableGameObject", 1f);
     }
