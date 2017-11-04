@@ -67,7 +67,10 @@ public class TimeMachine : MonoBehaviour {
 
     public void EndGame(){
         BMSLogger.Instance.Log("game end called");
-		Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
+        if (!multiplayer)
+        {
+            Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
+        }
 		audioMixerScript.INSTANCE.Mute();
 		Invoke("ChangeToGameOver", 3f);
         PlayerPrefs.SetInt("Winner", isRed ? 1 : 0);
@@ -97,11 +100,13 @@ public class TimeMachine : MonoBehaviour {
 
     public void AddLaborerToAvailableLaborer(RSManager controller)
 	{
+        multiplayer = false;
 		AvailableLaborers.Enqueue(controller);
 	}
 
     public void MAddLaborerToAvailableLaborer(GameObject controller)
     {
+        multiplayer = true;
         MAvalableLaboreres.Enqueue(controller);
         
     }
