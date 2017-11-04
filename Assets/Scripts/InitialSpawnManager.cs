@@ -20,6 +20,8 @@ public class InitialSpawnManager : MonoBehaviour {
 	public int laborersToSPawnByBase;
 	public int LaborerCountThroughGame;
 
+	public TimeMachine redTimeMachine;
+	public TimeMachine blueTimeMachine;
 
     private void Awake()
     {
@@ -33,6 +35,7 @@ public class InitialSpawnManager : MonoBehaviour {
 		SpawnBaseLaborers ();
 		StartCoroutine (SpawnLaborersThroughtGame ());
 
+		StartCoroutine (checkOneTeamIsOut ());
     }
 
     void SpawnRobots(){
@@ -156,5 +159,35 @@ public class InitialSpawnManager : MonoBehaviour {
 	}
 
 
+	//checks if either team has no players left. If so ends game.
+	public IEnumerator checkOneTeamIsOut ()
+	{
+		yield return new WaitForSeconds (5);
+
+		RSManager[] robots = FindObjectsOfType<RSManager> ();
+		bool redleft = false;
+		bool blueleft = false;
+
+		for (int i = 0; i < robots.Length; i++) {
+			if(!robots[i].robotLaborerControl.isIdleLaborer){
+				if (!robots [i].isRed  ) {
+					blueleft = true;
+				} 
+				else {
+					redleft = true;
+				}
+			}
+
+		}
+
+		if(!blueleft){
+			redTimeMachine.EndGame ();
+		}
+		else if(!redleft){
+			blueTimeMachine.EndGame ();
+		}
+
+		StartCoroutine (checkOneTeamIsOut ());
+	}
 
 }
