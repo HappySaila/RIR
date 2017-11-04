@@ -1,7 +1,5 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Unity;
-using BeardedManStudios.Forge.Networking.Lobby;
-using BeardedManStudios.SimpleJSON;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -106,7 +104,7 @@ public class MultiplayerMenu : MonoBehaviour
         
 		networker.objectCreated += (networkObject) => {
             print("Crazy! network object created");
-			//UIManager.instance.FadeFromBlack();
+			UIManager.instance.FadeFromBlack();
 		};
 		//if (networker.IsServer)
 
@@ -134,7 +132,7 @@ public class MultiplayerMenu : MonoBehaviour
         Debug.Log(NetworkManager.Instance.IsServer);
         NetworkManager.Instance.InstantiatemasterServer();
         Destroy(gameObject);
-		//UIManager.instance.FadeFromBlack();
+		UIManager.instance.FadeFromBlack();
 	}
 
     private void CreateInlineChat(Scene arg0, LoadSceneMode arg1)

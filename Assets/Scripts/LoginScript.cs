@@ -20,6 +20,7 @@ public class LoginScript : APIScript
         {
             UIManager.instance.loggedIn();
             GlobalVariables.instance.me.Name = username.text;
+            error.text = "";
         } else {
             error.text = "unable to login. \nusername or password is incorrect";
         }
