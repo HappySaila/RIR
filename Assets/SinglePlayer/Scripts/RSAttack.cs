@@ -58,7 +58,6 @@ public class RSAttack : MonoBehaviour
 			return;
 		}
 
-		Debug.Log ("                 time in InitiateRam " + Time.time);
 		canRam = false;
 		anim.SetTrigger ("Ram");
 		rigid.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY

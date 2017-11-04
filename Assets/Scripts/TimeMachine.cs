@@ -17,6 +17,7 @@ public class TimeMachine : MonoBehaviour {
 	public float buildSpeedMultiplier;
     float maxBuildSpeed;
     bool multiplayer;
+    static bool canEndGame = true;
 
     public Queue<RSManager> AvailableLaborers = new Queue<RSManager>();
     public Queue<GameObject> MAvalableLaboreres = new Queue<GameObject>();
@@ -54,8 +55,9 @@ public class TimeMachine : MonoBehaviour {
     public void Build(){
         currentProgress += buildSpeedMultiplier * buildSpeed;
         currentProgress = Mathf.Clamp(currentProgress, 0, 100);
-        if (currentProgress > 99){
+        if (currentProgress > 99 && canEndGame){
             EndGame();
+            canEndGame = false;
         }
 
         timeMachine.position = new Vector3(timeMachine.position.x, 

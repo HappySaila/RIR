@@ -175,8 +175,6 @@ public class RSMovement : MonoBehaviour
 			if (robotManager.isRed != robotTarget.isRed && robotTarget.robotLaborerControl.isFighter) {
 				//if distance is shorter then ram is distance - ram
 				if (TargetDistance () < AIData.GetRamDistance ()) {
-					Debug.Log ("iwant to ram at time:"+ Time.time);
-						
 					robotManager.robotAttack.InitiateRam ();
 				}
 			}
