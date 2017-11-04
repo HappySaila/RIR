@@ -84,7 +84,6 @@ public class RSManager : MonoBehaviour {
 
 	public void Die()
 	{
-		
 		//stop attacking
 		robotAttack.enabled = false;
 

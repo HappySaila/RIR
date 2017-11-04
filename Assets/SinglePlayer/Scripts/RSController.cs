@@ -74,7 +74,10 @@ public class RSController : MonoBehaviour {
         //set players color and team 
         newRobot.GetComponent<RSController>().SetTeam(robotManager.isRed);
         newRobot.GetComponentInChildren<RSController>().SetPlayer(isPlayerOne);
-        newRobot.GetComponent<RSController>().SetViewPort(isPlayerOne);
+        if (InitialSpawnManager.instance.isSplitScreen){
+			newRobot.GetComponent<RSController>().SetViewPort(isPlayerOne);
+		}
+            
 
         Destroy(robotManager.gameObject);
         Destroy(gameObject);

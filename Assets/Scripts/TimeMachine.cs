@@ -27,18 +27,19 @@ public class TimeMachine : MonoBehaviour {
         } else {
             blueTimeMachine = this;
         }
-        timeMachine.gameObject.GetComponent<MeshRenderer>().materials[0].color = isRed ? Color.red : Color.blue;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-     
+        if (Input.GetMouseButtonDown(1) && !isRed){
+            EndGame();
+        }
 	}
 
     void ChangeToGameOver(){
         //look at game over
-		SceneManager.LoadScene(0);
-        BackToMenuManager.instance.Invoke("LookAtGameOver", 2f);
+		SceneManager.LoadScene("GameOver");
+        audioMixerScript.INSTANCE.ChangeSnapShot(0);
     }
 
     public void Build(){
@@ -57,6 +58,7 @@ public class TimeMachine : MonoBehaviour {
 		Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
 		audioMixerScript.INSTANCE.Mute();
 		Invoke("ChangeToGameOver", 3f);
+        PlayerPrefs.SetInt("Winner", isRed ? 1 : 0);
     }
 
     private void OnTriggerEnter(Collider col)

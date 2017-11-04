@@ -15,11 +15,12 @@ public class UIManager : MonoBehaviour {
     public Text RoomErrorMessage;
     public Text RoomNumber;
     public Text RoomName;
+    public Text WaitingRoomName;
     public GameObject FadeCanvas;
     public GameObject FadeFromBlackPrefab;
     public GameObject WaitingRobot;
     GameObject FadeCanvasInstance;
-    int sceneNumber = 0;
+    string sceneName = "MainMenu";
     AudioSource audioSource;
     public GameObject forgeCanvas;
     GameObject forgeCanvasInstance;
@@ -30,6 +31,7 @@ public class UIManager : MonoBehaviour {
 		audioSource= GetComponentInChildren<AudioSource>();
         if (instance == null){
             instance = this;
+            PlayerPrefs.SetInt("GameOver", 0);
         } else {
             Destroy(gameObject);
         }
@@ -52,21 +54,20 @@ public class UIManager : MonoBehaviour {
 		FadeMusic();
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         Invoke("LoadScene", 2f);
-        sceneNumber = 1;
+        sceneName = "SinglePlayer";
         FadeBlack();
 	}
 
     public void LoadScene(){
         //will load scene(sceneNumber)
-        SceneManager.LoadScene(sceneNumber);
-        print("Load scene");
+        SceneManager.LoadScene(sceneName);
     }
 
     public void SplitScreenClicked(){
 		FadeMusic();
 		SoundManager.INSTANCE.PlayButtonClicked(audioSource);
 		Invoke("LoadScene", 2f);
-		sceneNumber = 2;
+		sceneName = "SplitScreen";
 		FadeBlack();
     }
 
@@ -136,6 +137,7 @@ public class UIManager : MonoBehaviour {
 			cam.LookAtWaitingRoom();
 			MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
 			StartCoroutine(SpawnWaitingRobots());
+			WaitingRoomName.text = RoomName.text;
 		}
     }
 
@@ -157,6 +159,7 @@ public class UIManager : MonoBehaviour {
             cam.LookAtWaitingRoom();
             StartCoroutine(SpawnWaitingRobots());
             RoomErrorMessage.text = "";
+            WaitingRoomName.text = RoomName.text;
         } else {
             RoomErrorMessage.text = "room doesnt exists";
         }
