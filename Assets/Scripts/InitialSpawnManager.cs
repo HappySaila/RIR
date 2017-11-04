@@ -17,6 +17,9 @@ public class InitialSpawnManager : MonoBehaviour {
 	[Range(0,4)]
 	public int redBots;
 	public int LaborerCount;
+	public int laborersToSPawnByBase;
+	public int LaborerCountThroughGame;
+
 
     private void Awake()
     {
@@ -27,6 +30,9 @@ public class InitialSpawnManager : MonoBehaviour {
         audioMixerScript.INSTANCE.ChangeSnapShot(2);
         SpawnRobots();
         SpawnLaborers();
+		SpawnBaseLaborers ();
+		StartCoroutine (SpawnLaborersThroughtGame ());
+
     }
 
     void SpawnRobots(){
@@ -102,5 +108,53 @@ public class InitialSpawnManager : MonoBehaviour {
 			AIRespawner.instance.RedAICount = redBots -1;
 		}
     }
+	void SpawnBaseLaborers(){
+
+		GameObject[] spawnPointsB = GameObject.FindGameObjectsWithTag("BaseLabourerSpawnPointB");
+		GameObject[] spawnPointsR = GameObject.FindGameObjectsWithTag("BaseLabourerSpawnPointR");
+
+		for (int i = 0; i < spawnPointsB.Length ; i++)
+		{
+			
+			Instantiate(IdleLaborer, spawnPointsB[i].transform.position, Random.rotation);
+		}
+	
+		for (int i = 0; i < spawnPointsR.Length ; i++)
+		{
+
+			Instantiate(IdleLaborer, spawnPointsR[i].transform.position, Random.rotation);
+		}
+
+		AIRespawner.instance.BlueAICount = 0;
+		AIRespawner.instance.RedAICount = 0;
+		if (isSplitScreen){
+			AIRespawner.instance.RedAICount = redBots -1;
+		}
+	}
+
+
+	public IEnumerator SpawnLaborersThroughtGame ()
+	{
+		
+		yield return new WaitForSeconds (4);
+
+
+
+		for (int i = 0; i < LaborerCountThroughGame; i++)
+		{
+			Vector3 bounds = LaborerSpawn.size;
+			float x = LaborerSpawn.transform.position.x + Random.Range(-bounds.x, bounds.x);
+			float z = LaborerSpawn.transform.position.z + Random.Range(-bounds.z, bounds.z);
+			Vector3 spawnPos = new Vector3(x, LaborerSpawn.transform.position.y, z);
+			Instantiate(IdleLaborer, spawnPos, Random.rotation);
+
+			AIRespawner.instance.BlueAICount--;
+		}
+			StartCoroutine (SpawnLaborersThroughtGame ());
+
+
+	}
+
+
 
 }
