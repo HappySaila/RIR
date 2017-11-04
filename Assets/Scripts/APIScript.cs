@@ -12,7 +12,7 @@ public class APIScript : MonoBehaviour {
     {
         
         string result = Http.Get(defaultIP + ":" + defaultPort);
-        Debug.Log(result);
+//        Debug.Log(result);
         return "{ \"msg\":\"API is running again\"}".Equals(result);
     }
 

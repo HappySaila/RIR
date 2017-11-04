@@ -15,11 +15,11 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip UIClick;
 	public AudioClip hoveringRobot;
 	public AudioClip ramHit;
-	public AudioClip gameOverLose;
-	public AudioClip gameOverWin;
 	public AudioClip hammer;
 	public AudioClip stab;
 
+	public AudioClip GameOverSound;
+	AudioSource gameOverAudioSource;
 
     float lowPitch = 0.8f;
 	float highPitch = 1.2f;
@@ -29,7 +29,9 @@ public class SoundManager : MonoBehaviour {
 	int hitSoundCallCount;
 
 	void Awake(){
+		
 		DontDestroyOnLoad (gameObject);
+		gameOverAudioSource = GetComponent<AudioSource> ();
 		if (INSTANCE == null) {
 			INSTANCE = this;
 		} else {
@@ -61,6 +63,11 @@ public class SoundManager : MonoBehaviour {
 	public void PlayButtonClicked(AudioSource s){
 		s.PlayOneShot(UIClick);
 	}
+
+	public void PlayGameOverSound(){
+		gameOverAudioSource.PlayOneShot(GameOverSound);
+	}
+
 	public void PlayStab(AudioSource s)
 	{
         if (canStab){
