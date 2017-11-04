@@ -20,8 +20,17 @@ public class TimeMachine : MonoBehaviour {
     public Queue<RSManager> AvailableLaborers = new Queue<RSManager>();
     public Queue<GameObject> MAvalableLaboreres = new Queue<GameObject>();
 
+	[HideInInspector] public GameObject[] pointsAroundTimeMech;
+
+
 	// Use this for initialization
 	void Start () {
+		if(!isRed){
+			pointsAroundTimeMech = GameObject.FindGameObjectsWithTag ("BlueTMPoint");
+		}else{
+			pointsAroundTimeMech = GameObject.FindGameObjectsWithTag ("RedTMPoint");
+		}
+	
         if (isRed){
             redTimeMachine = this;
         } else {

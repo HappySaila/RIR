@@ -119,8 +119,10 @@ public class RSLaborerControl : MonoBehaviour
 			agent.enabled = true;
             GetComponentInParent<RSManager>().isRed = col.GetComponentInParent<RSManager>().isRed;
             target = col.GetComponentInParent<RSManager>().isRed ? 
-                        TimeMachine.redTimeMachine.targetPosition.position : 
-                        TimeMachine.blueTimeMachine.targetPosition.position;
+				TimeMachine.redTimeMachine.pointsAroundTimeMech[Random.Range(0,TimeMachine.redTimeMachine.pointsAroundTimeMech.Length)].transform.position : 
+				TimeMachine.blueTimeMachine.pointsAroundTimeMech[Random.Range(0,TimeMachine.blueTimeMachine.pointsAroundTimeMech.Length)].transform.position ;
+
+
             GetComponentInChildren<ColorRobot>().SetColor(col.GetComponentInParent<RSManager>().isRed);
 			agent.SetDestination(target);
 			trigger.enabled = false;
