@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour {
     public Text RoomErrorMessage;
     public Text RoomNumber;
     public Text RoomName;
+    public Text WaitingRoomName;
     public GameObject FadeCanvas;
     public GameObject FadeFromBlackPrefab;
     public GameObject WaitingRobot;
@@ -30,6 +31,7 @@ public class UIManager : MonoBehaviour {
 		audioSource= GetComponentInChildren<AudioSource>();
         if (instance == null){
             instance = this;
+            PlayerPrefs.SetInt("GameOver", 0);
         } else {
             Destroy(gameObject);
         }
@@ -136,6 +138,7 @@ public class UIManager : MonoBehaviour {
 			cam.LookAtWaitingRoom();
 			MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
 			StartCoroutine(SpawnWaitingRobots());
+			WaitingRoomName.text = RoomName.text;
 		}
     }
 
@@ -157,6 +160,7 @@ public class UIManager : MonoBehaviour {
             cam.LookAtWaitingRoom();
             StartCoroutine(SpawnWaitingRobots());
             RoomErrorMessage.text = "";
+            WaitingRoomName.text = RoomName.text;
         } else {
             RoomErrorMessage.text = "room doesnt exists";
         }

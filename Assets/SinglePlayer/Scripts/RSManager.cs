@@ -84,7 +84,6 @@ public class RSManager : MonoBehaviour {
 
 	public void Die()
 	{
-		Debug.Log ("im dead:"+ Time.time);
 		//stop attacking
 		robotAttack.enabled = false;
 
