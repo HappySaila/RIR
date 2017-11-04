@@ -215,7 +215,7 @@ public class UIManager : MonoBehaviour {
 
     public void FadeFromBlack(){
         DestroyFadeBlackCanvas();
-        Instantiate(FadeFromBlackPrefab, transform.position, Quaternion.identity);
+        //Instantiate(FadeFromBlackPrefab, transform.position, Quaternion.identity);
     }
 
     public void DestroyFadeBlackCanvas(){
