@@ -21,10 +21,10 @@ public class FlyCamera : MonoBehaviour {
 			float xRot = 0;
 			float yRot = 0;
             if (isPlayerOne){
-				y = Input.GetAxis("Vertical2");
-				//xRot = Input.GetAxis("Mouse X");
-				xRot = Input.GetAxis("Horizontal2");
-				yRot = Input.GetAxis("Mouse Y");
+                y = Input.GetButton("Jump") ? 1 : 0;
+                //xRot = Input.GetAxis("Mouse X");
+                xRot = Input.GetAxis("Horizontal2") * 5f;
+                yRot = Input.GetAxis("Vertical2") * 2f;
 			} else {
 				y = Input.GetAxis("Ram");
 				xRot = Input.GetAxis("Horizontal") * 4;
