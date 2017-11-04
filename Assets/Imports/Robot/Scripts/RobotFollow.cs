@@ -7,12 +7,14 @@ public class RobotFollow : MonoBehaviour {
 	public Camera FrontCamera;
 	public Camera BackCamera;
     FlyCamera flyCamera;
+    RSController robotManager;
 
 	bool camIsInFront;
 	public bool isSplitScreen;
     public float flySpeed;
 	
     void Start(){
+        robotManager = GetComponentInParent<RSController>();
         flyCamera = GetComponentInChildren<FlyCamera>();
         isSplitScreen = InitialSpawnManager.instance.isSplitScreen;
     }
@@ -29,17 +31,28 @@ public class RobotFollow : MonoBehaviour {
     }
 
     void CameraSwitch(){
-        if (!isSplitScreen){
+        if (robotManager.isPlayerOne){
 			if (Input.GetKeyDown(KeyCode.E))
 			{
 				SwitchCamera();
 			}
-			
-			if (Input.GetKeyUp(KeyCode.E))
+
+            if (Input.GetKeyUp(KeyCode.E)){
+                SwitchCamera();
+            }
+		} else {
+            if (Input.GetButtonDown("Taunt"))
 			{
+                SwitchCamera();
+            } 
+
+            if (Input.GetButtonUp("Taunt")){
 				SwitchCamera();
-			}
-        } 
+            }
+		}
+            
+            
+        
     }
 
     public void DisableCameras(){

@@ -39,9 +39,12 @@ public class AIRespawner : MonoBehaviour {
             if (TimeMachine.redTimeMachine.AvailableLaborers.Count > 0){
                 robotManager = TimeMachine.redTimeMachine.AvailableLaborers.Dequeue();
                 GameObject robot = Instantiate(InitialSpawnManager.instance.RobotAI, 
-                                               robotManager.GetComponentInChildren<Rigidbody>().transform.position, Quaternion.identity);
+                                               TimeMachine.redTimeMachine.spawnPosition.position, TimeMachine.redTimeMachine.spawnPosition.rotation);
 				robot.GetComponent<RSController>().SetTeam(true);
-				Destroy(robotManager.gameObject);
+				if (robotManager != null)
+				{
+					Destroy(robotManager.gameObject);
+				}
                 RedAICount--;
             }
         }
@@ -51,14 +54,17 @@ public class AIRespawner : MonoBehaviour {
 			{
                 robotManager = TimeMachine.blueTimeMachine.AvailableLaborers.Dequeue();
 				GameObject robot = Instantiate(InitialSpawnManager.instance.RobotAI,
-											   robotManager.GetComponentInChildren<Rigidbody>().transform.position, Quaternion.identity);
+											   TimeMachine.blueTimeMachine.spawnPosition.position, TimeMachine.blueTimeMachine.spawnPosition.rotation);
                 robot.GetComponent<RSController>().SetTeam(false);
-				Destroy(robotManager.gameObject);
+                if (robotManager!=null){
+					Destroy(robotManager.gameObject);
+				}
                 BlueAICount--;
 			}
         }
 
-        yield return new WaitForSeconds(3);
+        yield return new WaitUntil(() => (BlueAICount>0 || RedAICount>0));
+        print("Respawn");
         StartCoroutine(Respawn());
     }
 	

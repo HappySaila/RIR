@@ -34,6 +34,7 @@ public class RSController : MonoBehaviour {
     }
 
     IEnumerator RespawnE(){
+        print("Trying to respawn");
         bool spawned = false;
         if (isRed){
             if (TimeMachine.redTimeMachine.AvailableLaborers.Count > 0){
@@ -67,9 +68,6 @@ public class RSController : MonoBehaviour {
     public void Respawn()
     {
         //delete current controller
-        //delete laborer at time machine
-        Transform laborerTransform = robotManager.GetComponentInChildren<Rigidbody>().transform;
-        //instantiate new player at old laborer position
         Transform RespawnPosition;
         if (robotManager.isRed){
             RespawnPosition = TimeMachine.redTimeMachine.spawnPosition;
@@ -83,9 +81,11 @@ public class RSController : MonoBehaviour {
         if (InitialSpawnManager.instance.isSplitScreen){
 			newRobot.GetComponent<RSController>().SetViewPort(isPlayerOne);
 		}
-            
 
-        Destroy(robotManager.gameObject);
+        if (robotManager!=null){
+			Destroy(robotManager.gameObject);
+		}
+            
         Destroy(gameObject);
     }
 
@@ -100,11 +100,19 @@ public class RSController : MonoBehaviour {
         if (playerOne){
             Rect rect = new Rect(-0.5f, 0, 1, 1);
 			GetComponentInChildren<RSManager>().GetComponentInChildren<RobotFollow>().BackCamera.rect = rect;
-			GetComponentInChildren<Camera>().rect = rect;
-		} else {
+			Camera[] cams = GetComponentsInChildren<Camera>();
+            foreach (Camera c in cams)
+            {
+                c.rect = rect;
+            }
+        } else {
             Rect rect = new Rect(0.5f, 0, 1, 1);
-			GetComponentInChildren<RSManager>().GetComponentInChildren<RobotFollow>().BackCamera.rect = rect;
-			GetComponentInChildren<Camera>().rect = rect;
+            GetComponentInChildren<RSManager>().GetComponentInChildren<RobotFollow>().BackCamera.rect = rect;
+			Camera[] cams = GetComponentsInChildren<Camera>();
+			foreach (Camera c in cams)
+			{
+				c.rect = rect;
+			}
         }
 		GetComponentInChildren<RSManager>().GetComponentInChildren<RobotFollow>().BackCamera.enabled = true;
 	}
