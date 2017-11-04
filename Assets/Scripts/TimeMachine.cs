@@ -38,8 +38,7 @@ public class TimeMachine : MonoBehaviour {
 
     void ChangeToGameOver(){
         //look at game over
-		SceneManager.LoadScene("GameOver");
-        audioMixerScript.INSTANCE.ChangeSnapShot(0);
+        SceneManager.LoadScene("GameOver");
     }
 
     public void Build(){

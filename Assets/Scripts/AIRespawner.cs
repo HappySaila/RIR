@@ -58,10 +58,6 @@ public class AIRespawner : MonoBehaviour {
 			}
         }
 
-        if (TimeMachine.redTimeMachine != TimeMachine.blueTimeMachine){
-			HUDManager.instance.SetScores();
-		}
-            
         yield return new WaitForSeconds(3);
         StartCoroutine(Respawn());
     }
