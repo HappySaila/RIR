@@ -124,8 +124,8 @@ public class gameManager : MonoBehaviour {
                 {
                     Debug.Log("respawning player as blue");
                     NetworkingPlayer toGive = blueTeamDead.Dequeue();
-                    GameObject obj = TimeMachine.blueTimeMachine.MAvalableLaboreres.Dequeue();
-                    obj.GetComponent<RMManager>().networkObject.Destroy();
+                    RMManager obj = TimeMachine.blueTimeMachine.MAvalableLaboreres.Dequeue();
+                    obj.networkObject.Destroy();
                     RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
                     StartCoroutine(setPlayerPositions(behavior, 2,2, toGive, 0.1f));
                     
@@ -138,8 +138,8 @@ public class gameManager : MonoBehaviour {
                 {
                     Debug.Log("respawning player as red");
                     NetworkingPlayer toGive = redTeamDead.Dequeue();
-                    GameObject obj = TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue();
-                    obj.GetComponent<RMManager>().networkObject.Destroy();
+                    RMManager obj = TimeMachine.redTimeMachine.MAvalableLaboreres.Dequeue();
+                    obj.networkObject.Destroy();
                     RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
                     StartCoroutine(setPlayerPositions(behavior, 1,2, toGive, 0.1f));
                 }

@@ -153,9 +153,8 @@ public class RMLabourerController : MonoBehaviour {
         timeMachine = t;
         isBuilding = true;
         agent.enabled = false;
-        Debug.Log("I am building like a beast");
         robotManager.type = RMManager.types.BUILDER;
         //add to time machine T laborer available to respawn
-        t.MAddLaborerToAvailableLaborer(gameObject);
+        t.MAddLaborerToAvailableLaborer(robotManager);
     }
 }

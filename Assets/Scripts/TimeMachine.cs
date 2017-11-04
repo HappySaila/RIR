@@ -20,7 +20,7 @@ public class TimeMachine : MonoBehaviour {
     static bool canEndGame = true;
 
     public Queue<RSManager> AvailableLaborers = new Queue<RSManager>();
-    public Queue<GameObject> MAvalableLaboreres = new Queue<GameObject>();
+    public Queue<RMManager> MAvalableLaboreres = new Queue<RMManager>();
 
 	[HideInInspector] public GameObject[] pointsAroundTimeMech;
 
@@ -65,15 +65,17 @@ public class TimeMachine : MonoBehaviour {
             timeMachine.position.z);
     }
 
-    public void EndGame(){
+    public void EndGame()
+    {
         BMSLogger.Instance.Log("game end called");
         if (!multiplayer)
         {
             Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
+            audioMixerScript.INSTANCE.Mute();
+            Invoke("ChangeToGameOver", 3f);
+            PlayerPrefs.SetInt("Winner", isRed ? 1 : 0);
+            Debug.Log("ye done");
         }
-		audioMixerScript.INSTANCE.Mute();
-		Invoke("ChangeToGameOver", 3f);
-        PlayerPrefs.SetInt("Winner", isRed ? 1 : 0);
     }
 
     private void OnTriggerEnter(Collider col)
@@ -104,12 +106,9 @@ public class TimeMachine : MonoBehaviour {
 		AvailableLaborers.Enqueue(controller);
 	}
 
-    public void MAddLaborerToAvailableLaborer(GameObject controller)
+    public void MAddLaborerToAvailableLaborer(RMManager controller)
     {
         multiplayer = true;
         MAvalableLaboreres.Enqueue(controller);
-        
     }
-
-
 }

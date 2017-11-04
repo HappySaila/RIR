@@ -5,6 +5,7 @@ using BeardedManStudios.Forge.Networking.Generated;
 using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Unity;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class RMManager : RobotManagerBehavior {
     public enum types
@@ -44,7 +45,28 @@ public class RMManager : RobotManagerBehavior {
         {
             Camara.enabled = false;
         }
+        if (TimeMachine.blueTimeMachine.currentProgress > 99)
+        {
+            EndGame();
+        }
+        else if (TimeMachine.blueTimeMachine.currentProgress > 99)
+        {
+            EndGame();
+        }
+    }
+    public void EndGame()
+    {
+        BMSLogger.Instance.Log("game end called");
+        audioMixerScript.INSTANCE.Mute();
+        Invoke("ChangeToGameOver", 3f);
+        PlayerPrefs.SetInt("Winner", team == 1 ? 1 : 0);
+    }
 
+    void ChangeToGameOver()
+    {
+        //look at game over
+        SceneManager.LoadScene("GameOver");
+        audioMixerScript.INSTANCE.ChangeSnapShot(0);
     }
 
     // Update is called once per frame
@@ -226,13 +248,13 @@ public class RMManager : RobotManagerBehavior {
                 labourerController.agent.enabled = false;
                 if(team == 1)
                 {
-                    TimeMachine.redTimeMachine.MAddLaborerToAvailableLaborer(gameObject);
+                    TimeMachine.redTimeMachine.MAddLaborerToAvailableLaborer(this);
                     BMSLogger.Instance.Log(" red labouerer count " + TimeMachine.redTimeMachine.MAvalableLaboreres.Count);
                 }
                 else
                 {
                     
-                    TimeMachine.blueTimeMachine.MAddLaborerToAvailableLaborer(gameObject);
+                    TimeMachine.blueTimeMachine.MAddLaborerToAvailableLaborer(this);
                     BMSLogger.Instance.Log(" blue labouerer count " + TimeMachine.blueTimeMachine.MAvalableLaboreres.Count);
                 }
                 break;
