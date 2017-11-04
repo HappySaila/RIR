@@ -84,11 +84,10 @@ public class gameManager : MonoBehaviour {
         }
     }
         void Start () {
-        DontDestroyOnLoad(gameObject);
         RobotManagerBehavior behavior;
         if (NetworkManager.Instance.IsServer)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 15; i++)
             {
                 behavior = NetworkManager.Instance.InstantiateRobotManager();
                 StartCoroutine(setLabourer(behavior, 0.1f));
@@ -97,6 +96,16 @@ public class gameManager : MonoBehaviour {
         if (NetworkManager.Instance.IsServer)
         {
             Invoke("spawnPlayers", 0.2f);
+        }
+        Invoke("spawnLabourer", 5f);
+    }
+    public void spawnLabourer()
+    {
+        if (NetworkManager.Instance.IsServer)
+        {
+                RobotManagerBehavior behavior = NetworkManager.Instance.InstantiateRobotManager();
+                StartCoroutine(setLabourer(behavior, 0.1f));
+                Invoke("spawnLabourer", 15f);
         }
     }
 
@@ -136,5 +145,7 @@ public class gameManager : MonoBehaviour {
                 }
             }
         }
-	}
+        
+        
+    }
 }

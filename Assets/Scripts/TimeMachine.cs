@@ -66,6 +66,7 @@ public class TimeMachine : MonoBehaviour {
     }
 
     public void EndGame(){
+        BMSLogger.Instance.Log("game end called");
 		Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
 		audioMixerScript.INSTANCE.Mute();
 		Invoke("ChangeToGameOver", 3f);
@@ -74,8 +75,6 @@ public class TimeMachine : MonoBehaviour {
 
     private void OnTriggerEnter(Collider col)
     {
-        if (!multiplayer)
-        {
             if (col.GetComponentInParent<RSManager>() != null)
             {
                 if (!col.GetComponentInParent<RSManager>().robotLaborerControl.isFighter)
@@ -83,16 +82,15 @@ public class TimeMachine : MonoBehaviour {
                     col.GetComponentInParent<RSManager>().robotLaborerControl.StartBuilding(this);
                 }
             }
-        }
-        else
-        {
-            if (col.GetComponentInParent<RMManager>() != null)
+        
+        if (col.GetComponentInParent<RMManager>() != null)
             {
-                if (!col.GetComponentInParent<RMManager>().labourerController.isFighter)
+            if (col.GetComponentInParent<RMManager>().type == RMManager.types.MOVINGTOBASE)
                 {
-                    col.GetComponentInParent<RMManager>().labourerController.StartBuilding(this);
+                BMSLogger.Instance.Log("building this");
+                col.GetComponentInParent<RMManager>().labourerController.StartBuilding(this);
                 }
-            }
+           
         }
 
     }
