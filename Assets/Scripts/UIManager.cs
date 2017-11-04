@@ -20,7 +20,7 @@ public class UIManager : MonoBehaviour {
     public GameObject FadeFromBlackPrefab;
     public GameObject WaitingRobot;
     GameObject FadeCanvasInstance;
-    int sceneNumber = 0;
+    string sceneName = "MainMenu";
     AudioSource audioSource;
     public GameObject forgeCanvas;
     GameObject forgeCanvasInstance;
@@ -54,21 +54,20 @@ public class UIManager : MonoBehaviour {
 		FadeMusic();
 		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
         Invoke("LoadScene", 2f);
-        sceneNumber = 1;
+        sceneName = "SinglePlayer";
         FadeBlack();
 	}
 
     public void LoadScene(){
         //will load scene(sceneNumber)
-        SceneManager.LoadScene(sceneNumber);
-        print("Load scene");
+        SceneManager.LoadScene(sceneName);
     }
 
     public void SplitScreenClicked(){
 		FadeMusic();
 		SoundManager.INSTANCE.PlayButtonClicked(audioSource);
 		Invoke("LoadScene", 2f);
-		sceneNumber = 2;
+		sceneName = "SplitScreen";
 		FadeBlack();
     }
 

@@ -27,7 +27,6 @@ public class TimeMachine : MonoBehaviour {
         } else {
             blueTimeMachine = this;
         }
-        timeMachine.gameObject.GetComponent<MeshRenderer>().materials[0].color = isRed ? Color.red : Color.blue;
 	}
 	
 	// Update is called once per frame
@@ -40,6 +39,7 @@ public class TimeMachine : MonoBehaviour {
     void ChangeToGameOver(){
         //look at game over
 		SceneManager.LoadScene("GameOver");
+        audioMixerScript.INSTANCE.ChangeSnapShot(0);
     }
 
     public void Build(){
