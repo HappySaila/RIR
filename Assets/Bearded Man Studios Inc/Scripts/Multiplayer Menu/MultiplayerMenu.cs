@@ -22,12 +22,13 @@ public class MultiplayerMenu : MonoBehaviour
 		ipAddress.text = "127.0.0.1";
 		portNumber.text = "15937";
 
-			// Do any firewall opening requests on the operating system
-			NetWorker.PingForFirewall(ushort.Parse(portNumber.text));
-		
+		// Do any firewall opening requests on the operating system
+		NetWorker.PingForFirewall(ushort.Parse(portNumber.text));
+		NetWorker.RefreshLocalUdpListings(ushort.Parse(portNumber.text));
 
-			Rpc.MainThreadRunner = MainThreadManager.Instance;
+		Rpc.MainThreadRunner = MainThreadManager.Instance;
 	}
+
 
 	public void Connect()
 	{
@@ -81,7 +82,7 @@ public class MultiplayerMenu : MonoBehaviour
 
 	private void TestLocalServerFind(NetWorker.BroadcastEndpoints endpoint, NetWorker sender)
 	{
-		Debug.Log("Address: " + endpoint.Address + ", Port: " + endpoint.Port + ", Server? " + endpoint.IsServer);
+		BMSLogger.Instance.Log("Address: " + endpoint.Address + ", Port: " + endpoint.Port + ", Server? " + endpoint.IsServer);
 	}
 
 	public void Connected(NetWorker networker)

@@ -72,9 +72,6 @@ public class RSManager : MonoBehaviour {
 				break;
 
 		}
-
-	
-
 	}
 
     public void SetPlayerOne(bool isPlayerOne){
