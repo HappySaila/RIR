@@ -180,7 +180,7 @@ public class MasterServerScript : masterServerBehavior
     public void NewServer()
     {
         if(!loaded)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            SceneManager.LoadScene("multiplayerScene");
         loaded = true;
     }
 

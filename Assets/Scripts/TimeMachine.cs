@@ -67,7 +67,6 @@ public class TimeMachine : MonoBehaviour {
 
     public void EndGame()
     {
-        BMSLogger.Instance.Log("game end called");
         if (!multiplayer)
         {
             Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
