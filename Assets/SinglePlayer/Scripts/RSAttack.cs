@@ -13,7 +13,7 @@ public class RSAttack : MonoBehaviour
 	RSManager robotManager;
 	bool isRamming = false;
 	public bool canRam = true;
-	public float whenIStartedRammingLast;
+	public float timeRamStarted;
 
 	// Use this for initialization
 	void Start ()
@@ -40,81 +40,62 @@ public class RSAttack : MonoBehaviour
 
 			}
 		}
-
-			
 		if (attack > 0 && canRam) {
 			InitiateRam ();
-			whenIStartedRammingLast = Time.time;
-
-		} else if (!isRamming) {
-			whenIStartedRammingLast = 99999999999;
-		
 		}
 	}
 
 	public void InitiateRam ()
 	{
-		if (!canRam) {
-			return;
-		}
-
 		canRam = false;
+		timeRamStarted = Time.time;
 		anim.SetTrigger ("Ram");
-		rigid.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY
-		| RigidbodyConstraints.FreezeRotationZ;
 	}
 
 	public void Ram ()
 	{
-		if (isRamming) {
-			isRamming = false;
-			rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY
-			| RigidbodyConstraints.FreezeRotationZ;
-			return;
-		}
-
-		Invoke ("Ram", 0.5f);
-		rigid.AddForce (-transform.forward * 50, ForceMode.Impulse);
 		isRamming = true;
+        rigid.AddForce (-transform.forward * 50, ForceMode.Impulse);
 	}
 
 	public void OnRamComplete ()
 	{
 		canRam = true;
+        isRamming = false;
 	}
 
 	public void OnCollisionEnter (Collision col)
 	{
 		if (isRamming) {
 			Hit (col.gameObject, col.contacts [0].point);
-		
+            isRamming = false;
 		}
 	}
 
-	void Hit (GameObject target, Vector3 point)
-	{
-		if (target.tag == "Hittable") {
-			target.GetComponent<Rigidbody> ().AddForceAtPosition (-transform.forward * ramForce, point, ForceMode.VelocityChange);
-			RSManager rsManagerofTarget = target.GetComponentInParent<RSManager> ();
-			if (rsManagerofTarget != null) { //the player has rammed a robot
-				if(rsManagerofTarget.isRed!=robotManager.isRed){
-					
-				if (rsManagerofTarget.robotAttack.isRamming) {//he is also ramming
-					//if i ram first you dead
-
-					if (whenIStartedRammingLast <= rsManagerofTarget.robotAttack.whenIStartedRammingLast) {
-						target.GetComponentInParent<RSManager> ().Die ();
+    void Hit(GameObject target, Vector3 point)
+    {
+        if (target.tag == "Hittable")
+        {
+            target.GetComponent<Rigidbody>().AddForceAtPosition(-transform.forward * ramForce, point, ForceMode.VelocityChange);
+            RSManager rsManagerofTarget = target.GetComponentInParent<RSManager>();
+            if (rsManagerofTarget != null)
+            { //the player has rammed a robot
+                if (rsManagerofTarget.isRed != robotManager.isRed)
+                {
+                    if (rsManagerofTarget.robotAttack.isRamming)
+                    {//he is also ramming
+                        if (timeRamStarted <= rsManagerofTarget.robotAttack.timeRamStarted)
+                        {
+                            target.GetComponentInParent<RSManager>().Die();
+                        }
+                    } else {
+						target.GetComponentInParent<RSManager>().Die();
 					}
-				} else {
-					target.GetComponentInParent<RSManager> ().Die ();
-				}
-
-			}
-			}
-
-			robotManager.playSound ("hit");
-		}
-	}
+                }
+                robotManager.playSound("hit");
+            }
+        }
+    }
 
 	public void Die ()
 	{
