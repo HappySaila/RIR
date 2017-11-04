@@ -80,6 +80,11 @@ public class UIManager : MonoBehaviour {
         cam.LookAtMultiplayer();
     }
 
+	public void QuitClicked(){
+		SoundManager.INSTANCE.PlayButtonClicked (audioSource);
+		Application.Quit ();
+	}
+
     public void MultiplayerConnected(){
         cam.LookAtMultiplayer();
     }

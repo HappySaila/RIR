@@ -70,7 +70,13 @@ public class RSController : MonoBehaviour {
         //delete laborer at time machine
         Transform laborerTransform = robotManager.GetComponentInChildren<Rigidbody>().transform;
         //instantiate new player at old laborer position
-        GameObject newRobot = Instantiate(InitialSpawnManager.instance.RobotPlayer, laborerTransform.position, Quaternion.identity);
+        Transform RespawnPosition;
+        if (robotManager.isRed){
+            RespawnPosition = TimeMachine.redTimeMachine.spawnPosition;
+        } else {
+            RespawnPosition = TimeMachine.blueTimeMachine.spawnPosition;
+        }
+        GameObject newRobot = Instantiate(InitialSpawnManager.instance.RobotPlayer, RespawnPosition.position, RespawnPosition.rotation);
         //set players color and team 
         newRobot.GetComponent<RSController>().SetTeam(robotManager.isRed);
         newRobot.GetComponentInChildren<RSController>().SetPlayer(isPlayerOne);
