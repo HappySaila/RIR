@@ -20,6 +20,7 @@ public class GameOver : MonoBehaviour {
 			rend.material.color = Color.blue;
 		}
         audioMixerScript.INSTANCE.FadeInIntro();
+        SpeechManager.instance.GameOverScene();
 	}
     public void ReturnToMainMenu(){
         Instantiate(fadeOut, transform.position, Quaternion.identity);

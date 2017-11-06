@@ -32,7 +32,8 @@ public class UIManager : MonoBehaviour {
         if (instance == null){
             instance = this;
             PlayerPrefs.SetInt("GameOver", 0);
-        } else {
+			SpeechManager.instance.StartScene();
+		} else {
             Destroy(gameObject);
         }
 	}
