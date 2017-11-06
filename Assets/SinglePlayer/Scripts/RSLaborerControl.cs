@@ -104,7 +104,8 @@ public class RSLaborerControl : MonoBehaviour
 		}
 	}
 
-	void StandUp(Collider col)
+
+    void StandUp(Collider col)
 	{
 		transform.up = Vector3.Lerp(transform.up, Vector3.up, Time.deltaTime);
 		if (Vector3.Distance(transform.up.normalized, Vector3.up) < 0.1)
@@ -126,7 +127,6 @@ public class RSLaborerControl : MonoBehaviour
 			trigger.enabled = false;
 
 			robotManager.playSound ("collectLabourer");
-
 		}
 
 	}

@@ -74,9 +74,11 @@ public class RSController : MonoBehaviour {
         Transform RespawnPosition;
         if (robotManager.isRed){
             RespawnPosition = TimeMachine.redTimeMachine.spawnPosition;
+            Instantiate(ParticleSystemManager.instance.RespawnRed, RespawnPosition.position, Quaternion.identity);
         } else {
             RespawnPosition = TimeMachine.blueTimeMachine.spawnPosition;
-        }
+			Instantiate(ParticleSystemManager.instance.RespawnBlue, RespawnPosition.position, Quaternion.identity);
+		}
         GameObject newRobot = Instantiate(InitialSpawnManager.instance.RobotPlayer, RespawnPosition.position, RespawnPosition.rotation);
         //set players color and team 
         newRobot.GetComponent<RSController>().SetTeam(robotManager.isRed);

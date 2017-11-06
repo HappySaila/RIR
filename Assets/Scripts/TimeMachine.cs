@@ -23,6 +23,7 @@ public class TimeMachine : MonoBehaviour {
     public Queue<RMManager> MAvalableLaboreres = new Queue<RMManager>();
 
 	[HideInInspector] public GameObject[] pointsAroundTimeMech;
+    ParticleSystem[] steamParticles;
 
 
 	// Use this for initialization
@@ -38,7 +39,19 @@ public class TimeMachine : MonoBehaviour {
         } else {
             blueTimeMachine = this;
         }
+        steamParticles = GetComponentsInChildren<ParticleSystem>();
+        StartCoroutine(AdjustParticles());
 	}
+
+    IEnumerator AdjustParticles(){
+        yield return new WaitForSeconds(1);
+        foreach (ParticleSystem s in steamParticles)
+        {
+            var e = s.emission;
+            e.rateOverTime = currentProgress / 100f * 150;
+        }
+        StartCoroutine(AdjustParticles());
+    }
 	
 	// Update is called once per frame
 	void Update () {

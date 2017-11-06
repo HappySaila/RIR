@@ -81,6 +81,7 @@ public class RSAttack : MonoBehaviour
         {
             target.GetComponent<Rigidbody>().AddForceAtPosition(-transform.forward * ramForce, point, ForceMode.VelocityChange);
             RSManager rsManagerofTarget = target.GetComponentInParent<RSManager>();
+            Instantiate(ParticleSystemManager.instance.LaborerSparks, point, Random.rotation);
 
             if (rsManagerofTarget != null)
             { //the player has rammed a robot
