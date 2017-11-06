@@ -17,6 +17,10 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip ramHit;
 	public AudioClip hammer;
 	public AudioClip stab;
+	public AudioClip robotScene;
+	public AudioClip gladiatorScene;
+	public AudioClip swoosh;
+	public AudioClip Swing;
 
 	public AudioClip GameOverSound;
 	AudioSource gameOverAudioSource;
@@ -33,10 +37,10 @@ public class SoundManager : MonoBehaviour {
 		DontDestroyOnLoad (gameObject);
 		if (INSTANCE == null) {
 			INSTANCE = this;
-		} else {
-			Destroy (gameObject);
-		}
-			
+			gameOverAudioSource = GetComponent<AudioSource>();
+        } else {
+            Destroy (gameObject);
+        }
 	}
 
     private void Start()
@@ -72,6 +76,21 @@ public class SoundManager : MonoBehaviour {
         gameOverAudioSource.PlayOneShot(GameOverSound, 0.5f);
 	}
 
+	public void PlayRobotScene()
+	{
+        gameOverAudioSource.PlayOneShot(robotScene, 1);
+	}
+
+	public void PlayGladiatorScene()
+	{
+        gameOverAudioSource.PlayOneShot(gladiatorScene, 1);
+	}
+
+	public void PlaySwoosh()
+	{
+		gameOverAudioSource.PlayOneShot(swoosh, 1);
+	}
+
 	public void PlayStab(AudioSource s)
 	{
         if (canStab){
@@ -81,9 +100,17 @@ public class SoundManager : MonoBehaviour {
         Invoke("StopStab", 0.5f);    
 	}
     bool canStab = true;
+
     void StopStab(){
         canStab = true;
     }
+
+    public void PlaySwing(AudioSource s){
+        BendPitch(s);
+		s.PlayOneShot(Swing);
+	}
+
+
 
     void BendPitch(AudioSource source){
 		source.pitch = Random.Range (lowPitch, highPitch);

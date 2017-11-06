@@ -59,6 +59,7 @@ public class RSAttack : MonoBehaviour
 	{
 		isRamming = true;
         rigid.AddForce (-transform.forward * 50, ForceMode.Impulse);
+        robotManager.playSound("swing");
 	}
 
 	public void OnRamComplete ()

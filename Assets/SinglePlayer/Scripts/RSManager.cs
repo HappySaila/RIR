@@ -67,9 +67,9 @@ public class RSManager : MonoBehaviour {
 		case "hammer":
 			SoundManager.INSTANCE.PlayHammer (audioSource);
 				break;
-			case "spannereeraSDASF":
-				//SoundManager.INSTANCE.PlayRamHit (audioSource);
-				break;
+		case "swing":
+			SoundManager.INSTANCE.PlaySwing (audioSource);
+			break;
 
 		}
 	}

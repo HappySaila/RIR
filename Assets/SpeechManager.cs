@@ -47,6 +47,7 @@ public class SpeechManager : MonoBehaviour
         {
             RobotA.SetTrigger("In");
             RobotVisible = true;
+            SoundManager.INSTANCE.PlayRobotScene();
         }
 
         yield return new WaitForSeconds(1);
@@ -69,6 +70,7 @@ public class SpeechManager : MonoBehaviour
         {
             RomanA.SetTrigger("In");
             RomanVisible = true;
+            SoundManager.INSTANCE.PlayGladiatorScene();
         }
 
         yield return new WaitForSeconds(1);
@@ -107,12 +109,18 @@ public class SpeechManager : MonoBehaviour
 			RobotA.SetTrigger("Out");
 			RobotVisible = false;
 		}
+        SoundManager.INSTANCE.PlaySwoosh();
 		yield return new WaitForSeconds(1);
         mainCanvas.enabled = false;
 	}
 
-    public void StartScene()
+    public void StartScene(){
+        StartCoroutine(StartSceneE());
+    }
+
+    IEnumerator StartSceneE()
     {
+        yield return new WaitForSeconds(1);
         int i = Random.Range(0, 100) % 9;
         switch (i){
             case 0:
