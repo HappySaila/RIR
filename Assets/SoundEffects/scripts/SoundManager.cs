@@ -31,7 +31,6 @@ public class SoundManager : MonoBehaviour {
 	void Awake(){
 		
 		DontDestroyOnLoad (gameObject);
-		gameOverAudioSource = GetComponent<AudioSource> ();
 		if (INSTANCE == null) {
 			INSTANCE = this;
 		} else {
@@ -39,7 +38,12 @@ public class SoundManager : MonoBehaviour {
 		}
 			
 	}
-	private void Update()
+
+    private void Start()
+    {
+		gameOverAudioSource = GetComponent<AudioSource>();
+	}
+    private void Update()
 	{
 		//to ensure that when alot of things are hit that it dosnt sound terrible.... Improves sfx feal
 		if (hitSoundCallCount >0) {
@@ -65,7 +69,7 @@ public class SoundManager : MonoBehaviour {
 	}
 
 	public void PlayGameOverSound(){
-		gameOverAudioSource.PlayOneShot(GameOverSound);
+        gameOverAudioSource.PlayOneShot(GameOverSound, 0.5f);
 	}
 
 	public void PlayStab(AudioSource s)

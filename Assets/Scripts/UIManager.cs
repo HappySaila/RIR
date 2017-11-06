@@ -143,6 +143,7 @@ public class UIManager : MonoBehaviour {
 			MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
 			StartCoroutine(SpawnWaitingRobots());
 			WaitingRoomName.text = RoomName.text;
+			SoundManager.INSTANCE.PlayButtonClicked(audioSource);
 		}
     }
 

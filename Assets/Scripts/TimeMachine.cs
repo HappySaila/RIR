@@ -84,10 +84,9 @@ public class TimeMachine : MonoBehaviour {
         {
             Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);
             audioMixerScript.INSTANCE.Mute();
-		SoundManager.INSTANCE.PlayGameOverSound ();
+		    SoundManager.INSTANCE.PlayGameOverSound ();
             Invoke("ChangeToGameOver", 3f);
             PlayerPrefs.SetInt("Winner", isRed ? 1 : 0);
-            Debug.Log("ye done");
         }
     }
 

@@ -19,12 +19,13 @@ public class GameOver : MonoBehaviour {
             winner.color = Color.blue;
 			rend.material.color = Color.blue;
 		}
-		audioMixerScript.INSTANCE.ChangeSnapShot(0);
+        audioMixerScript.INSTANCE.FadeInIntro();
 	}
     public void ReturnToMainMenu(){
         Instantiate(fadeOut, transform.position, Quaternion.identity);
         Invoke("BackToMain", 3);
-    }
+        SoundManager.INSTANCE.PlayButtonClicked(GetComponent<AudioSource>());
+	}
 
     public void BackToMain(){
 		SceneManager.LoadScene("MainMenu");
