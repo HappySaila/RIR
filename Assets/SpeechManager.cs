@@ -340,7 +340,7 @@ public class SpeechManager : MonoBehaviour
 		Robot("All robots okay?");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
 		yield return new WaitForEndOfFrame();
-		Robot("Robot X492? How is your head?");
+		Robot("Robot X? How is your head?");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
 		yield return new WaitForEndOfFrame();
 		Roman("Haha! Great fight! Another! Can we get another?");
@@ -351,10 +351,10 @@ public class SpeechManager : MonoBehaviour
 
 	IEnumerator GameOver4()
 	{
-		Robot("A fight to the death the wanted? A fight to the death they got!");
+		Robot("A fight to the death they wanted? A fight to the death they got!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
 		yield return new WaitForEndOfFrame();
-		Robot("Robot X492? Get in the time machine! We leaving.");
+		Robot("Robot X? Get in the time machine! We leaving.");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
 		yield return new WaitForEndOfFrame();
 		Robot("Back to the present. Cant wait to see my wife bot and kid bots!");

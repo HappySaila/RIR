@@ -90,7 +90,7 @@ public class RSController : MonoBehaviour {
         if (robotManager!=null){
 			Destroy(robotManager.gameObject);
 		}
-            
+
         Destroy(gameObject);
     }
 
