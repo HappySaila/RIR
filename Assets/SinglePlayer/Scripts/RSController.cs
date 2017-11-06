@@ -26,15 +26,18 @@ public class RSController : MonoBehaviour {
         robotManager.transform.parent = null;
         if (!isAI){
             flyCamera.Activate(robotManager.robotFollow.BackCamera.transform);
-			StartCoroutine(RespawnE());
+            Invoke("StartRespawn", 3);
         } else {
             Destroy(gameObject);
             AIRespawner.instance.AIDied(robotManager.isRed);
         }
     }
 
+    void StartRespawn(){
+		StartCoroutine(RespawnE());
+	}
+
     IEnumerator RespawnE(){
-        print("Trying to respawn");
         bool spawned = false;
         if (isRed){
             if (TimeMachine.redTimeMachine.AvailableLaborers.Count > 0){

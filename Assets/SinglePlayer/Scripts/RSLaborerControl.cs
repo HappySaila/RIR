@@ -73,7 +73,7 @@ public class RSLaborerControl : MonoBehaviour
 
 	public void CallSetLaborer()
 	{
-        if (rigid.velocity.magnitude < 0.01f){
+        if (rigid.velocity.magnitude < float.Epsilon){
             SetLaborer();
         } else {
             Invoke("CallSetLaborer", 0.2f);
@@ -90,9 +90,7 @@ public class RSLaborerControl : MonoBehaviour
 
 		trigger.enabled = true;
 		isIdleLaborer = true;
-		rigid.constraints = RigidbodyConstraints.FreezeRotationX |
-			RigidbodyConstraints.FreezeRotationZ |
-			RigidbodyConstraints.FreezeRotationY;
+        rigid.constraints = RigidbodyConstraints.FreezeAll;
 	}
 
 	void OnTriggerStay(Collider col)
