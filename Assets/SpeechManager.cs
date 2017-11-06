@@ -180,16 +180,16 @@ public class SpeechManager : MonoBehaviour
     {
         Robot("Finally! Someone came to rescue us!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("What? Your time machine is broken too?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("You are going to be stuck here for a long time.");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Roman("Get back to work!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -197,13 +197,13 @@ public class SpeechManager : MonoBehaviour
     {
         Robot("Where were you?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("You missed such a good fight!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("Anyways, I think you are next!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -211,13 +211,13 @@ public class SpeechManager : MonoBehaviour
     {
         Roman("A new worker?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Roman("Welcome to the end of your miserable life.");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Roman("Get working!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -225,13 +225,13 @@ public class SpeechManager : MonoBehaviour
     {
         Robot("Ah man! So much oil leaks in that last round.");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("We got to build that time machine.");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("Got to get back to the present!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -239,10 +239,10 @@ public class SpeechManager : MonoBehaviour
     {
         Roman("Through that door robot.");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("Yes sir. No time to waste. Got to go fight, fight,fight");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -250,13 +250,13 @@ public class SpeechManager : MonoBehaviour
     {
         Roman("Robot! I have been meaning to tell you.");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Roman("Your fighting has been really impressive. Keep it up!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("Yes sir!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -264,10 +264,10 @@ public class SpeechManager : MonoBehaviour
     {
         Robot("Robot friend! Where have you been?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("Grab a hammer and help me build this time machine.");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -275,13 +275,13 @@ public class SpeechManager : MonoBehaviour
     {
         Roman("There have been rumours that you and your friends have been trying to escape?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Roman("Is this true?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("Err - no. We just want to fight. Fight all day and all night!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 
@@ -289,13 +289,13 @@ public class SpeechManager : MonoBehaviour
     {
         Roman("Robot! Why are you wandering around?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Roman("Get in the arena and fight!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         Robot("Yes sir!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(0.1f);;
         AllLeave();
     }
 	#endregion
@@ -305,16 +305,16 @@ public class SpeechManager : MonoBehaviour
 	{
 		Roman("That was a great fight!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Roman("Very strong and very entertaining.");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Roman("Especially the part when the one robot rammed into the other one.");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Roman("Truely great stuff!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		AllLeave();
 	}
 
@@ -322,16 +322,16 @@ public class SpeechManager : MonoBehaviour
 	{
 		Robot("Yes! We win!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Robot("Our time machine is built and we are getting out of here!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Robot("Oil? Check. Lets go!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
         Roman("Great fight!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
         AllLeave();
 	}
 
@@ -339,13 +339,13 @@ public class SpeechManager : MonoBehaviour
 	{
 		Robot("All robots okay?");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Robot("Robot X? How is your head?");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Roman("Haha! Great fight! Another! Can we get another?");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		AllLeave();
 	}
 
@@ -353,13 +353,13 @@ public class SpeechManager : MonoBehaviour
 	{
 		Robot("A fight to the death they wanted? A fight to the death they got!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Robot("Robot X? Get in the time machine! We leaving.");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Robot("Back to the present. Cant wait to see my wife bot and kid bots!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		AllLeave();
 	}
 
@@ -367,16 +367,16 @@ public class SpeechManager : MonoBehaviour
 	{
 		Robot("My word! We won.");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Roman("Great fight! At first I thought blue was going to win.");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Roman("And then red was coming back.");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		Roman("And then back forth back forth. What an outcome!");
 		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-		yield return new WaitForEndOfFrame();
+		yield return new WaitForSeconds(0.1f);;
 		AllLeave();
 	}
     #endregion
