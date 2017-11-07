@@ -282,6 +282,11 @@ public class SpeechManager : MonoBehaviour
         AllLeave();
     }
 
+    public void Hosting(){
+        Robot("Hosting - Game no longer active. \nStart up client instances and connect!");
+        Roman("Hosting - Game no longer active. \nStart up client instances and connect!");
+    }
+
     #region welcome scenes
     IEnumerator Welcome()
     {

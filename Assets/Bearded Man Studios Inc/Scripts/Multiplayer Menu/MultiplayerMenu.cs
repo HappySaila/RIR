@@ -64,6 +64,7 @@ public class MultiplayerMenu : MonoBehaviour
 		};
         NetworkManager.Instance.Initialize(server);
         Connected(server);
+        SpeechManager.instance.Hosting();
 	}
 
 	private void Update()
