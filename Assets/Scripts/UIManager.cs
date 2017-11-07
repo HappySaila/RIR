@@ -25,6 +25,7 @@ public class UIManager : MonoBehaviour {
     public GameObject forgeCanvas;
     GameObject forgeCanvasInstance;
     int waitingRobots=0;
+    public static bool canPlayStartScene = true;
 
     private void Awake()
     {
@@ -32,7 +33,10 @@ public class UIManager : MonoBehaviour {
         if (instance == null){
             instance = this;
             PlayerPrefs.SetInt("GameOver", 0);
-			SpeechManager.instance.StartScene();
+            if (canPlayStartScene){
+				SpeechManager.instance.StartScene();
+                canPlayStartScene = false;            
+            }
 		} else {
             Destroy(gameObject);
         }
