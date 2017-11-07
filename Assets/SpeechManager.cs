@@ -119,9 +119,13 @@ public class SpeechManager : MonoBehaviour
 
         RobotLeave();
 		
-        SoundManager.INSTANCE.PlaySwoosh();
+		SoundManager.INSTANCE.PlaySwoosh();
 		yield return new WaitForSeconds(1);
-        mainCanvas.enabled = false;
+		mainCanvas.enabled = false;
+		SpeechA.SetTrigger("Reset");
+		RomanA.SetTrigger("Reset");
+		RobotA.SetTrigger("Reset");
+		FadeBlack.ResetTrigger("Reset");
 	}
 
     public void RobotLeave(){

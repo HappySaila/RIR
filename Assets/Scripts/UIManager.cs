@@ -76,40 +76,47 @@ public class UIManager : MonoBehaviour {
     }
 
 	void Update (){
-		if (Input.GetJoystickNames ()[0].Length>0 && splitScrean.interactable == false) {
-			splitScrean.interactable = true;
+        if (Input.GetJoystickNames().Length>0){
+			if (Input.GetJoystickNames ()[0].Length>0 && splitScrean.interactable == false) {
+				splitScrean.interactable = true;
+			}
 		}
-
 		if(playerHasClickedSplitPlayer){
-			if(Input.GetJoystickNames ()[0].Length==0){
+			if (Input.GetJoystickNames().Length > 0)
+			{
+                if (Input.GetJoystickNames()[0].Length == 0)
+                {
+                    splitScrean.interactable = false;
+                }
+            }else{
 				splitScrean.interactable = false;
 			}
 		}
-
-
-
-		//Debug.Log (" "+Input.GetJoystickNames ()[0].Length);
-		//Input.GetJoystickNames ()[0]
-
 	}
 
     public void SplitScreenClicked(){
-
-		//Debug.Log ("Input.GetJoystickNames ().Length "+Input.GetJoystickNames ().Length );
-
-		if (Input.GetJoystickNames ()[0].Length>0) {
-			FadeMusic();
-			SoundManager.INSTANCE.PlayButtonClicked(audioSource);
-			Invoke("LoadScene", 2f);
-			sceneName = "SplitScreen";
-			FadeBlack();
-		} else {
+        if (Input.GetJoystickNames().Length > 0){
+			if (Input.GetJoystickNames()[0].Length > 0)
+			{
+				FadeMusic();
+				SoundManager.INSTANCE.PlayButtonClicked(audioSource);
+				Invoke("LoadScene", 2f);
+				sceneName = "SplitScreen";
+				FadeBlack();
+			}
+			else
+			{
+				splitScrean.interactable = false;
+				playerHasClickedSplitPlayer = true;
+				SpeechManager.instance.StartCantPlaySplitScreen();
+			}
+		}
+		else
+		{
 			splitScrean.interactable = false;
 			playerHasClickedSplitPlayer = true;
-			SpeechManager.instance.StartCantPlaySplitScreen ();
+			SpeechManager.instance.StartCantPlaySplitScreen();
 		}
-
-
     }
 
     public void MultiPlayerClicked(){
