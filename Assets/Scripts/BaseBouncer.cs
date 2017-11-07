@@ -26,7 +26,6 @@ public class BaseBouncer : MonoBehaviour {
 		if (col.GetComponentInParent <RSManager>() != null) {
 			if (isRed != col.GetComponentInParent <RSManager>().isRed){
                 //player has entered the wrong base
-                print("DIE" + col.GetComponentInParent<RSManager>().isRed);
                 col.GetComponentInParent <RSManager> ().Die ();
             } else {
 				//player has entered thier own base

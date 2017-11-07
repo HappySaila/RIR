@@ -21,6 +21,7 @@ public class GameOver : MonoBehaviour {
 		}
         audioMixerScript.INSTANCE.FadeInIntro();
         SpeechManager.instance.GameOverScene();
+        TimeMachine.canEndGame = true;
 	}
     public void ReturnToMainMenu(){
         Instantiate(fadeOut, transform.position, Quaternion.identity);

@@ -204,6 +204,7 @@ public class UIManager : MonoBehaviour {
 		GetComponent<RegisterScript>().error.text = "";
         GetComponent<LoginScript>().error.text = "";
         cam.LookAtCreateRoom();
+        SpeechManager.instance.HowToMultiplayer();
     }
 
     public void GameOver(){

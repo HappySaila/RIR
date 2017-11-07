@@ -17,7 +17,7 @@ public class TimeMachine : MonoBehaviour {
 	public float buildSpeedMultiplier;
     float maxBuildSpeed;
     bool multiplayer;
-    static bool canEndGame = true;
+    public static bool canEndGame = true;
 
     public Queue<RSManager> AvailableLaborers = new Queue<RSManager>();
     public Queue<RMManager> MAvalableLaboreres = new Queue<RMManager>();
@@ -55,9 +55,6 @@ public class TimeMachine : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(1) && !isRed){
-            EndGame();
-        }
 	}
 
     void ChangeToGameOver(){
@@ -80,6 +77,7 @@ public class TimeMachine : MonoBehaviour {
 
     public void EndGame()
     {
+        print("GameOver");
         if (!multiplayer)
         {
             Instantiate(InitialSpawnManager.instance.FadeBlack, transform.position, Quaternion.identity);

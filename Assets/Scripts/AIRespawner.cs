@@ -64,7 +64,6 @@ public class AIRespawner : MonoBehaviour {
         }
 
         yield return new WaitUntil(() => (BlueAICount>0 || RedAICount>0));
-        print("Respawn");
         StartCoroutine(Respawn());
     }
 	

@@ -98,21 +98,30 @@ public class SpeechManager : MonoBehaviour
 			SpeechVisible = false;
 		}
 
+        RomanLeave();
+
+        RobotLeave();
+		
+        SoundManager.INSTANCE.PlaySwoosh();
+		yield return new WaitForSeconds(1);
+        mainCanvas.enabled = false;
+	}
+
+    public void RobotLeave(){
+		if (RobotVisible)
+		{
+			RobotA.SetTrigger("Out");
+			RobotVisible = false;
+		} 
+    }
+
+    public void RomanLeave(){
 		if (RomanVisible)
 		{
 			RomanA.SetTrigger("Out");
 			RomanVisible = false;
 		}
-
-		if (RobotVisible)
-		{
-			RobotA.SetTrigger("Out");
-			RobotVisible = false;
-		}
-        SoundManager.INSTANCE.PlaySwoosh();
-		yield return new WaitForSeconds(1);
-        mainCanvas.enabled = false;
-	}
+    }
 
     public void StartScene(){
         StartCoroutine(StartSceneE());
@@ -173,6 +182,104 @@ public class SpeechManager : MonoBehaviour
 				StartCoroutine(GameOver5());
 				break;
 		}
+    }
+
+    public void HowToPlay(){
+        StartCoroutine(HowToPlayE());
+    }
+
+    public void HowToMultiplayer(){
+        StartCoroutine(HowToMultiplayerE());
+    }
+
+    IEnumerator HowToPlayE(){
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("You new huh?");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f); ;
+		Robot("Well then, Welcome to Robots in Rome!");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f); ;
+		Robot("Your objective is simple. Gather enough robots to build your time machine.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f); ;
+		Robot("Once your time machine is built, we can go back to our time.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+        Robot("To move your bot, use the WASD controls.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("And to attack, use the space bar.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+        Robot("You got it?");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("WASD - movement\nSPACE - attack\nE - look behind\nQ - taunt");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+        RobotLeave();
+        Roman("Have any friends?");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+        Roman("Make sure you connect an external controller.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Roman("To interact with your robot with the XBOX controller, just do the following.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Roman("Left stick - movement\nA button- attack\nX button- look behind\nB button - taunt");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Roman("Now get in there and fight!");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("Yes sir!");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		AllLeave();
+    }
+
+    IEnumerator HowToMultiplayerE(){
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("To run multiplayer you are going to need a host.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("To run a host you are going to have to open a new instance of Robots in Rome. Click multiplayer and click host on the Forge interface.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("The instance hosting the game will not be interactable.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("All clients will have to connect to the hosting machines IP address.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("If the host is found, it will be filled in automatically in the IP address feild in the Forge interface.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("Once that is all done you will be connected!");
+        yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+        yield return new WaitForSeconds(0.1f);
+		RobotLeave();
+        Roman("To start a game you are going to have to create or join a room.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Roman("If you create a room, your friends can join it and you can fight along side each other.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Roman("If you create a room of size three, once your room is full it will search for another room of size three and join the two rooms for " +
+              "an epic three vs three battle.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Roman("Make sure the room names match when you are joining.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+        Robot("Yes sir!");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+        AllLeave();
     }
 
     #region welcome scenes
