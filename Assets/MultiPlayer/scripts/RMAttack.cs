@@ -76,7 +76,7 @@ public class RMAttack : MonoBehaviour {
     {
         if (target.tag == "Hittable")
         {
-            Debug.Log("hit");
+            Instantiate(ParticleSystemManager.instance.LaborerSparks,point,Random.rotation);
             //robotManger.networkObject.SendRpc(robotManger.networkObject.Owner,"ramPlayer",BeardedManStudios.Forge.Networking.Receivers.Target, -transform.forward * ramForce, point);
             target.GetComponent<Rigidbody>().AddForceAtPosition(-transform.forward * ramForce, point, ForceMode.VelocityChange);
             if (target.GetComponentInParent<RMManager>() != null)

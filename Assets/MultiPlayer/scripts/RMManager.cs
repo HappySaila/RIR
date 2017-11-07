@@ -227,6 +227,14 @@ public class RMManager : RobotManagerBehavior {
         {
             Camara.enabled = false;
         }
+        if (team == 1)
+        {
+            Instantiate(ParticleSystemManager.instance.RespawnRed, networkObject.position, Random.rotation);
+        }
+        else
+        {
+            Instantiate(ParticleSystemManager.instance.RespawnBlue, networkObject.position, Random.rotation);
+        }
     }
 
     public override void makeIntoLabourer(RpcArgs args)
