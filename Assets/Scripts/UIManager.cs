@@ -26,9 +26,16 @@ public class UIManager : MonoBehaviour {
     GameObject forgeCanvasInstance;
     int waitingRobots=0;
     public static bool canPlayStartScene = true;
+	static bool playerHasClickedSplitPlayer = false;
+
+	public Button splitScrean;
+
+
 
     private void Awake()
     {
+		
+
 		audioSource= GetComponentInChildren<AudioSource>();
         if (instance == null){
             instance = this;
@@ -68,12 +75,41 @@ public class UIManager : MonoBehaviour {
         SceneManager.LoadScene(sceneName);
     }
 
+	void Update (){
+		if (Input.GetJoystickNames ()[0].Length>0 && splitScrean.interactable == false) {
+			splitScrean.interactable = true;
+		}
+
+		if(playerHasClickedSplitPlayer){
+			if(Input.GetJoystickNames ()[0].Length==0){
+				splitScrean.interactable = false;
+			}
+		}
+
+
+
+		//Debug.Log (" "+Input.GetJoystickNames ()[0].Length);
+		//Input.GetJoystickNames ()[0]
+
+	}
+
     public void SplitScreenClicked(){
-		FadeMusic();
-		SoundManager.INSTANCE.PlayButtonClicked(audioSource);
-		Invoke("LoadScene", 2f);
-		sceneName = "SplitScreen";
-		FadeBlack();
+
+		//Debug.Log ("Input.GetJoystickNames ().Length "+Input.GetJoystickNames ().Length );
+
+		if (Input.GetJoystickNames ()[0].Length>0) {
+			FadeMusic();
+			SoundManager.INSTANCE.PlayButtonClicked(audioSource);
+			Invoke("LoadScene", 2f);
+			sceneName = "SplitScreen";
+			FadeBlack();
+		} else {
+			splitScrean.interactable = false;
+			playerHasClickedSplitPlayer = true;
+			SpeechManager.instance.StartCantPlaySplitScreen ();
+		}
+
+
     }
 
     public void MultiPlayerClicked(){

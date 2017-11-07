@@ -69,22 +69,26 @@ public class MultiplayerMenu : MonoBehaviour
 
 	private void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.H))
-			Host();
-		else if (Input.GetKeyDown(KeyCode.C))
-			Connect();
-		else if (Input.GetKeyDown(KeyCode.L))
-		{
-			NetWorker.localServerLocated -= TestLocalServerFind;
-			NetWorker.localServerLocated += TestLocalServerFind;
-			NetWorker.RefreshLocalUdpListings();
-		}
-	}
+        if (Input.GetKeyDown(KeyCode.H))
+            Host();
+        else if (Input.GetKeyDown(KeyCode.C))
+            Connect();
+
+        NetWorker.localServerLocated -= TestLocalServerFind;
+        NetWorker.localServerLocated += TestLocalServerFind;
+        NetWorker.RefreshLocalUdpListings();
+        
+    }
 
 	private void TestLocalServerFind(NetWorker.BroadcastEndpoints endpoint, NetWorker sender)
 	{
 		BMSLogger.Instance.Log("Address: " + endpoint.Address + ", Port: " + endpoint.Port + ", Server? " + endpoint.IsServer);
-	}
+        MainThreadManager.Run(() => {
+            ipAddress.text = endpoint.Address;
+        });
+        
+        //portNumber.text = ""+endpoint.Port;
+    }
 
 	public void Connected(NetWorker networker)
 	{

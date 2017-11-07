@@ -89,6 +89,23 @@ public class SpeechManager : MonoBehaviour
         StartCoroutine(Leave());
     }
 
+	public void StartCantPlaySplitScreen (){
+		StartCoroutine (StartCantPlaySplitScreenE ());
+	}
+
+	IEnumerator StartCantPlaySplitScreenE()
+	{
+		//yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Robot("Hay.You can't do that!");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(0.1f);
+		Roman("You first need to plug in an xbox remote to do that.");
+		yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
+		yield return new WaitForSeconds(2f);;
+		AllLeave();
+	}
+
     IEnumerator Leave(){
         yield return new WaitForSeconds(0.5f);
 		if (SpeechVisible)
@@ -292,7 +309,7 @@ public class SpeechManager : MonoBehaviour
     {
         Robot("Finally! Someone came to rescue us!");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
-        yield return new WaitForSeconds(0.1f);;
+        yield return new WaitForSeconds(0.1f);
         Robot("What? Your time machine is broken too?");
         yield return new WaitUntil(() => Input.GetMouseButtonUp(0));
         yield return new WaitForSeconds(0.1f);;
