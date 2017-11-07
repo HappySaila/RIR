@@ -55,7 +55,7 @@ public class TimeMachine : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonDown(1) && !isRed){
+		if (Input.GetKeyDown("escape") && !isRed){
             EndGame();
         }
 	}
