@@ -122,7 +122,6 @@ public class MasterServerScript : masterServerBehavior
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("server running");
         if (networkObject.IsServer)
         {
             serverUpdateFunction();

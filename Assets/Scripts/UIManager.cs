@@ -32,7 +32,8 @@ public class UIManager : MonoBehaviour {
         if (instance == null){
             instance = this;
             PlayerPrefs.SetInt("GameOver", 0);
-        } else {
+			SpeechManager.instance.StartScene();
+		} else {
             Destroy(gameObject);
         }
 	}
@@ -143,6 +144,7 @@ public class UIManager : MonoBehaviour {
 			MasterServerScript.instance.createRoomButtonPressed(RoomName.text, int.Parse(RoomNumber.text));
 			StartCoroutine(SpawnWaitingRobots());
 			WaitingRoomName.text = RoomName.text;
+			SoundManager.INSTANCE.PlayButtonClicked(audioSource);
 		}
     }
 

@@ -17,6 +17,10 @@ public class SoundManager : MonoBehaviour {
 	public AudioClip ramHit;
 	public AudioClip hammer;
 	public AudioClip stab;
+	public AudioClip robotScene;
+	public AudioClip gladiatorScene;
+	public AudioClip swoosh;
+	public AudioClip Swing;
 
 	public AudioClip GameOverSound;
 	AudioSource gameOverAudioSource;
@@ -31,15 +35,19 @@ public class SoundManager : MonoBehaviour {
 	void Awake(){
 		
 		DontDestroyOnLoad (gameObject);
-		gameOverAudioSource = GetComponent<AudioSource> ();
 		if (INSTANCE == null) {
 			INSTANCE = this;
-		} else {
-			Destroy (gameObject);
-		}
-			
+			gameOverAudioSource = GetComponent<AudioSource>();
+        } else {
+            Destroy (gameObject);
+        }
 	}
-	private void Update()
+
+    private void Start()
+    {
+		gameOverAudioSource = GetComponent<AudioSource>();
+	}
+    private void Update()
 	{
 		//to ensure that when alot of things are hit that it dosnt sound terrible.... Improves sfx feal
 		if (hitSoundCallCount >0) {
@@ -65,7 +73,22 @@ public class SoundManager : MonoBehaviour {
 	}
 
 	public void PlayGameOverSound(){
-		gameOverAudioSource.PlayOneShot(GameOverSound);
+        gameOverAudioSource.PlayOneShot(GameOverSound, 0.5f);
+	}
+
+	public void PlayRobotScene()
+	{
+        gameOverAudioSource.PlayOneShot(robotScene, 1);
+	}
+
+	public void PlayGladiatorScene()
+	{
+        gameOverAudioSource.PlayOneShot(gladiatorScene, 1);
+	}
+
+	public void PlaySwoosh()
+	{
+		gameOverAudioSource.PlayOneShot(swoosh, 1);
 	}
 
 	public void PlayStab(AudioSource s)
@@ -77,9 +100,17 @@ public class SoundManager : MonoBehaviour {
         Invoke("StopStab", 0.5f);    
 	}
     bool canStab = true;
+
     void StopStab(){
         canStab = true;
     }
+
+    public void PlaySwing(AudioSource s){
+        BendPitch(s);
+		s.PlayOneShot(Swing);
+	}
+
+
 
     void BendPitch(AudioSource source){
 		source.pitch = Random.Range (lowPitch, highPitch);

@@ -26,15 +26,18 @@ public class RSController : MonoBehaviour {
         robotManager.transform.parent = null;
         if (!isAI){
             flyCamera.Activate(robotManager.robotFollow.BackCamera.transform);
-			StartCoroutine(RespawnE());
+            Invoke("StartRespawn", 3);
         } else {
             Destroy(gameObject);
             AIRespawner.instance.AIDied(robotManager.isRed);
         }
     }
 
+    void StartRespawn(){
+		StartCoroutine(RespawnE());
+	}
+
     IEnumerator RespawnE(){
-        print("Trying to respawn");
         bool spawned = false;
         if (isRed){
             if (TimeMachine.redTimeMachine.AvailableLaborers.Count > 0){
@@ -71,9 +74,11 @@ public class RSController : MonoBehaviour {
         Transform RespawnPosition;
         if (robotManager.isRed){
             RespawnPosition = TimeMachine.redTimeMachine.spawnPosition;
+            Instantiate(ParticleSystemManager.instance.RespawnRed, RespawnPosition.position, Quaternion.identity);
         } else {
             RespawnPosition = TimeMachine.blueTimeMachine.spawnPosition;
-        }
+			Instantiate(ParticleSystemManager.instance.RespawnBlue, RespawnPosition.position, Quaternion.identity);
+		}
         GameObject newRobot = Instantiate(InitialSpawnManager.instance.RobotPlayer, RespawnPosition.position, RespawnPosition.rotation);
         //set players color and team 
         newRobot.GetComponent<RSController>().SetTeam(robotManager.isRed);
@@ -85,7 +90,7 @@ public class RSController : MonoBehaviour {
         if (robotManager!=null){
 			Destroy(robotManager.gameObject);
 		}
-            
+
         Destroy(gameObject);
     }
 

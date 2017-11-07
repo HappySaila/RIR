@@ -21,7 +21,6 @@ public class RSLaborerControl : MonoBehaviour
 
 	void Start()
 	{
-
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
@@ -45,6 +44,7 @@ public class RSLaborerControl : MonoBehaviour
 				//target has reached its destination and must start building
 				anim.SetBool("isBuilding", true);
 				agent.enabled = false;
+                rigid.constraints = RigidbodyConstraints.FreezeAll;
 			}
 		}
 
@@ -73,7 +73,7 @@ public class RSLaborerControl : MonoBehaviour
 
 	public void CallSetLaborer()
 	{
-        if (rigid.velocity.magnitude < 0.01f){
+        if (rigid.velocity.magnitude < float.Epsilon){
             SetLaborer();
         } else {
             Invoke("CallSetLaborer", 0.2f);
@@ -86,13 +86,11 @@ public class RSLaborerControl : MonoBehaviour
 		{
 			trigger = GetComponent<SphereCollider>();
 		}
-       // Debug.Log("enabled triggers");
 
 		trigger.enabled = true;
 		isIdleLaborer = true;
-		rigid.constraints = RigidbodyConstraints.FreezeRotationX |
-			RigidbodyConstraints.FreezeRotationZ |
-			RigidbodyConstraints.FreezeRotationY;
+        rigid.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ |
+            RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
 	}
 
 	void OnTriggerStay(Collider col)
@@ -106,7 +104,8 @@ public class RSLaborerControl : MonoBehaviour
 		}
 	}
 
-	void StandUp(Collider col)
+
+    void StandUp(Collider col)
 	{
 		transform.up = Vector3.Lerp(transform.up, Vector3.up, Time.deltaTime);
 		if (Vector3.Distance(transform.up.normalized, Vector3.up) < 0.1)
@@ -128,7 +127,6 @@ public class RSLaborerControl : MonoBehaviour
 			trigger.enabled = false;
 
 			robotManager.playSound ("collectLabourer");
-
 		}
 
 	}

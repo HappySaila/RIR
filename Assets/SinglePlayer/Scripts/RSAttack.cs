@@ -47,6 +47,9 @@ public class RSAttack : MonoBehaviour
 
 	public void InitiateRam ()
 	{
+        if (!canRam){
+            return;
+        }
 		canRam = false;
 		timeRamStarted = Time.time;
 		anim.SetTrigger ("Ram");
@@ -56,6 +59,7 @@ public class RSAttack : MonoBehaviour
 	{
 		isRamming = true;
         rigid.AddForce (-transform.forward * 50, ForceMode.Impulse);
+        robotManager.playSound("swing");
 	}
 
 	public void OnRamComplete ()
@@ -78,6 +82,8 @@ public class RSAttack : MonoBehaviour
         {
             target.GetComponent<Rigidbody>().AddForceAtPosition(-transform.forward * ramForce, point, ForceMode.VelocityChange);
             RSManager rsManagerofTarget = target.GetComponentInParent<RSManager>();
+            Instantiate(ParticleSystemManager.instance.LaborerSparks, point, Random.rotation);
+
             if (rsManagerofTarget != null)
             { //the player has rammed a robot
                 if (rsManagerofTarget.isRed != robotManager.isRed)
@@ -88,7 +94,7 @@ public class RSAttack : MonoBehaviour
                         {
                             target.GetComponentInParent<RSManager>().Die();
                         }
-                    } else {
+                    } else if (robotManager.robotLaborerControl.isFighter){
 						target.GetComponentInParent<RSManager>().Die();
 					}
                 }
